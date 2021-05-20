@@ -26,3 +26,25 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 
 # ESP-IDF
 alias esp-idf-init='. $HOME/esp/esp-idf/export.sh'
+
+# xKeySnail
+alias xkeysnail-config='sudo pkill xkeysnail; xhost +SI:localuser:root; nohup sudo xkeysnail /home/mauzy/.config/xkeysnail/config.py &
+'
+
+# Git stuff
+git-fixup() {
+    if [ -z "$1" ]
+    then
+        echo "ERROR: please provide a commit id"
+    else
+        git commit --fixup=$1
+        git rebase -i --autosquash $1^
+fi
+}
+
+# Webpack fixup
+webpack() {
+    sed -i '
+    s!ignoredFiles(paths.appSrc)![ignoredFiles(paths.appSrc), "**/.#*", "**/*~", "**/#*#"]!g
+    ' node_modules/react-scripts/config/webpackDevServer.config.js
+}
