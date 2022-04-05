@@ -28,8 +28,11 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 alias esp-idf-init='. $HOME/esp/esp-idf/export.sh'
 
 # xKeySnail
-alias xkeysnail-config='sudo pkill xkeysnail; xhost +SI:localuser:root; nohup sudo xkeysnail /home/mauzy/.config/xkeysnail/config.py &
+alias xkeysnail-config='sudo pkill xkeysnail && xhost +SI:localuser:root; nohup sudo xkeysnail /home/mauzy/.config/xkeysnail/config.py &
 '
+
+# Emacs
+alias spacemacs='HOME=~/spacemacs emacs'
 
 # Git stuff
 git-fixup() {
@@ -43,7 +46,7 @@ fi
 }
 
 # Webpack fixup
-webpack() {
+enoent() {
     sed -i '
     s!ignoredFiles(paths.appSrc)![ignoredFiles(paths.appSrc), "**/.#*", "**/*~", "**/#*#"]!g
     ' node_modules/react-scripts/config/webpackDevServer.config.js
