@@ -16,6 +16,7 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
 fi
 
 PATH="$PATH:/home/mauzy/.local/share/cmake-3.17.0-Linux-x86_64/bin"
+PATH="$PATH:$(yarn global bin)"
 
 # For i3 cwd term spawns
 export PROMPT_COMMAND="pwd > /tmp/whereami"
