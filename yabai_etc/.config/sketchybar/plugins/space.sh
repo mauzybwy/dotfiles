@@ -10,8 +10,13 @@ source "$CONFIG_DIR/colors.sh"
 
 WIN=$(yabai -m query --spaces --space $SID | jq '.windows[0]')
 SHOW_SPACE="false"
-if [[ "$WIN" != "null" || "$SELECTED" = "true" ]]; then
+if [[ "$WIN" != "null" ]]; then
   SHOW_SPACE="true"
+elif [[ "$SELECTED" = "true"  ]]; then
+  SHOW_SPACE="true"
+  sketchybar --set $NAME label="--"
+else
+  sketchybar --set $NAME label="--"
 fi
 
 sketchybar --set $NAME \

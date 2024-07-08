@@ -157,13 +157,13 @@ cmd - k [
 cmd - n [
     "Firefox" : skhd -k "cmd + alt - left"
     "Google Chrome" : skhd -k "cmd + alt - left"
-    "Arc" : skhd -k "cmd + alt - down"
+    # "Arc" : skhd -k "cmd + alt - down"
 ]
 
 cmd - p [
     "Firefox" : skhd -k "cmd + alt - right"
     "Google Chrome" : skhd -k "cmd + alt - right"
-    "Arc" : skhd -k "cmd + alt - up"
+    # "Arc" : skhd -k "cmd + alt - up"
 ]
 
 cmd + shift - j [
@@ -225,24 +225,36 @@ shift + ctrl - d [
       "Simulator" : skhd -k "cmd + d"
 ]
 
-:: actions @ : echo 'x' > ~/.skhd_mode
+#################################################################################
+# Modes
+#################################################################################
+
+:: actions @ : sketchybar --set chevron label="[x]" label.drawing="on" icon.drawing="off"
 default < hyper + fn - x ; actions
 default < ctrl - x [
     "Arc" : skhd -k 'hyper + fn - x'
+    "iTerm2" : skhd -k 'hyper + fn - x'
 ]
 actions < hyper + fn - escape ; default
-actions < hyper - escape : echo '' > ~/.skhd_mode
+actions < hyper - escape : sketchybar --set chevron label="" label.drawing="false" icon.drawing="on"
 actions < escape : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape'
 actions < ctrl - g : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape'
 
+actions < o [
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd + alt - n'
+    "iTerm2" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - t'
+]
 actions < b [
     "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'ctrl - space'
+]
+actions < n [
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - n'
 ]
 actions < k [
     "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - w'
 ]
-actions < n [
-    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd + alt - n'
+actions < i [
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd + shift - n'
 ]
 actions < ctrl - b [
     "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'ctrl - space'

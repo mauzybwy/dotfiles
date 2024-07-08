@@ -150,7 +150,16 @@
   (add-hook! jtsx-tsx-mode
     (eglot-add-server
      '((jtsx-tsx-mode :language-id "typescriptreact")
-       "typescript-language-server" "--stdio"))))
+       "typescript-language-server" "--stdio"
+       :initializationOptions
+       (:preferences
+        (
+         :includeInlayFunctionParameterTypeHints t
+         :includeInlayFunctionLikeReturnTypeHints t
+         :allowRenameOfImportPath t
+         )
+        )
+       ))))
 
 ;; Astro
 (load! "../pkgs/astro-ts-mode.el")

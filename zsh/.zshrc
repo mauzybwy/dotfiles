@@ -78,7 +78,7 @@ plugins=(git zoxide fzf iterm2 cp nvm macos)
 
 # Plugins configuraiton
 zstyle :omz:plugins:iterm2 shell-integration yes
-zstyle ':omz:plugins:nvm' lazy yes
+zstyle ':omz:plugins:nvm' lazy no
 
 source $ZSH/oh-my-zsh.sh
 
@@ -116,6 +116,20 @@ alias brewl='brew leaves | xargs brew desc --eval-all'
 alias brewlc='brew ls --casks | xargs brew desc --eval-all'
 alias sourcezsh='source ~/.zshrc'
 alias doomsync='~/.config/emacs/bin/doom sync'
+alias p='pnpm'
 
 # Atuin
 eval "$(atuin init zsh)"
+
+# Tokens, etc.
+export NPM_TOKEN="2565b89efbdb2fa02c71948f502f969d8df5dbe2"
+export ANDROID_HOME="/Users/mauzy/Library/Android/sdk"
+export SENTRY_AUTH_TOKEN="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"
+
+# pnpm
+export PNPM_HOME="/Users/mauzy/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
