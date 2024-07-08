@@ -1,0 +1,255 @@
+# change focus (old)
+# alt - j : yabai -m window --focus west
+# alt - n : yabai -m window --focus south
+# alt - p : yabai -m window --focus north
+# alt - k : yabai -m window --focus east
+
+# change focus (with display support)
+alt - j : yabai -m window --focus west  || $(yabai -m display --focus west)
+alt - n : yabai -m window --focus stack.next || yabai -m window --focus south || $(yabai -m display --focus south)
+alt - p : yabai -m window --focus stack.prev || yabai -m window --focus north || $(yabai -m display --focus north)
+alt - k : yabai -m window --focus east  || $(yabai -m display --focus east)
+
+# create stacks
+
+ctrl + alt - j : yabai -m window --stack west
+ctrl + alt - n : yabai -m window --stack south
+ctrl + alt - p : yabai -m window --stack north
+ctrl + alt - k : yabai -m window --stack east
+
+# warp windows (old)
+# shift + alt - j : yabai -m window --warp west
+# shift + alt - n : yabai -m window --warp south
+# shift + alt - p : yabai -m window --warp north
+# shift + alt - k : yabai -m window --warp east
+
+# warp windows (with display support)
+alt + shift - j : yabai -m window --warp west || $(yabai -m window --display west; yabai -m display --focus west)
+alt + shift - n : yabai -m window --warp south || $(yabai -m window --display south; yabai -m display --focus south)
+alt + shift - p : yabai -m window --warp north || $(yabai -m window --display north; yabai -m display --focus north)
+alt + shift - k : yabai -m window --warp east || $(yabai -m window --display east; yabai -m display --focus east)
+
+0x37 : osascript -e 'display notification "Boom!" with title "Test Notification"'
+
+alt - d : skhd -k "cmd - d"
+
+alt - f : yabai -m window --toggle zoom-fullscreen
+
+alt - v : yabai -m window --toggle split
+
+alt - 1 : yabai -m space --focus 1
+alt - 2 : yabai -m space --focus 2
+alt - 3 : yabai -m space --focus 3
+alt - 4 : yabai -m space --focus 4
+alt - 5 : yabai -m space --focus 5
+alt - 6 : yabai -m space --focus 6
+alt - 7 : yabai -m space --focus 7
+alt - 8 : yabai -m space --focus 8
+alt - 9 : yabai -m space --focus 9
+alt - 0 : yabai -m space --focus 10
+
+alt + shift - 1 : yabai -m window --space 1
+alt + shift - 2 : yabai -m window --space 2
+alt + shift - 3 : yabai -m window --space 3
+alt + shift - 4 : yabai -m window --space 4
+alt + shift - 5 : yabai -m window --space 5
+alt + shift - 6 : yabai -m window --space 6
+alt + shift - 7 : yabai -m window --space 7
+alt + shift - 8 : yabai -m window --space 8
+alt + shift - 9 : yabai -m window --space 9
+alt + shift - 0 : yabai -m window --space 10
+
+# alt - return : /Applications/kitty.app/Contents/MacOS/kitty -d=/Users/mauzy -o shell=bash --single-instance
+alt - return : /Applications/iTerm.app/Contents/MacOS/iTerm2
+
+alt + shift - q : yabai -m window --close
+
+ctrl - t [
+    "Firefox" : skhd -k "cmd - t"
+    "Google Chrome" : skhd -k "cmd - t"
+    "Arc" : skhd -k "cmd - t"
+]
+
+ctrl - r [
+    "Firefox" : skhd -k "cmd - r"
+    "Google Chrome" : skhd -k "cmd - r"
+    "Arc" : skhd -k "cmd - r"
+]
+
+ctrl - l [
+    "Firefox" : skhd -k "cmd - l"
+    "Google Chrome" : skhd -k "cmd - l"
+    "Arc" : skhd -k "cmd - l"
+]
+
+ctrl - n [
+    "Firefox" : skhd -k "down"
+    "Google Chrome" : skhd -k "down"
+    "Arc" : skhd -k "down"
+]
+
+ctrl - p [
+    "Firefox" : skhd -k "up"
+    "Google Chrome" : skhd -k "up"
+    "Arc" : skhd -k "up"
+]
+
+ctrl - f [
+    "Firefox" : skhd -k "right"
+    "Google Chrome" : skhd -k "right"
+    "Arc" : skhd -k "right"
+]
+
+ctrl - b [
+    "Firefox" : skhd -k "left"
+    "Google Chrome" : skhd -k "left"
+    "Arc" : skhd -k "left"
+]
+
+ctrl - w [
+    "Firefox" : skhd -k "cmd - x"
+    "Google Chrome" : skhd -k "cmd - x"
+    "Arc" : skhd -k "cmd - x"
+]
+
+alt - w [
+    "Firefox" : skhd -k "cmd - c"
+    "Google Chrome" : skhd -k "cmd - c"
+    "Arc" : skhd -k "cmd - c"
+]
+
+ctrl - y [
+    "Firefox" : skhd -k "cmd - v"
+    "Google Chrome" : skhd -k "cmd - v"
+    "Arc" : skhd -k "cmd - v"
+]
+
+ctrl - s [
+    "Firefox" : skhd -k "cmd - f"
+    "Google Chrome" : skhd -k "cmd - f"
+    "Arc" : skhd -k "cmd - f"
+]
+
+ctrl + cmd - j [
+    "Firefox" : skhd -k "cmd - left"
+    "Google Chrome" : skhd -k "cmd - left"
+    "Arc" : skhd -k "cmd - left"
+]
+
+ctrl + cmd - k [
+    "Firefox" : skhd -k "cmd - right"
+    "Google Chrome" : skhd -k "cmd - right"
+    "Arc" : skhd -k "cmd - right"
+]
+
+cmd - j [
+    "Firefox" : skhd -k "cmd + alt - left"
+    "Google Chrome" : skhd -k "cmd + alt - left"
+    "Arc" : skhd -k "cmd + alt - left" ; sleep 0.1 && skhd -k "ctrl - space"
+]
+
+cmd - k [
+    "Firefox" : skhd -k "cmd + alt - right"
+    "Google Chrome" : skhd -k "cmd + alt - right"
+    "Arc" : skhd -k "cmd + alt - right" ; sleep 0.1 && skhd -k "ctrl - space"
+]
+
+cmd - n [
+    "Firefox" : skhd -k "cmd + alt - left"
+    "Google Chrome" : skhd -k "cmd + alt - left"
+    "Arc" : skhd -k "cmd + alt - down"
+]
+
+cmd - p [
+    "Firefox" : skhd -k "cmd + alt - right"
+    "Google Chrome" : skhd -k "cmd + alt - right"
+    "Arc" : skhd -k "cmd + alt - up"
+]
+
+cmd + shift - j [
+    "Firefox" : skhd -k "ctrl + shift - pageup"
+    "Google Chrome" : skhd -k "ctrl + shift - pageup"
+    "Arc" : skhd -k "ctrl + shift - pageup"
+]
+
+cmd + shift - k [
+    "Firefox" : skhd -k "ctrl + shift - pagedown"
+    "Google Chrome" : skhd -k "ctrl + shift - pagedown"
+    "Arc" : skhd -k "ctrl + shift - pagedown"
+]
+
+ctrl - c [
+    "Firefox" : skhd -k "cmd - w"
+    "Google Chrome" : skhd -k "cmd - w"
+]
+
+ctrl - g [
+     "Firefox" : skhd -k "escape"
+     "Google Chrome" : skhd -k "escape"
+     "Arc" : skhd -k "escape"
+]
+
+ctrl - e [
+     "Firefox" : skhd -k "cmd - right"
+     "Google Chrome" : skhd -k "cmd - right"
+     "Arc" : skhd -k "cmd - right"
+]
+
+ctrl - a [
+     "Firefox" : skhd -k "cmd - left"
+     "Google Chrome" : skhd -k "cmd - left"
+     "Arc" : skhd -k "cmd - left"
+]
+
+ctrl - 0x2C [
+     "Firefox" : skhd -k "cmd - z"
+     "Google Chrome" : skhd -k "cmd - z"
+     "Arc" : skhd -k "cmd - z"
+]
+
+ctrl - v [
+     "Arc" : skhd -k "alt - down"
+]
+
+# cmd - v [
+#      "Arc" : skhd -k "alt - up"
+# ]
+
+shift + ctrl - 0x2C [
+     "Firefox" : skhd -k "cmd + shift - z"
+     "Google Chrome" : skhd -k "cmd + shift - z"
+     "Arc" : skhd -k "cmd + shift - z"
+]
+
+shift + ctrl - d [
+      "Simulator" : skhd -k "cmd + d"
+]
+
+:: actions @ : echo 'x' > ~/.skhd_mode
+default < hyper + fn - x ; actions
+default < ctrl - x [
+    "Arc" : skhd -k 'hyper + fn - x'
+]
+actions < hyper + fn - escape ; default
+actions < hyper - escape : echo '' > ~/.skhd_mode
+actions < escape : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape'
+actions < ctrl - g : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape'
+
+actions < b [
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'ctrl - space'
+]
+actions < k [
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - w'
+]
+actions < n [
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd + alt - n'
+]
+actions < ctrl - b [
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'ctrl - space'
+]
+actions < 0x21 [
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - up'
+]
+actions < 0x1E [
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - down'
+]

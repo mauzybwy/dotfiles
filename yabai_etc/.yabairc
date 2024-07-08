@@ -1,0 +1,90 @@
+#!/usr/bin/env sh
+
+sudo yabai --load-sa
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+yabai -m rule --add app=Emacs manage=on
+# yabai -m rule --add app="^Emacs$" title!="^EMACSSS.*" manage=off
+
+# global settings
+yabai -m config mouse_follows_focus          off
+yabai -m config focus_follows_mouse          off
+yabai -m config window_placement             first_child
+yabai -m config window_topmost               off
+yabai -m config window_shadow                off
+yabai -m config window_opacity               off
+yabai -m config window_opacity_duration      0.0
+yabai -m config active_window_opacity        1.0
+yabai -m config normal_window_opacity        1.0
+yabai -m config window_border                on
+yabai -m config window_border_width          2
+yabai -m config active_window_border_color   0xffffffff
+yabai -m config normal_window_border_color   0xff444b6a
+yabai -m config active_window_border_color   0xffffffff
+yabai -m config normal_window_border_color   0xff7A808C
+yabai -m config insert_feedback_color        0xff61afef
+yabai -m config split_ratio                  0.50
+yabai -m config auto_balance                 off
+yabai -m config mouse_modifier               fn
+yabai -m config mouse_action1                move
+yabai -m config mouse_action2                resize
+yabai -m config mouse_drop_action            swap
+
+yabai -m config layout                       bsp
+yabai -m config top_padding                  4
+yabai -m config bottom_padding               4
+yabai -m config left_padding                 8
+yabai -m config right_padding                8
+yabai -m config window_gap                   4
+
+function setup_space {
+  local idx="$1"
+  local name="$2"
+  local space=
+  echo "setup space $idx : $name"
+
+  space=$(yabai -m query --spaces --space "$idx")
+  if [ -z "$space" ]; then
+    yabai -m space --create
+  fi
+
+  yabai -m space "$idx" --label "$name"
+}
+
+setup_space 1 I
+setup_space 2 II
+setup_space 3 III
+setup_space 4 IV
+setup_space 5 V
+setup_space 6 VI
+setup_space 7 VII
+setup_space 8 VIII
+setup_space 9 IX
+setup_space 10 X
+
+# yabai -m rule --add app="Google Chrome" space=1
+# yabai -m rule --add app="Alacritty"     space=2
+# ^^ these are annoying
+# yabai -m rule --add app="Safari"        space=3
+yabai -m rule --add app="Spotify"       space=10
+yabai -m rule --add app="Discord"       space=8
+yabai -m rule --add app="Slack"         space=9
+
+yabai -m rule --add app="^System Preferences$" manage=off
+yabai -m rule --add app="^Finder$" manage=off
+
+yabai -m rule --add app="^Fsssss$" manage=off
+
+yabai -m rule --add app="^SampleGame$" space=7
+yabai -m rule --add app="^SampleGame$" manage=off
+# yabai -m rule --add app="^Simulator$" manage=off
+# yabai -m rule --add app="^Audacity$" manage=off
+
+yabai -m rule --add app="^Arc$" title="^$" mouse_follows_focus=off
+yabai -m rule --add app="^Arc$" title="^Space 1$" manage=off grid=20:20:1:1:18:18
+
+# yabai -m config external_bar all:27:0
+yabai -m config external_bar all:0:0
+
+echo "yabai configuration loaded.."
+
+# borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=2.0 style=round &
