@@ -5,6 +5,15 @@
 
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 
+declare -A apps
+apps[Emacs]=""
+apps[iTerm2]=""
+apps[Spotify]=""
+apps[Arc]="󰖟"
+apps[Firefox]=""
+apps[Slack]=""
+apps[""]=""
+
 ##### Bar Appearance #####
 # Configuring the general appearance of the bar.
 # These are only some of the options available. For all options see:
@@ -47,14 +56,30 @@ do
     icon="${SPACE_ICONS[i]}"
     icon.padding_left=7
     icon.padding_right=7
-    background.color=0x60ffffff
+    background.color=0x40ffffff
     background.corner_radius=0
     background.height=12
-    label.drawing=off
+    # label.drawing=off
     script="$PLUGIN_DIR/space.sh"
     click_script="yabai -m space --focus $sid"
   )
-  sketchybar --add space space."$sid" left --set space."$sid" "${space[@]}"
+
+  APP_NAME=""
+  WIN=$(yabai -m query --spaces --space $sid | jq '.windows[0]')
+  if [[ "$WIN" != "null" && "$WIN" != "" ]];then
+    APP_NAME=$(yabai -m query --windows --window $WIN | jq -r '.app')
+  fi
+
+  sketchybar --add space space."$sid" left \
+             --set space."$sid" "${space[@]}" \
+             label="" \
+             icon=$sid \
+             scroll_texts="true" \
+             label.max_chars=4
+
+  if [[ "$APP_NAME" ]]; then
+    $CONFIG_DIR/init_spaces.sh $sid $APP_NAME
+  fi
 done
 
 ##### Adding Left Items #####
@@ -66,6 +91,7 @@ sketchybar --add item chevron left \
            --add item front_app left \
            --set front_app icon.drawing=off script="$PLUGIN_DIR/front_app.sh" \
            --subscribe front_app front_app_switched
+
 
 ##### Adding Right Items #####
 # In the same way as the left items we can add items to the right side.
