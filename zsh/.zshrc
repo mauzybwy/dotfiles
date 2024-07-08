@@ -107,8 +107,12 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias ls='eza --git'
+alias ls='eza --git --group-directories-first --time-style=long-iso --group --color-scale'
 alias top='btop'
+alias brewl='brew leaves | xargs brew desc --eval-all'
+alias brewlc='brew ls --casks | xargs brew desc --eval-all'
+alias sourcezsh='source ~/.zshrc'
+alias doomsync='~/.config/emacs/bin/doom sync'
 
 # Atuin
 eval "$(atuin init zsh)"
