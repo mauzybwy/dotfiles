@@ -60,7 +60,7 @@ alt + shift - 9 : yabai -m window --space 9
 alt + shift - 0 : yabai -m window --space 10
 
 # alt - return : /Applications/kitty.app/Contents/MacOS/kitty -d=/Users/mauzy -o shell=bash --single-instance
-alt - return : /Applications/iTerm.app/Contents/MacOS/iTerm2
+alt - return : bash ~/.local/script/open_iterm.sh
 
 alt + shift - q : yabai -m window --close
 
