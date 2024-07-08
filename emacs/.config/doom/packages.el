@@ -100,3 +100,9 @@
 
 (package! copilot
   :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
+
+(package! flymake-eslint)
+(package! jinja2-mode)
+(package! jtsx)
+(package! org-superstar)
+;;(package! ejc-sql)

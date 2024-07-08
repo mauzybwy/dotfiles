@@ -24,6 +24,7 @@
           (markdown "https://github.com/ikatyang/tree-sitter-markdown")
           (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
           (python "https://github.com/tree-sitter/tree-sitter-python")
+          ;; (sql "https://github.com/m-novikov/tree-sitter-sql")
           (toml "https://github.com/tree-sitter/tree-sitter-toml")
           (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
@@ -46,42 +47,6 @@
   (mauzy/add-to-list-multiple
    'apheleia-mode-alist
    '((rjsx-mode . prettier-typescript))))
-
-(set-formatter! 'prettier-astro
-  '("npx" "prettier" "--parser=astro"
-    (apheleia-formatters-indent "--use-tabs" "--tab-width" 'astro-ts-mode-indent-offset))
-  :modes '(astro-ts-mode))
-
-;; Eglot Server overrides
-
-;; (add-to-list 'eglot-server-programs '((js-mode typescript-mode (typescript-ts-base-mode :language-id "typescript")) . (eglot-deno "deno" "lsp")))
-;; (add-to-list 'eglot-server-programs '((js-mode typescript-mode) . (eglot-deno "deno" "lsp")))
-
-;; (use-package! tsx-mode
-;;   :hook (typescript-mode . tsx-mode)
-;;   :config
-;;   ;; Additional configuration if needed
-;;   )
-
-
-;;;;;
-;;;;; Web Dev (js/ts/html/css/etc)
-;;;;;
-
-;; (use-package! rjsx-mode
-;;   :mode ())
-
-;; (use-package! tsx-mode
-;;   :after (eglot)
-;;   :config
-;;   (setq auto-mode-alist (delete '("\\.tsx\\'" . typescript-tsx-mode) auto-mode-alist))
-;;   (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-mode))
-;;   )
-
-
-;;;;;; Astro
-;; (define-derived-mode astro-mode web-mode "Astro 🚀")
-(load! "../pkgs/astro-ts-mode.el")
 
 ;; (use-package! lsp-tailwindcss
 ;;   :when (modulep! +lsp)
@@ -114,143 +79,205 @@
 ;;;; Eglot
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-derived-mode javascript-ts-mode typescript-ts-mode "Javascript")
+(defun eglot-add-server (s)
+  (add-to-list 'eglot-server-programs s)
+  (message "Added %s to eglot-server-programs" s)
+  (message "eglot-server-programs: %s" eglot-server-programs)
+  (eglot-ensure))
 
 (use-package! eglot
-  ;; :ensure t
-  :hook
-  '((deno-ts-mode . eglot-ensure)
-    (deno-tsx-ts-mode . eglot-ensure)
-    (js2-mode . eglot-ensure)
-    (js-ts-mode . eglot-ensure)
-    (tsx-ts-mode . eglot-ensure)
-    (rjsx-mode . eglot-ensure)
-    (astro-ts-mode . eglot-ensure)
-    (typescript-ts-mode . eglot-ensure))
-
   :config
   (mauzy/add-to-list-multiple
    'eglot-server-programs
    '(((js2-mode :language-id "javascript") "typescript-language-server" "--stdio")
-     ;; ((ts2-mode :language-id "typescript") "vtsls" "--stdio")
-     ;; ((rjsx-mode :language-id "typescriptreact") "vtsls" "--stdio"))
      ((rjsx-mode :language-id "typescriptreact") "typescript-language-server" "--stdio")
-     ((javascript-ts-mode :language-id "javascript") "typescript-language-server" "--stdio")
-     ((typescript-ts-mode :language-id "typescript") "typescript-language-server" "--stdio")
-     ((tsx-ts-mode :language-id "typescriptreact") "typescript-language-server" "--stdio")
      ((deno-ts-mode :language-id "typescript") "deno" "lsp")
      ((deno-tsx-ts-mode :language-id "typescriptreact") "deno" "lsp")
-     (astro-ts-mode "astro-ls" "--stdio"
-                    :initializationOptions
-                    (:typescript (:tsdk "/Users/mauzy/Library/pnpm/global/5/node_modules/typescript/lib/")))
      )))
 
-(use-package! fsharp-mode
-  :defer t)
-(use-package! eglot-fsharp)
-;; (use-package! eglot-fsharp
-;;   :config
-;;   (setq eglot-fsharp-fsautocomplete-args
-;;         '(:automaticWorkspaceInit t
-;;           :abstractClassStubGeneration t
-;;           :abstractClassStubGenerationMethodBody
-;;           "failwith \"Not Implemented\""
-;;           :abstractClassStubGenerationObjectIdentifier "this"
-;;           :addFsiWatcher nil
-;;           :codeLenses (:references (:enabled t)
-;;                        :signature (:enabled t))
-;;           :disableFailedProjectNotifications nil
-;;           :dotnetRoot ""
-;;           :enableAdaptiveLspServer t
-;;           :enableAnalyzers nil
-;;           :enableMSBuildProjectGraph nil
-;;           :enableReferenceCodeLens t
-;;           :excludeProjectDirectories [".git" "paket-files" ".fable" "packages" "node_modules"]
-;;           :externalAutocomplete nil
-;;           :fsac (:attachDebugger nil
-;;                  :cachedTypeCheckCount 200
-;;                  :conserveMemory nil
-;;                  :dotnetArgs nil
-;;                  :netCoreDllPath ""
-;;                  :parallelReferenceResolution nil
-;;                  :silencedLogs nil)
-;;           :fsiExtraParameters nil
-;;           :fsiSdkFilePath ""
-;;           :generateBinlog nil
-;;           :indentationSize 4
-;;           :inlayHints (:disableLongTooltip t
-;;                        :enabled :json-false
-;;                        :parameterNames :json-false
-;;                        :typeAnnotations :json-false)
-;;           :inlineValues (:enabled t
-;;                          :prefix "//")
-;;           :interfaceStubGeneration t
-;;           :interfaceStubGenerationMethodBody "failwith \"Not Implemented\""
-;;           :interfaceStubGenerationObjectIdentifier "this"
-;;           :keywordsAutocomplete t
-;;           :lineLens (:enabled "always"
-;;                      :prefix " // ")
-;;           :linter t
-;;           :pipelineHints (:enabled t
-;;                           :prefix " // ")
-;;           :recordStubGeneration t
-;;           :recordStubGenerationBody "failwith \"Not Implemented\""
-;;           :resolveNamespaces t
-;;           :saveOnSendLastSelection nil
-;;           :simplifyNameAnalyzer t
-;;           :smartIndent nil
-;;           :suggestGitignore t
-;;           :suggestSdkScripts t
-;;           :unionCaseStubGeneration t
-;;           :unionCaseStubGenerationBody "failwith \"Not Implemented\""
-;;           :unusedDeclarationsAnalyzer t
-;;           :unusedOpensAnalyzer t
-;;           :verboseLogging t
-;;           :workspaceModePeekDeepLevel 4
-;;           :workspacePath ""))
-;;   )
-
-
-;; (use-package! eglot-fsharp
-;;   :config
-;;   (setq eglot-fsharp-fsautocomplete-args
-;;         '(:codeLenses (:references (:enabled t)
-;;                        :signature (:enabled t))
-;;           :indentationSize 4
-;;           :inlayHints (:disableLongTooltip t
-;;                        :enabled nil
-;;                        :parameterNames t
-;;                        :typeAnnotations nil)
-;;           :lineLens (:enabled "replaceCodeLens"
-;;                      :prefix " // ")
-;;           :verboseLogging t
-;;           :workspaceModePeekDeepLevel 4
-;;           :workspacePath ""))
-;;   )
-
-
 (after! rjsx-mode (set-company-backend! 'rjsx-mode '(company-files)))
-
-;;; lang.conf.el ends here
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Auto-mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (straight-use-package '(tsx-mode :type git :host github :repo "orzechowskid/tsx-mode.el"))
 (setq auto-mode-alist
-      (append '(("\\.[jt]sx\\'" . rjsx-mode)
-                ("\\.[mc]?js\\'" . javascript-ts-mode)
-                ("\\.[mc]?ts\\'" . typescript-ts-mode)
-                ("\\.el\\'" . emacs-lisp-mode)
-                (".*\\.astro\\'" . astro-ts-mode))
+      (append '(("\\.el\\'" . emacs-lisp-mode))
               auto-mode-alist))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Language Specific
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Prog Mode
+(add-hook! prog-mode
+  (rainbow-delimiters-mode))
+
+;; Elisp
+;;(use-package! elisp-mode
+;;  :mode "\\.el\\'")
+
+;; Typescript
+(use-package! json-ts-mode
+  :mode "\\.json\\'"
+  :init
+  (add-hook! json-ts-mode
+    (setq json-ts-mode-indent-offset 4)))
+
+;; Javascript
+(use-package! jtsx-jsx-mode
+  :mode "\\.[mc]?jsx?\\'"
+  :init
+  (add-hook! jtsx-jsx-mode
+    (eglot-add-server
+     '((jtsx-jsx-mode :language-id "javascript")
+       "typescript-language-server" "--stdio"))))
+
+;; Typescript
+(use-package! jtsx-typescript-mode
+  :mode "\\.[mc]?ts\\'"
+  :init
+  (add-hook! jtsx-typescript-mode
+    (eglot-add-server
+     '((jtsx-typescript-mode :language-id "typescript")
+       "typescript-language-server" "--stdio"))))
+
+;; Typescript[TSX]
+(use-package! jtsx-tsx-mode
+  :mode "\\.tsx\\'"
+  :init
+  (add-hook! jtsx-tsx-mode
+    (eglot-add-server
+     '((jtsx-tsx-mode :language-id "typescriptreact")
+       "typescript-language-server" "--stdio"))))
+
+;; Astro
+(load! "../pkgs/astro-ts-mode.el")
+(use-package! astro-ts-mode
+  :mode ".*\\.astro\\'"
+  :init
+  (set-formatter! 'prettier-astro
+    '("npx" "prettier" "--parser=astro"
+      (apheleia-formatters-indent "--use-tabs" "--tab-width" 'astro-ts-mode-indent-offset))
+    :modes '(astro-ts-mode))
+  (add-hook! astro-ts-mode
+    (eglot-add-server
+     '(astro-ts-mode "astro-ls" "--stdio"
+       :initializationOptions
+       (:typescript (:tsdk "/Users/mauzy/Library/pnpm/global/5/node_modules/typescript/lib/"))))))
+
+;; Python
+(use-package! python-ts-mode
+  :mode "\\.py[iw]?\\'"
+  :init
+  (add-hook! python-ts-mode
+    (setq python-indent-offset 4)
+    (add-to-list
+     'eglot-server-programs
+     '(python-ts-mode "pyright-langserver" "--stdio"))
+    (eglot-ensure)))
+
+;; SQL
 (use-package! sqlformat
   :config
   (setq sqlformat-command 'pgformatter)
   (setq sqlformat-args '("-s2" "-g")))
+(use-package! sql-mode
+  :mode "\\.sql\\'"
+  :init
+  (defvar my/eglot/sqls/current-connection nil)
+  (defvar my/eglot/sqls/current-database nil)
 
-(after! sql
-  (add-hook 'sql-mode-hook 'sqlformat-on-save-mode))
+  (cl-defmethod eglot-execute
+    :around
+    (server action)
+
+    (pcase (plist-get action :command)
+      ("executeQuery"
+       (if (use-region-p)
+           (let* ((begin (region-beginning))
+                  (end (region-end))
+                  (begin-lsp (eglot--pos-to-lsp-position begin))
+                  (end-lsp (eglot--pos-to-lsp-position end))
+                  (action (plist-put action :range `(:start ,begin-lsp :end ,end-lsp)))
+                  (result (cl-call-next-method server action)))
+             (my/eglot/sqls/show-result result))
+         (message "No region")))
+
+      ((or
+        "showConnections"
+        "showDatabases"
+        "showSchemas"
+        "showTables")
+       (my/eglot/sqls/show-result (cl-call-next-method)))
+
+      ("switchConnections"
+       (let* ((connections (eglot--request server :workspace/executeCommand
+                                           '(:command "showConnections")))
+              (collection (split-string connections "\n"))
+              (connection (completing-read "Switch to connection: " collection nil t))
+              (index (number-to-string (string-to-number connection)))
+              (action (plist-put action :arguments (vector index))))
+         (cl-call-next-method server action)
+         (setq my/eglot/sqls/current-connection connection)))
+
+      ("switchDatabase"
+       (let* ((databases (eglot--request server :workspace/executeCommand
+                                         '(:command "showDatabases")))
+              (collection (split-string databases "\n"))
+              (database (completing-read "Switch to database: " collection nil t))
+              (action (plist-put action :arguments (vector database))))
+         (cl-call-next-method server action)
+         (setq my/eglot/sqls/current-database database)))
+
+      (_
+       (cl-call-next-method))))
+
+  (defun my/eglot/sqls/show-result (result)
+    (with-current-buffer (get-buffer-create "*sqls result*")
+      (setq-local header-line-format
+                  '(:eval (my/eglot/sqls/show-result/header-line-format)))
+      (erase-buffer)
+      (insert result)
+      (display-buffer (current-buffer))))
+
+  (defun my/eglot/sqls/show-result/header-line-format ()
+    (let* ((connection (or my/eglot/sqls/current-connection ""))
+           (parts (split-string connection " "))
+           (driver (nth 1 parts))
+           (alias (nth 2 parts))
+           (result (format "[%s] %s/%s"
+                           (or driver "?")
+                           (or alias "?")
+                           (or my/eglot/sqls/current-database "?"))))
+      (propertize result
+                  'face 'my/eglot/sqls/show-result/header-line-face)))
+
+  (defface my/eglot/sqls/show-result/header-line-face
+    '((t (:inherit 'magit-header-line)))
+    "*sqls result* header-line face")
+  (add-hook! sql-mode
+    (add-to-list
+     'eglot-server-programs
+     '(sql-mode "/Users/mauzy/go/bin/sqls" "--trace"))
+    (eglot-ensure)
+    (sqlformat-on-save-mode))
+  )
+
+(use-package! jinja2-mode
+  :mode "\\.jinja\\'")
+
+;; fsharp
+(use-package! fsharp-mode
+  :defer t)
+(use-package! eglot-fsharp)
+
+
+;; (after! sql
+;;   (add-hook 'sql-mode-hook 'sqlformat-on-save-mode))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; lang.conf.el ends here

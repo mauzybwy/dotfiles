@@ -11,6 +11,7 @@
 (load! "./conf/vertico.el")
 (load! "./conf/bindings.el")
 (load! "./conf/lang.el")
+(load! "./conf/lang.el")
 (load! "./conf/orgmode.el")
 
 ;;; Global Variables
@@ -42,6 +43,8 @@
   (nyan-mode))
 
 (after! projectile
+  (add-to-list 'projectile-ignored-projects "/Users/mauzy/")
+  (add-to-list 'projectile-globally-ignored-directories "*venv")
   (add-to-list 'projectile-globally-ignored-directories "*dist")
   (add-to-list 'projectile-globally-ignored-directories "*obj")
   (add-to-list 'projectile-globally-ignored-directories "*bin")

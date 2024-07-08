@@ -108,6 +108,7 @@ function zat {
 
 export PATH="/Library/TeX/texbin:/opt/homebrew/bin:/Users/mauzy/.local/bin:/Users/mauzy/.local/share/google-cloud-sdk/bin:$PATH"
 export PATH="$PATH":"$HOME/.maestro/bin"
+export PATH="$PATH":"$HOME/go/bin"
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/mauzy/.local/share/google-cloud-sdk/path.bash.inc' ]; then . '/Users/mauzy/.local/share/google-cloud-sdk/path.bash.inc'; fi

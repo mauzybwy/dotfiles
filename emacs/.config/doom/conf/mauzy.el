@@ -12,7 +12,17 @@ than having to call `add-to-list' multiple times."
 
 (defun mauzy/comment-section-block ()
   (interactive)
-  (if (member major-mode '(rjsx-mode tsx-ts-mode typescript-ts-mode deno-mode deno-ts-mode deno-tsx-ts-mode astro-mode))
+  (if (member major-mode
+              '(rjsx-mode
+                tsx-ts-mode
+                typescript-ts-mode
+                deno-mode
+                deno-ts-mode
+                deno-tsx-ts-mode
+                astro-mode
+                jtsx-typescript-mode
+                jtsx-tsx-mode
+                jtsx-jsx-mode))
       (progn
 	(insert "/*****************************************************************************")
 	(electric-newline-and-maybe-indent)
@@ -32,7 +42,17 @@ than having to call `add-to-list' multiple times."
 
 (defun mauzy/comment-section-line ()
   (interactive)
-  (if (member major-mode '(rjsx-mode tsx-ts-mode typescript-ts-mode deno-mode deno-ts-mode deno-tsx-ts-mode astro-mode))
+  (if (member major-mode
+              '(rjsx-mode
+                tsx-ts-mode
+                typescript-ts-mode
+                deno-mode
+                deno-ts-mode
+                deno-tsx-ts-mode
+                astro-mode
+                jtsx-typescript-mode
+                jtsx-tsx-mode
+                jtsx-jsx-mode))
       (progn
 	(insert "/****************************************************************************/")
         (electric-newline-and-maybe-indent))
