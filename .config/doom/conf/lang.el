@@ -112,6 +112,7 @@
 
 ;; Prog Mode
 (add-hook! prog-mode
+  (avy-linum-mode)
   (rainbow-delimiters-mode))
 
 ;; Elisp
@@ -151,14 +152,14 @@
     (eglot-add-server
      '((jtsx-tsx-mode :language-id "typescriptreact")
        "typescript-language-server" "--stdio"
-       :initializationOptions
-       (:preferences
-        (
-         :includeInlayFunctionParameterTypeHints t
-         :includeInlayFunctionLikeReturnTypeHints t
-         :allowRenameOfImportPath t
-         )
-        )
+       ;; :initializationOptions
+       ;; (:preferences
+       ;;  (
+       ;;   ;; :includeInlayFunctionParameterTypeHints t
+       ;;   :includeInlayFunctionLikeReturnTypeHints t
+       ;;   :allowRenameOfImportPath t
+       ;;   )
+       ;;  )
        ))))
 
 ;; Astro
@@ -167,7 +168,7 @@
   :mode ".*\\.astro\\'"
   :init
   (set-formatter! 'prettier-astro
-    '("npx" "prettier" "--parser=astro"
+    '("pnpx", "prettier" "--parser=astro"
       (apheleia-formatters-indent "--use-tabs" "--tab-width" 'astro-ts-mode-indent-offset))
     :modes '(astro-ts-mode))
   (add-hook! astro-ts-mode

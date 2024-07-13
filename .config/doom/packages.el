@@ -106,3 +106,5 @@
 (package! jtsx)
 (package! org-superstar)
 ;;(package! ejc-sql)
+
+(package! devil)

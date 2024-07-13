@@ -7,8 +7,13 @@
 (map! :map 'override-global-map
       "C-c p s" #'+vertico/project-search
       "C-c p S" #'+vertico/project-search-from-cwd
+      "C-c p F" #'projectile-find-file-in-directory
       "C-c f r" #'rename-visited-file
-      "C-;" #'avy-goto-char-timer
+      "C-;" #'avy-goto-word-0
+      "M-;" #'avy-goto-line
+      "C-M-;" #'avy-goto-char-timer
+      "C-x /" #'comment-dwim
+      ;;"C-;" #'avy-goto-word-0
       )
 
 ;;; More overrides
@@ -23,8 +28,7 @@
 
       ;; C-c commands
       "C-c r" #'revert-buffer
-      "C-c p g" #'projectile-vc
-      "C-c p v" #'projectile-run-vterm
+      "C-c p C-t" #'projectile-run-vterm
       "C-c j q" #'counsel-jq
 
       ;; Motion commands

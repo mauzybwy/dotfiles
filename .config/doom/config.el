@@ -119,6 +119,12 @@
   :config
   (setq flymake-no-changes-timeout 4))
 
+(use-package! avy
+  :config
+  (setq avy-timeout-seconds 0.1)
+  (setq avy-all-windows t))
+
+
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
 ;; - `doom-font' -- the primary font to use
@@ -151,7 +157,6 @@
 (remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
 (add-hook! '+doom-dashboard-functions :append
   (setq fancy-splash-image (concat doom-user-dir "bruiser.png")))
-
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.

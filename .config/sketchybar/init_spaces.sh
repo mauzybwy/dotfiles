@@ -1,19 +1,6 @@
 #!/bin/zsh
 
-declare -A apps
-apps[Emacs]=""
-apps[iTerm2]=""
-apps[kitty]=""
-apps[Spotify]=""
-apps[Arc]="󰖟"
-apps[Firefox]=""
-apps[Slack]=""
-apps[Finder]=""
-apps[Preview]=""
-apps[System]=""
-a="System Settings"
-apps[$a]=""
-apps[Simulator]=""
+source "$CONFIG_DIR/icons.sh"
 
 WINDOWS=$(yabai -m query --windows | jq -r 'sort_by(.id) | .[] | "\(.space)|\(.app)|\(."has-focus")"')
 

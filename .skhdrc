@@ -6,8 +6,8 @@
 
 # change focus (with display support)
 alt - j : yabai -m window --focus west  || $(yabai -m display --focus west)
-alt - n : yabai -m window --focus stack.next || yabai -m window --focus south || $(yabai -m display --focus south)
-alt - p : yabai -m window --focus stack.prev || yabai -m window --focus north || $(yabai -m display --focus north)
+alt - n : yabai -m window --focus stack.next || yabai -m window --focus stack.first || yabai -m window --focus south || $(yabai -m display --focus south)
+alt - p : yabai -m window --focus stack.prev || yabai -m window --focus stack.last || yabai -m window --focus north || $(yabai -m display --focus north)
 alt - k : yabai -m window --focus east  || $(yabai -m display --focus east)
 
 # create stacks
@@ -86,24 +86,28 @@ ctrl - n [
     "Firefox" : skhd -k "down"
     "Google Chrome" : skhd -k "down"
     "Arc" : skhd -k "down"
+    "Spark Desktop" : skhd -k "down"
 ]
 
 ctrl - p [
     "Firefox" : skhd -k "up"
     "Google Chrome" : skhd -k "up"
     "Arc" : skhd -k "up"
+    "Spark Desktop" : skhd -k "up"
 ]
 
 ctrl - f [
     "Firefox" : skhd -k "right"
     "Google Chrome" : skhd -k "right"
     "Arc" : skhd -k "right"
+    "Spark Desktop" : skhd -k "right"
 ]
 
 ctrl - b [
     "Firefox" : skhd -k "left"
     "Google Chrome" : skhd -k "left"
     "Arc" : skhd -k "left"
+    "Spark Desktop" : skhd -k "left"
 ]
 
 ctrl - w [
@@ -145,13 +149,13 @@ ctrl + cmd - k [
 cmd - j [
     "Firefox" : skhd -k "cmd + alt - left"
     "Google Chrome" : skhd -k "cmd + alt - left"
-    "Arc" : skhd -k "cmd + alt - left" ; sleep 0.1 && skhd -k "ctrl - space"
+    "Arc" : skhd -k "cmd + alt - left" #; sleep 0.1 && skhd -k "hyper - space"
 ]
 
 cmd - k [
     "Firefox" : skhd -k "cmd + alt - right"
     "Google Chrome" : skhd -k "cmd + alt - right"
-    "Arc" : skhd -k "cmd + alt - right" ; sleep 0.1 && skhd -k "ctrl - space"
+    "Arc" : skhd -k "cmd + alt - right" #; sleep 0.1 && skhd -k "hyper - space"
 ]
 
 cmd - n [
@@ -187,6 +191,7 @@ ctrl - g [
      "Firefox" : skhd -k "escape"
      "Google Chrome" : skhd -k "escape"
      "Arc" : skhd -k "escape"
+     "Spark Desktop" : skhd -k "escape"
 ]
 
 ctrl - e [
@@ -244,20 +249,26 @@ actions < o [
     "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd + alt - n'
     "iTerm2" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - t'
 ]
+actions < l [
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd + alt - n'
+]
 actions < b [
-    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'ctrl - space'
+    # "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'hyper - space'
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'ctrl - t'
 ]
-actions < n [
-    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - n'
+actions < ctrl - b [
+    # "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'hyper - space'
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'ctrl - t'
 ]
+
 actions < k [
     "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - w'
 ]
 actions < i [
     "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd + shift - n'
 ]
-actions < ctrl - b [
-    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'ctrl - space'
+actions < ctrl - f [
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'hyper - space'
 ]
 actions < 0x21 [
     "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - up'
@@ -265,3 +276,35 @@ actions < 0x21 [
 actions < 0x1E [
     "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - down'
 ]
+actions < n [
+    "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - n'
+    "iTerm2": skhd -k 'hyper + fn - escape' ; skhd -k 'hyper + fn - n'
+]
+actions < x [
+    "iTerm2" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'ctrl - x'
+]
+
+
+:: new @ : sketchybar --set chevron label="[x-n]" label.drawing="on" icon.drawing="off";
+default < hyper + fn - n ; new
+default < ctrl - x [
+    "iTerm2" : skhd -k 'hyper + fn - n'
+]
+
+new < hyper + fn - escape ; default
+new < hyper - escape : sketchybar --set chevron label="" label.drawing="false" icon.drawing="on"
+new < escape : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape'
+new < ctrl - g : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape'
+
+new < t [
+    "iTerm2" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd - t'
+]
+
+new < d [
+    "iTerm2" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd + shift - d'
+]
+
+:: passthrough : sketchybar --set chevron label="[pass]" label.drawing="on" icon.drawing="off";
+default < cmd + shift - p ; passthrough
+passthrough < hyper - escape ; default
+passthrough < cmd + shift - p : sketchybar --set chevron label="" label.drawing="false" icon.drawing="on" ; skhd -k 'hyper - escape'
