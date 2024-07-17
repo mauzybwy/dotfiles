@@ -149,13 +149,13 @@ ctrl + cmd - k [
 cmd - j [
     "Firefox" : skhd -k "cmd + alt - left"
     "Google Chrome" : skhd -k "cmd + alt - left"
-    "Arc" : skhd -k "cmd + alt - left" #; sleep 0.1 && skhd -k "hyper - space"
+    # "Arc" : skhd -k "cmd + alt - left" #; sleep 0.1 && skhd -k "hyper - space"
 ]
 
 cmd - k [
     "Firefox" : skhd -k "cmd + alt - right"
     "Google Chrome" : skhd -k "cmd + alt - right"
-    "Arc" : skhd -k "cmd + alt - right" #; sleep 0.1 && skhd -k "hyper - space"
+    # "Arc" : skhd -k "cmd + alt - right" #; sleep 0.1 && skhd -k "hyper - space"
 ]
 
 cmd - n [

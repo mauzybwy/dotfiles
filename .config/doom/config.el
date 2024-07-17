@@ -78,14 +78,63 @@
   (nerd-icons-completion-mode)
   (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
 
-(use-package! company
-  :config
-  (setq company-minimum-prefix-length 1)
-  (setq company-show-numbers t)
-  (setq company-idle-delay 0.2)
-  (setq company-tooltip-idle-delay 0.2))
+;; ;; Use `consult-completion-in-region' if Vertico is enabled.
+;; ;; Otherwise use the default `completion--in-region' function.
+;; (setq completion-in-region-function
+;;       (lambda (&rest args)
+;;         (apply (if vertico-mode
+;;                    #'consult-completion-in-region
+;;                  #'completion--in-region)
+;;                args)))
 
+;; (use-package! company
+;;   :config
+;;   (setq company-minimum-prefix-length 1)
+;;   (setq company-show-numbers t)
+;;   (setq company-idle-delay 0.2)
+;;   (setq company-tooltip-idle-delay 0.2))
 ;; (add-to-list 'company-backends #'company-tabnine)
+
+;;TAB-only configuration
+(use-package! corfu
+  :custom
+  (corfu-auto t)               ;; Enable auto completion
+  (corfu-preselect 'directory) ;; Select the first candidate, except for directories
+  (corfu-popupinfo-mode nil)
+  (corfu-terminal-disable-on-gui nil)
+  (corfu-terminal-mode +1)
+  (corfu-doc-terminal-mode +1)
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+
+  ;; Free the RET key for less intrusive behavior.
+  :bind
+  (:map corfu-map
+        ;; Option 1: Unbind RET completely
+        ("<tab>" . nil)
+        ("TAB" . nil)
+        ("C-;" . 'corfu-quick-jump))
+
+  :init
+  (global-corfu-mode))
+
+(use-package! kind-icon
+  :ensure t
+  :after corfu
+                                        ;:custom
+                                        ; (kind-icon-blend-background t)
+                                        ; (kind-icon-default-face 'corfu-default) ; only needed with blend-background
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+;; (defun my/eglot-capf ()
+;;   (setq-local completion-at-point-functions
+;;               (list (cape-capf-super
+;;                      #'eglot-completion-at-point
+;;                      #'tempel-expand
+;;                      #'cape-file))))
+
+;; (add-hook 'eglot-managed-mode-hook #'my/eglot-capf)
+
 
 ;; (after! rjsx-mode
 ;;   (set-company-backend! 'rjsx-mode nil)
@@ -123,7 +172,6 @@
   :config
   (setq avy-timeout-seconds 0.1)
   (setq avy-all-windows t))
-
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;

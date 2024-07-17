@@ -102,6 +102,10 @@ sketchybar --add item clock right \
 sketchybar --add item volume right \
            --set volume script="$PLUGIN_DIR/volume.sh" $BG \
            --subscribe volume volume_change
+           --add event bluetooth_status "com.apple.bluetooth.status" \
+           --add event bluetooth_on "IOBluetoothHostControllerPoweredOnNotification" \
+           --add event bluetooth_off "IOBluetoothHostControllerPoweredOffNotification" \
+           --subscribe volume system_woke bluetooth_status bluetooth_off bluetooth_on
 
 sketchybar --add item battery right \
            --set battery update_freq=120 script="$PLUGIN_DIR/battery.sh" $BG \

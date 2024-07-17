@@ -1,0 +1,9 @@
+.DS_Store
+.idea
+*.log
+tmp/
+
+.oh-my-zsh/custom/plugins/fzf-tab
+.oh-my-zsh/custom/plugins/zsh-autosuggestions
+.oh-my-zsh/custom/plugins/zsh-secrets
+.oh-my-zsh/custom/themes/powerlevel10k

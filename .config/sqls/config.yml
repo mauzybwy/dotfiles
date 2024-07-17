@@ -1,11 +1,11 @@
 connections:
-  - alias: supabase
-    driver: postgresql
-    proto: tcp
-    user: postgres
-    passwd: postgres
-    dbName: postgres
-    host: 127.0.0.1
-    port: 54322
-    params:
-      sslmode: disable
+    - alias: supabase-local
+      driver: postgresql
+      proto: tcp
+      user: postgres
+      passwd: postgres
+      dbName: postgres
+      host: 127.0.0.1
+      port: 54322
+      params:
+          sslmode: disable

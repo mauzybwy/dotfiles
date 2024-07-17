@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 path=('/Users/mauzy/.local/script' $path)
@@ -12,7 +19,8 @@ export ZSH="$HOME/.oh-my-zsh"
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # ZSH_THEME="robbyrussell"
- ZSH_THEME="bira"
+ZSH_THEME="bira2"
+# ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -74,15 +82,35 @@ export ZSH="$HOME/.oh-my-zsh"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zoxide fzf iterm2 cp nvm macos)
+plugins=(git zoxide fzf iterm2 cp nvm macos zsh-secrets fzf-tab zsh-autosuggestions)
 
 # Plugins configuraiton
 zstyle :omz:plugins:iterm2 shell-integration yes
 zstyle ':omz:plugins:nvm' lazy no
 
+# FZF-TAB configuration
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# set descriptions format to enable group support
+# NOTE: don't use escape sequences here, fzf-tab will ignore them
+zstyle ':completion:*:descriptions' format '[%d]'
+# set list-colors to enable filename colorizing
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+zstyle ':completion:*' menu no
+# preview directory's content with eza when completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+# switch group using `<` and `>`
+zstyle ':fzf-tab:*' switch-group '<' '>'
+
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
+
+# Public Vars
+export ANDROID_HOME="/Users/mauzy/Library/Android/sdk"
+export RECEPIENT="blwetze@gmail.com"
+export SECRETS_STORAGE="/Users/mauzy/.secrets"
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -90,11 +118,11 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='emacs'
+else
+  export EDITOR='vim'
+fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -121,11 +149,6 @@ alias p='pnpm'
 # Atuin
 eval "$(atuin init zsh)"
 
-# Tokens, etc.
-export NPM_TOKEN="2565b89efbdb2fa02c71948f502f969d8df5dbe2"
-export ANDROID_HOME="/Users/mauzy/Library/Android/sdk"
-export SENTRY_AUTH_TOKEN="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"
-
 # pnpm
 export PNPM_HOME="/Users/mauzy/Library/pnpm"
 case ":$PATH:" in
@@ -133,3 +156,6 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(doom-modeline-major-mode-icon t)
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
- '(package-selected-packages '(eglot-fsharp))
+ '(package-selected-packages '(eglot eglot-fsharp))
  '(sql-postgres-login-params
    '((user :default "mauzy")
      server

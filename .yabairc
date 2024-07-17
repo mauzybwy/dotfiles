@@ -80,6 +80,10 @@ yabai -m rule --add app="^SampleGame$" manage=off
 # yabai -m rule --add app="^Simulator$" manage=off
 # yabai -m rule --add app="^Audacity$" manage=off
 
+yabai -m rule --add app="^Emacs$" manage=off mouse_follows_focus=off focus_follows_mouse=off layer=above
+yabai -m rule --add app="^Emacs$" title="Doom Emacs" manage=on
+yabai -m rule --add app="^Emacs$" title='  —  \(.* × .*\)' \ manage=off
+
 yabai -m rule --add app="^Arc$" title="^$" mouse_follows_focus=off
 yabai -m rule --add app="^Arc$" title="^Space 1$" manage=off grid=20:20:1:1:18:18
 yabai -m rule --add app="^choose" manage=off

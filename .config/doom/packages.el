@@ -108,3 +108,7 @@
 ;;(package! ejc-sql)
 
 (package! devil)
+(package! corfu-terminal)
+(package! corfu-doc-terminal :recipe (:type git
+                                      :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git"))
+(package! kind-icon)

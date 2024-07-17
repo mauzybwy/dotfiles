@@ -87,6 +87,8 @@
 
 (use-package! eglot
   :config
+  (setq eglot-events-buffer-size 0)
+  (fset #'jsonrpc--log-event #'ignore)
   (mauzy/add-to-list-multiple
    'eglot-server-programs
    '(((js2-mode :language-id "javascript") "typescript-language-server" "--stdio")
