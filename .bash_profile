@@ -19,3 +19,4 @@ if [ -f '/Users/mauzy/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/User
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/mauzy/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/mauzy/Downloads/google-cloud-sdk/completion.bash.inc'; fi
+. "$HOME/.cargo/env"

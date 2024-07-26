@@ -48,6 +48,8 @@
 
 (after! vertico
   (vertico-multiform-mode t)
+  (setq uniquify-buffer-name-style 'forward)
+
   ;; add-to-list works if 'file isn't already in the alist
   ;; setq can be used but will overwrite all existing values
   (add-to-list 'vertico-multiform-categories

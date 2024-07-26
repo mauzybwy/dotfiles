@@ -112,3 +112,8 @@
 (package! corfu-doc-terminal :recipe (:type git
                                       :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git"))
 (package! kind-icon)
+
+;; (package! eglot-booster)
+
+(package! eglot-booster :recipe (:type git
+                                 :repo "https://github.com/jdtsmith/eglot-booster.git"))

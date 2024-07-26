@@ -83,10 +83,12 @@
   (add-to-list 'eglot-server-programs s)
   (message "Added %s to eglot-server-programs" s)
   (message "eglot-server-programs: %s" eglot-server-programs)
-  (eglot-ensure))
+  (eglot-ensure)
+  )
 
 (use-package! eglot
   :config
+  (eglot-booster-mode)
   (setq eglot-events-buffer-size 0)
   (fset #'jsonrpc--log-event #'ignore)
   (mauzy/add-to-list-multiple
@@ -114,8 +116,8 @@
 
 ;; Prog Mode
 (add-hook! prog-mode
-  (avy-linum-mode)
-  (rainbow-delimiters-mode))
+           ;; (avy-linum-mode)
+           (rainbow-delimiters-mode))
 
 ;; Elisp
 ;;(use-package! elisp-mode
@@ -154,14 +156,15 @@
     (eglot-add-server
      '((jtsx-tsx-mode :language-id "typescriptreact")
        "typescript-language-server" "--stdio"
-       ;; :initializationOptions
-       ;; (:preferences
-       ;;  (
-       ;;   ;; :includeInlayFunctionParameterTypeHints t
-       ;;   :includeInlayFunctionLikeReturnTypeHints t
-       ;;   :allowRenameOfImportPath t
-       ;;   )
-       ;;  )
+       :initializationOptions
+       (:preferences
+        (
+         ;; :includeInlayFunctionParameterTypeHints t
+         ;; :includeInlayFunctionLikeReturnTypeHints t
+         :allowRenameOfImportPath t
+         :lint t
+         )
+        )
        ))))
 
 ;; Astro

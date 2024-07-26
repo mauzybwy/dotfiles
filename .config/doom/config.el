@@ -98,12 +98,10 @@
 ;;TAB-only configuration
 (use-package! corfu
   :custom
-  (corfu-auto t)               ;; Enable auto completion
-  (corfu-preselect 'directory) ;; Select the first candidate, except for directories
+  (corfu-auto t)
+  (corfu-preselect t) 
   (corfu-popupinfo-mode nil)
   (corfu-terminal-disable-on-gui nil)
-  (corfu-terminal-mode +1)
-  (corfu-doc-terminal-mode +1)
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
 
   ;; Free the RET key for less intrusive behavior.
@@ -115,7 +113,11 @@
         ("C-;" . 'corfu-quick-jump))
 
   :init
-  (global-corfu-mode))
+  (global-corfu-mode)
+  (corfu-terminal-mode t)
+  (corfu-doc-terminal-mode t)
+  (setq corfu-auto-prefix 0)
+  (setq corfu-auto-delay 0.1))
 
 (use-package! kind-icon
   :ensure t
