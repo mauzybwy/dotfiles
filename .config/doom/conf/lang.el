@@ -70,6 +70,8 @@
         :suggest.names t
         :suggest.autoImports t
         :suggest.imports.autoDiscover t
+        :enablePaths ("supabase/functions")
+        :importMap "supabase/functions/import_map.json"
         :lint t))
 
 
@@ -196,8 +198,11 @@
 ;; SQL
 (use-package! sqlformat
   :config
-  (setq sqlformat-command 'pgformatter)
-  (setq sqlformat-args '("-s2" "-g")))
+  (setq sqlformat-command 'sqlfluff)
+  (setq sqlformat-args '("--config" "/Users/mauzy/.sqlfluff.postgres.cfg"))
+  ;; (setq sqlformat-command 'pgformatter)
+  ;;(setq sqlformat-args '("-s2" "-g" "-w80" "-W1"))
+  )
 (use-package! sql-mode
   :mode "\\.sql\\'"
   :init
