@@ -5,18 +5,20 @@
 
 source "$CONFIG_DIR/icons.sh"
 
-sketchybar --set debug label="HERE"
-
 if [ "$1" = "$FOCUSED_WORKSPACE" ]; then
     sketchybar --set $NAME background.drawing=on
 else
     sketchybar --set $NAME background.drawing=off
 fi
 
-WIN=$(aerospace list-windows --workspace $1 | awk 'BEGIN {FS="|"}; {print $2; exit}')
-# sketchybar --set $NAME label="$WIN"
-
 WINDOWS=$(aerospace list-windows --workspace $1)
+
+if [[ ! "$WINDOWS" && "$1" != "$FOCUSED_WORKSPACE" ]]; then
+    sketchybar --set $NAME drawing=off
+else
+    sketchybar --set $NAME drawing=on
+fi
+
 
 ICONS=""
 echo $WINDOWS | while IFS='|' read -r PID APP_NAME TITLE; do
@@ -34,9 +36,5 @@ echo $WINDOWS | while IFS='|' read -r PID APP_NAME TITLE; do
     ICONS="${ICONS}$GAP${APP_ICON}"
     # sketchybar --set $NAME label="ASDF"
 done
-
-if [[ ! "$ICONS" ]]; then
-    # sketchybar --set $NAME drawing=off
-fi
 
 sketchybar --set $NAME label="$ICONS"
