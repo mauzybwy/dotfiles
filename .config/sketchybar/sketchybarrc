@@ -12,11 +12,14 @@ PLUGIN_DIR="$CONFIG_DIR/plugins"
 # If you are looking for other colors, see the color picker:
 # https://felixkratz.github.io/SketchyBar/config/tricks#color-picker
 
-HEIGHT=16
+BAR_HEIGHT=24
+HEIGHT=24
 BG="background.blur_radius=30 background.color=0x40000000 background.corner_radius=16 background.drawing=on icon.padding_left=8 label.padding_right=8 background.border_width=1 background.border_color=0xffa1a1a1 background.height=$HEIGHT"
-#BG=""
 
-sketchybar --bar position=bottom height="${HEIGHT}" blur_radius=30 color=0x80000000 corner_radius=16 margin=4 y_offset=1 padding_left=0 padding_right=0
+# BG_COLOR=0x80000000
+BG_COLOR=0x00000000
+
+sketchybar --bar position=top height="${BAR_HEIGHT}" blur_radius=30 color="${BG_COLOR}" corner_radius=16 margin=4 y_offset=8 padding_left=0 padding_right=0
 
 ##### Changing Defaults #####
 # We now change some default values, which are applied to all further items.
@@ -42,31 +45,45 @@ sketchybar --default "${default[@]}"
 # https://felixkratz.github.io/SketchyBar/config/components#space----associate-mission-control-spaces-with-an-item
 # to indicate active and available mission control spaces.
 
-SPACE_ICONS=("1" "2" "3" "4" "5" "6" "7" "8" "9" "10")
-for i in "${!SPACE_ICONS[@]}"
-do
-  sid="$(($i+1))"
-  space=(
-    space="$sid"
-    icon="${SPACE_ICONS[i]}"
-    label="--"
-    icon.padding_right=4
-    background.color=0x40ffffff
-    background.corner_radius=0
-    background.padding_left=0
-    background.padding_right=0
-    background.height="${HEIGHT}"
-    script="$PLUGIN_DIR/space.sh"
-    click_script="yabai -m space --focus $sid"
-  )
+# SPACE_ICONS=("1" "2" "3" "4" "5" "6" "7" "8" "9" "10")
+# for i in "${!SPACE_ICONS[@]}"
+# do
+#   sid="$(($i+1))"
+#   space=(
+#     space="$sid"
+#     icon="${SPACE_ICONS[i]}"
+#     label="--"
+#     #label="+${WIN}+"
+#     icon.padding_right=4
+#     background.color=0x40ffffff
+#     background.corner_radius=0
+#     background.padding_left=0
+#     background.padding_right=0
+#     background.height="${HEIGHT}"
+#     script="$PLUGIN_DIR/space.sh"
+#     # click_script="yabai -m space --focus $sid"
+#   )
 
-  sketchybar --add space space."$sid" left \
-             --set space."$sid" "${space[@]}" $BG
+#   sketchybar --add space space."$sid" left \
+#              --set space."$sid" "${space[@]}" $BG
+# done
+
+# sketchybar --add item blah left \
+#     --set blah script=$CONFIG_DIR/init_spaces.sh drawing="false" \
+#     --subscribe blah space_windows_change
+
+sketchybar --add event aerospace_workspace_change
+
+for sid in $(aerospace list-workspaces --all); do
+    sketchybar --add item space.$sid left \
+        --subscribe space.$sid aerospace_workspace_change \
+        --set space.$sid \
+        $BG \
+        background.drawing=off \
+        icon="$sid" \
+        click_script="aerospace workspace $sid" \
+        script="$PLUGIN_DIR/aerospace.sh $sid"
 done
-
-sketchybar --add item blah left \
-    --set blah script=$CONFIG_DIR/init_spaces.sh drawing="false" \
-    --subscribe blah space_windows_change
 
 ##### Adding Left Items #####
 # We add some regular items to the left side of the bar, where
@@ -118,6 +135,10 @@ sketchybar --add event music_change "com.spotify.client.PlaybackStateChanged" \
            --add item music right \
            --set music script="$PLUGIN_DIR/spotify.sh" $BG \
            --subscribe music music_change
+
+# sketchybar --add item debug right \
+#            --set debug icon= label="$(which zsh)" $BG \
+#            click_script="env | pbcopy"
 
 ##### Force all scripts to run the first time (never do this in a script) #####
 sketchybar --update

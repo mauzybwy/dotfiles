@@ -8,17 +8,21 @@ source "$CONFIG_DIR/colors.sh"
 
 # sketchybar --set "$NAME" background.drawing="$SELECTED"
 
-WIN=$(yabai -m query --spaces --space $SID | jq '.windows[0]')
-SHOW_SPACE="false"
-if [[ "$WIN" != "null" ]]; then
-  SHOW_SPACE="true"
-elif [[ "$SELECTED" = "true"  ]]; then
-  SHOW_SPACE="true"
-  sketchybar --set $NAME label="--"
-else
-  sketchybar --set $NAME label="--"
-fi
+# WIN=$(yabai -m query --spaces --space $SID | jq '.windows[0]')
 
-sketchybar --set $NAME \
-    background.drawing=$SELECTED \
-    drawing=$SHOW_SPACE
+# WIN=$(aerospace list-windows --workspace 1 | awk 'BEGIN {FS="|"}; {print $2; exit}')
+# sketchybar --set $NAME label="$WIN"
+
+# if [[ "$WIN" != "" ]]; then
+#   SHOW_SPACE="true"
+#   sketchybar --set $NAME label="$WIN"
+# elif [[ "$SELECTED" = "true"  ]]; then
+#   SHOW_SPACE="true"
+#   sketchybar --set $NAME label="--"
+# else
+#   sketchybar --set $NAME label="--"
+# fi
+
+# sketchybar --set $NAME \
+#     background.drawing=$SELECTED \
+#     drawing=$SHOW_SPACE

@@ -19,6 +19,8 @@ apps[Discord]="󰙯"
 apps[Krita]=""
 apps[NoMachine]="󰢹"
 apps[Thunderbird]="󰴃"
+apps[Xcode]=""
+apps[Postman]="󰘦"
 
 # Special cases
 name="System Settings"; apps[$name]=""

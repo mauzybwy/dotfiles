@@ -33,9 +33,6 @@
 (setq auth-sources '("~/.authinfo.gpg"))
 
 
-;; (add-to-list 'default-frame-alist '(undecorated . t))
-
-
 ;; Nyannnnnnnnnnn
 (use-package! nyan-mode
   :after doom-modeline
@@ -205,8 +202,14 @@
       doom-modeline-project-detection 'auto)
 
 (remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
-(add-hook! '+doom-dashboard-functions :append
-  (setq fancy-splash-image (concat doom-user-dir "bruiser.png")))
+;; (add-hook! '+doom-dashboard-functions :append
+;;   (setq fancy-splash-image (concat doom-user-dir "bruiser.png")))
+(setq fancy-splash-image (concat doom-user-dir "bruiser.png"))
+
+(tool-bar-mode)
+(menu-bar-mode -1)
+(tool-bar-mode 0)
+
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.

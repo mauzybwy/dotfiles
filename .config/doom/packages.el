@@ -117,3 +117,5 @@
 
 (package! eglot-booster :recipe (:type git
                                  :repo "https://github.com/jdtsmith/eglot-booster.git"))
+
+(package! nix-mode)

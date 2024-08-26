@@ -90,7 +90,7 @@
 
 (use-package! eglot
   :config
-  (eglot-booster-mode)
+  ;; (eglot-booster-mode)
   (setq eglot-events-buffer-size 0)
   (fset #'jsonrpc--log-event #'ignore)
   (mauzy/add-to-list-multiple
@@ -293,6 +293,9 @@
   :defer t)
 (use-package! eglot-fsharp)
 
+;; Nix
+(after! nix-mode
+  (set-formatter! 'alejandra '("alejandra" "--quiet") :modes '(nix-mode)))
 
 ;; (after! sql
 ;;   (add-hook 'sql-mode-hook 'sqlformat-on-save-mode))
