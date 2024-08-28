@@ -56,25 +56,6 @@
 ;;   (add-to-list 'lsp-tailwindcss-major-modes 'astro-ts-mode))
 
 
-;;;;;; Deno
-
-(use-package! deno-ts-mode
-  :ensure t)
-
-(defclass eglot-deno (eglot-lsp-server) ()
-  :documentation "A custom class for deno lsp.")
-
-(cl-defmethod eglot-initialization-options ((server eglot-deno))
-  "Passes through required deno initialization options"
-  (list :enable nil
-        :suggest.names t
-        :suggest.autoImports t
-        :suggest.imports.autoDiscover t
-        :enablePaths ("supabase/functions")
-        :importMap "supabase/functions/import_map.json"
-        :lint t))
-
-
 (add-to-list 'auto-mode-alist '("\\.g\\'" . gnuplot-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -84,21 +65,21 @@
 (defun eglot-add-server (s)
   (add-to-list 'eglot-server-programs s)
   (message "Added %s to eglot-server-programs" s)
-  (message "eglot-server-programs: %s" eglot-server-programs)
+  ;; (message "eglot-server-programs: %s" eglot-server-programs)
   (eglot-ensure)
   )
 
 (use-package! eglot
   :config
-  ;; (eglot-booster-mode)
-  (setq eglot-events-buffer-size 0)
-  (fset #'jsonrpc--log-event #'ignore)
+  (eglot-booster-mode)
+  ;; (setq eglot-events-buffer-size 0)
+  ;; (fset #'jsonrpc--log-event #'ignore)
   (mauzy/add-to-list-multiple
    'eglot-server-programs
    '(((js2-mode :language-id "javascript") "typescript-language-server" "--stdio")
      ((rjsx-mode :language-id "typescriptreact") "typescript-language-server" "--stdio")
-     ((deno-ts-mode :language-id "typescript") "deno" "lsp")
-     ((deno-tsx-ts-mode :language-id "typescriptreact") "deno" "lsp")
+     ;; ((deno-ts-mode :language-id "typescript") "deno" "lsp")
+     ;; ((deno-tsx-ts-mode :language-id "typescriptreact") "deno" "lsp")
      )))
 
 (after! rjsx-mode (set-company-backend! 'rjsx-mode '(company-files)))
@@ -168,6 +149,60 @@
          )
         )
        ))))
+
+;; Deno
+(use-package! deno-ts-mode
+  :init
+  (add-hook! deno-ts-mode
+    (eglot-add-server
+     '((deno-ts-mode :language-id "typescript")
+       "deno" "lsp"
+       :initializationOptions
+       (
+        :enable t
+        :suggest.names t
+        :suggest.autoImports t
+        :suggest.imports.autoDiscover t
+        ;; :internalDebug t
+        :lint t
+        )
+       ))))
+
+;; Deno [TSX]
+(use-package! deno-tsx-mode
+  :init
+  (add-hook! deno-tsx-mode
+    (eglot-add-server
+     '((deno-ts-mode :language-id "typescriptreact")
+       "deno" "lsp"
+       :initializationOptions
+       (
+        :enable t
+        :suggest.names t
+        :suggest.autoImports t
+        :suggest.imports.autoDiscover t
+        ;; :internalDebug t
+        :lint t
+        )
+       ))))
+
+;; ------------------------------------------------------------------------------
+;; NOTE - make sure you set up a dir-locals.el with the enabled paths
+;; ------------------------------------------------------------------------------
+;; ((deno-ts-mode
+;;   . ((eglot-workspace-configuration
+;;       . (:deno (
+;;                 :enablePaths ["./supabase/functions"]
+;;                 :importMap "./supabase/functions/import_map.json"
+;;                 ))))))
+;; ------------------------------------------------------------------------------
+
+;; ------------------------------------------------------------------------------
+;; NOTE - if the project has Node AND Deno, add this to the Deno directory
+;; ------------------------------------------------------------------------------
+;; ((auto-mode-alist . (("\\.[mc]?[jt]s\\'" . deno-ts-mode)
+;;                      ("\\.[jt]sx\\'" . deno-tsx-ts-mode))))
+;; ------------------------------------------------------------------------------
 
 ;; Astro
 (load! "../pkgs/astro-ts-mode.el")
