@@ -140,11 +140,13 @@ export SECRETS_STORAGE="/Users/mauzy/.secrets"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias ls='eza --git --group-directories-first --time-style=long-iso --group --color-scale'
 alias top='btop'
+alias renix="darwin-rebuild switch --flake ~/.nixpkgs";
 alias brewl='brew leaves | xargs brew desc --eval-all'
 alias brewlc='brew ls --casks | xargs brew desc --eval-all'
 alias sourcezsh='source ~/.zshrc'
 alias doomsync='~/.config/emacs/bin/doom sync'
 alias p='pnpm'
+alias e='emacsclient'
 
 # Atuin
 eval "$(atuin init zsh)"
@@ -192,3 +194,6 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# Generated for envman. Do not edit.
+[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"

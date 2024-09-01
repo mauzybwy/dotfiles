@@ -3,6 +3,40 @@
 ;;; Code:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; Polymode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Ensure polymode is loaded
+(use-package! polymode
+  :init
+
+  ;; nix
+  (define-hostmode poly-nix-hostmode :mode 'nix-ts-mode)
+  (define-innermode poly-nix-shell-innermode
+    :mode 'bash-ts-mode
+    :head-matcher "= '' #sh"
+    :tail-matcher "'';"
+    :head-mode 'host
+    :tail-mode 'host)
+  (define-polymode poly-nix-mode
+    :hostmode 'poly-nix-hostmode
+    :innermodes '(poly-nix-shell-innermode))
+
+  ;; typescript
+  (define-hostmode poly-deno-ts-hostmode :mode 'deno-ts-mode)
+  (define-innermode poly-deno-ts-sql-innermode
+    :mode 'sql-mode
+    :head-matcher "sql`"
+    :tail-matcher "`;"
+    :head-mode 'host
+    :tail-mode 'host)
+  (define-polymode poly-deno-ts-mode
+    :hostmode 'poly-deno-ts-hostmode
+    :innermodes '(poly-deno-ts-sql-innermode))
+  )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Treesitter
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -20,11 +54,13 @@
           (html "https://github.com/tree-sitter/tree-sitter-html")
           (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
           (json "https://github.com/tree-sitter/tree-sitter-json")
+          (jq "https://github.com/nverno/tree-sitter-jq")
           (make "https://github.com/alemuller/tree-sitter-make")
           (markdown "https://github.com/ikatyang/tree-sitter-markdown")
           (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
           (python "https://github.com/tree-sitter/tree-sitter-python")
           ;; (sql "https://github.com/m-novikov/tree-sitter-sql")
+          (nix "https://github.com/nix-community/tree-sitter-nix")
           (toml "https://github.com/tree-sitter/tree-sitter-toml")
           (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
@@ -168,23 +204,24 @@
         )
        ))))
 
+
 ;; Deno [TSX]
-(use-package! deno-tsx-mode
-  :init
-  (add-hook! deno-tsx-mode
-    (eglot-add-server
-     '((deno-ts-mode :language-id "typescriptreact")
-       "deno" "lsp"
-       :initializationOptions
-       (
-        :enable t
-        :suggest.names t
-        :suggest.autoImports t
-        :suggest.imports.autoDiscover t
-        ;; :internalDebug t
-        :lint t
-        )
-       ))))
+;; (use-package! deno-tsx-ts-mode
+;;   :init
+;;   (add-hook! deno-tsx-ts-mode
+;;     (eglot-add-server
+;;      '((deno-ts-mode :language-id "typescriptreact")
+;;        "deno" "lsp"
+;;        :initializationOptions
+;;        (
+;;         :enable t
+;;         :suggest.names t
+;;         :suggest.autoImports t
+;;         :suggest.imports.autoDiscover t
+;;         ;; :internalDebug t
+;;         :lint t
+;;         )
+;;        ))))
 
 ;; ------------------------------------------------------------------------------
 ;; NOTE - make sure you set up a dir-locals.el with the enabled paths
@@ -207,10 +244,10 @@
 ;; Astro
 (load! "../pkgs/astro-ts-mode.el")
 (use-package! astro-ts-mode
-  :mode ".*\\.astro\\'"
+  :mode "\\.astro\\'"
   :init
   (set-formatter! 'prettier-astro
-    '("pnpx", "prettier" "--parser=astro"
+    '("pnpx" "prettier" "--parser=astro"
       (apheleia-formatters-indent "--use-tabs" "--tab-width" 'astro-ts-mode-indent-offset))
     :modes '(astro-ts-mode))
   (add-hook! astro-ts-mode
@@ -218,6 +255,14 @@
      '(astro-ts-mode "astro-ls" "--stdio"
        :initializationOptions
        (:typescript (:tsdk "/Users/mauzy/Library/pnpm/global/5/node_modules/typescript/lib/"))))))
+
+;; jq
+(use-package! jq-ts-mode
+  :mode "\\.jq\\'"
+  :init
+  (add-hook! jq-ts-mode
+    (eglot-add-server
+     '(jq-ts-mode "jq-lsp"))))
 
 ;; Python
 (use-package! python-ts-mode
@@ -329,8 +374,12 @@
 (use-package! eglot-fsharp)
 
 ;; Nix
-(after! nix-mode
-  (set-formatter! 'alejandra '("alejandra" "--quiet") :modes '(nix-mode)))
+(use-package! poly-nix-mode
+  :mode "\\.nix\\'"
+  :init
+  (set-formatter! 'alejandra '("alejandra" "--quiet") :modes '(nix-mode))
+  )
+
 
 ;; (after! sql
 ;;   (add-hook 'sql-mode-hook 'sqlformat-on-save-mode))

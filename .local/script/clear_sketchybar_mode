@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+sketchybar --set chevron label="" label.drawing="off" icon.drawing="off"

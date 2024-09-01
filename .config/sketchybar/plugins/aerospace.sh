@@ -3,17 +3,20 @@
 # make sure it's executable with:
 # chmod +x ~/.config/sketchybar/plugins/aerospace.sh
 
+WORKSPACE_ID=$1
+MONITOR_ID=$2
+
 source "$CONFIG_DIR/icons.sh"
 
-if [ "$1" = "$FOCUSED_WORKSPACE" ]; then
+if [ "$WORKSPACE_ID" = "$FOCUSED_WORKSPACE" ]; then
     sketchybar --set $NAME background.drawing=on
 else
     sketchybar --set $NAME background.drawing=off
 fi
 
-WINDOWS=$(aerospace list-windows --workspace $1)
+WINDOWS=$(aerospace list-windows --workspace $WORKSPACE_ID)
 
-if [[ ! "$WINDOWS" && "$1" != "$FOCUSED_WORKSPACE" ]]; then
+if [[ ! "$WINDOWS" && "$WORKSPACE_ID" != "$FOCUSED_WORKSPACE" ]]; then
     sketchybar --set $NAME drawing=off
 else
     sketchybar --set $NAME drawing=on
@@ -37,4 +40,4 @@ echo $WINDOWS | while IFS='|' read -r PID APP_NAME TITLE; do
     # sketchybar --set $NAME label="ASDF"
 done
 
-sketchybar --set $NAME label="$ICONS"
+sketchybar --set $NAME label="$ICONS" display="$MONITOR_ID"

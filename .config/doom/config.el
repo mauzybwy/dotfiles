@@ -52,6 +52,8 @@
   :init
   (dirvish-override-dired-mode)
   :config
+  (when (eq system-type 'darwin)
+    (setq insert-directory-program "/opt/homebrew/bin/gls"))
   (setq dirvish-mode-line-format
         '(:left (sort symlink) :right (omit yank index)))
   (setq dirvish-mode-line-height 10)
@@ -97,8 +99,8 @@
   :custom
   (corfu-auto t)
   (corfu-preselect t) 
-  (corfu-popupinfo-mode nil)
-  (corfu-terminal-disable-on-gui nil)
+  ;; (corfu-popupinfo-mode nil)
+  ;; (corfu-terminal-disable-on-gui nil)
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
 
   ;; Free the RET key for less intrusive behavior.
@@ -111,9 +113,9 @@
 
   :init
   (global-corfu-mode)
-  (corfu-terminal-mode t)
-  (corfu-doc-terminal-mode t)
-  (setq corfu-auto-prefix 0)
+  ;; (corfu-terminal-mode t)
+  ;; (corfu-doc-terminal-mode t)
+  (setq corfu-auto-prefix 1)
   (setq corfu-auto-delay 0.1))
 
 (use-package! kind-icon

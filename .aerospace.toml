@@ -24,7 +24,7 @@ inner.horizontal = 8
 inner.vertical   = 8
 outer.left       = 8
 outer.bottom     = 8
-outer.top        = 8
+outer.top        = [{ monitor."built-in retina display" = 8 }, 40]
 outer.right      = 8
 
 [mode.main.binding]
@@ -37,10 +37,10 @@ outer.right      = 8
 # '''
 alt-enter = 'exec-and-forget bash ~/.local/script/open_iterm.sh'
 
-alt-j = 'focus left'
-alt-k = 'focus right'
-alt-p = 'focus up'
-alt-n = 'focus down'
+alt-j = 'focus left --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors'
+alt-k = 'focus right --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors'
+alt-p = 'focus up --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors'
+alt-n = 'focus down --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors'
 
 alt-shift-j = 'move left'
 alt-shift-k = 'move right'
@@ -77,6 +77,18 @@ alt-7 = 'workspace 7'
 alt-8 = 'workspace 8'
 alt-9 = 'workspace 9'
 alt-0 = 'workspace 10'
+alt-f1 = 'workspace F1'
+alt-f2 = 'workspace F2'
+alt-f3 = 'workspace F3'
+alt-f4 = 'workspace F4'
+alt-f5 = 'workspace F5'
+alt-f6 = 'workspace F6'
+alt-f7 = 'workspace F7'
+alt-f8 = 'workspace F8'
+alt-f9 = 'workspace F9'
+alt-f10 = 'workspace F10'
+alt-f11 = 'workspace F11'
+alt-f12 = 'workspace F12'
 
 alt-shift-1 = 'move-node-to-workspace 1'
 alt-shift-2 = 'move-node-to-workspace 2'
@@ -89,14 +101,64 @@ alt-shift-8 = 'move-node-to-workspace 8'
 alt-shift-9 = 'move-node-to-workspace 9'
 alt-shift-0 = 'move-node-to-workspace 10'
 
-alt-shift-c = 'reload-config'
+alt-shift-f1 = 'move-node-to-workspace F1'
+alt-shift-f2 = 'move-node-to-workspace F2'
+alt-shift-f3 = 'move-node-to-workspace F3'
+alt-shift-f4 = 'move-node-to-workspace F4'
+alt-shift-f5 = 'move-node-to-workspace F5'
+alt-shift-f6 = 'move-node-to-workspace F6'
+alt-shift-f7 = 'move-node-to-workspace F7'
+alt-shift-f8 = 'move-node-to-workspace F8'
+alt-shift-f9 = 'move-node-to-workspace F9'
+alt-shift-f10 = 'move-node-to-workspace F10'
+alt-shift-f11 = 'move-node-to-workspace F11'
+alt-shift-f12 = 'move-node-to-workspace F12'
 
-alt-r = 'mode resize'
+alt-shift-period = 'move-workspace-to-monitor --wrap-around next'
+alt-shift-comma = 'move-workspace-to-monitor --wrap-around prev'
+
+alt-shift-r = 'reload-config'
+
+alt-r = ['mode resize', 'exec-and-forget ~/.local/script/set_sketchybar_mode [resize]']
 
 [mode.resize.binding]
 k = 'resize width -50'
 p = 'resize height +50'
 n = 'resize height -50'
 j = 'resize width +50'
-enter = 'mode main'
-esc = 'mode main'
+enter = ['mode main', 'exec-and-forget clear_sketchybar_mode']
+esc = ['mode main', 'exec-and-forget clear_sketchybar_mode']
+ctrl-g = ['mode main', 'exec-and-forget clear_sketchybar_mode']
+
+# Assignments
+
+[[on-window-detected]]
+if.app-id = 'org.gnu.Emacs'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-id = 'company.thebrowser.Browser'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.app-id = 'com.spotify.client'
+run = 'move-node-to-workspace 10'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+run = 'layout floating'
+
+# Monitor Assignments
+[workspace-to-monitor-force-assignment]
+F1 = 'secondary'
+F2 = 'secondary'
+F3 = 'secondary'
+F4 = 'secondary'
+F5 = 'secondary'
+F6 = 'secondary'
+F7 = 'secondary'
+F8 = 'secondary'
+F9 = 'secondary'
+F10 = 'secondary'
+F11 = 'secondary'
+F12 = 'secondary'

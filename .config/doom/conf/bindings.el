@@ -14,6 +14,12 @@
       ;; "C-M-;" #'avy-goto-char-timer
       "C-x C-;" #'comment-dwim
       "C-c m s" #'mc/mark-all-symbols-like-this
+
+      ;; Navigation
+      ;; "M-f" #'forward-to-word
+      ;; "M-b" #'backward-to-word
+      "M-f" #'forward-word
+      "M-b" #'backward-to-word
       )
 
 (map! "C-;" #'avy-goto-word-0)

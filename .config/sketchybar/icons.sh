@@ -21,6 +21,7 @@ apps[NoMachine]="󰢹"
 apps[Thunderbird]="󰴃"
 apps[Xcode]=""
 apps[Postman]="󰘦"
+apps[Bitwarden]="󰞀"
 
 # Special cases
 name="System Settings"; apps[$name]=""
