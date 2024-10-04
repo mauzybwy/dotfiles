@@ -150,15 +150,15 @@ run = 'layout floating'
 
 # Monitor Assignments
 [workspace-to-monitor-force-assignment]
-F1 = 'secondary'
-F2 = 'secondary'
-F3 = 'secondary'
-F4 = 'secondary'
-F5 = 'secondary'
-F6 = 'secondary'
-F7 = 'secondary'
-F8 = 'secondary'
-F9 = 'secondary'
-F10 = 'secondary'
-F11 = 'secondary'
-F12 = 'secondary'
+F1 = ['secondary', 'main']
+F2 = ['secondary', 'main']
+F3 = ['secondary', 'main']
+F4 = ['secondary', 'main']
+F5 = ['secondary', 'main']
+F6 = ['secondary', 'main']
+F7 = ['secondary', 'main']
+F8 = ['secondary', 'main']
+F9 = ['secondary', 'main']
+F10 = ['secondary', 'main']
+F11 = ['secondary', 'main']
+F12 = ['secondary', 'main']

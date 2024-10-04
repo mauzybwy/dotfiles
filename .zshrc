@@ -141,6 +141,7 @@ export SECRETS_STORAGE="/Users/mauzy/.secrets"
 alias ls='eza --git --group-directories-first --time-style=long-iso --group --color-scale'
 alias top='btop'
 alias renix="darwin-rebuild switch --flake ~/.nixpkgs";
+alias nixfix="sudo nix-store --repair --verify --check-contents"
 alias brewl='brew leaves | xargs brew desc --eval-all'
 alias brewlc='brew ls --casks | xargs brew desc --eval-all'
 alias sourcezsh='source ~/.zshrc'
@@ -194,6 +195,13 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# ruby
+if [ -d "/opt/homebrew/opt/ruby/bin" ]; then
+  export PATH=/opt/homebrew/opt/ruby/bin:$PATH
+  export PATH=`gem environment gemdir`/bin:$PATH
+fi
+# ruby end
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"

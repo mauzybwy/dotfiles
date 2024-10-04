@@ -3,40 +3,6 @@
 ;;; Code:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; Polymode
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Ensure polymode is loaded
-(use-package! polymode
-  :init
-
-  ;; nix
-  (define-hostmode poly-nix-hostmode :mode 'nix-ts-mode)
-  (define-innermode poly-nix-shell-innermode
-    :mode 'bash-ts-mode
-    :head-matcher "= '' #sh"
-    :tail-matcher "'';"
-    :head-mode 'host
-    :tail-mode 'host)
-  (define-polymode poly-nix-mode
-    :hostmode 'poly-nix-hostmode
-    :innermodes '(poly-nix-shell-innermode))
-
-  ;; typescript
-  (define-hostmode poly-deno-ts-hostmode :mode 'deno-ts-mode)
-  (define-innermode poly-deno-ts-sql-innermode
-    :mode 'sql-mode
-    :head-matcher "sql`"
-    :tail-matcher "`;"
-    :head-mode 'host
-    :tail-mode 'host)
-  (define-polymode poly-deno-ts-mode
-    :hostmode 'poly-deno-ts-hostmode
-    :innermodes '(poly-deno-ts-sql-innermode))
-  )
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Treesitter
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -383,6 +349,51 @@
 
 ;; (after! sql
 ;;   (add-hook 'sql-mode-hook 'sqlformat-on-save-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; Polymode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Ensure polymode is loaded
+(use-package! polymode
+  :init
+
+  ;; nix
+  (define-hostmode poly-nix-hostmode :mode 'nix-ts-mode)
+  (define-innermode poly-nix-shell-innermode
+    :mode 'bash-ts-mode
+    :head-matcher "= '' #sh"
+    :tail-matcher "'';"
+    :head-mode 'host
+    :tail-mode 'host)
+  (define-polymode poly-nix-mode
+    :hostmode 'poly-nix-hostmode
+    :innermodes '(poly-nix-shell-innermode))
+
+  ;; ;; sql
+  ;; (define-hostmode poly-sql-hostmode :mode 'sql-mode)
+  ;; (define-innermode poly-sql-deno-ts-innermode
+  ;;   :mode 'deno-ts-mode
+  ;;   :head-matcher "[$]{"
+  ;;   :tail-matcher "}"
+  ;;   :head-mode 'host
+  ;;   :tail-mode 'host)
+  ;; (define-polymode poly-sql-mode
+  ;;   :hostmode 'poly-sql-hostmode
+  ;;   :innermodes '(poly-sql-deno-ts-innermode))
+
+  ;; typescript
+  (define-hostmode poly-deno-ts-hostmode :mode 'deno-ts-mode)
+  (define-innermode poly-deno-ts-sql-innermode
+    :mode 'sql-mode
+    :head-matcher "sql\\(<.*>\\)?`"
+    :tail-matcher "`[,;]"
+    :head-mode 'host
+    :tail-mode 'host)
+  (define-polymode poly-deno-ts-mode
+    :hostmode 'poly-deno-ts-hostmode
+    :innermodes '(poly-deno-ts-sql-innermode)))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
