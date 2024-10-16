@@ -387,12 +387,18 @@
   (define-innermode poly-deno-ts-sql-innermode
     :mode 'sql-mode
     :head-matcher "sql\\(<.*>\\)?`"
-    :tail-matcher "`[,;]"
+    :tail-matcher "`"
+    :head-mode 'host
+    :tail-mode 'host)
+  (define-innermode poly-deno-ts-sql-manual-innermode
+    :mode 'sql-mode
+    :head-matcher "--sql_start"
+    :tail-matcher "--sql_end"
     :head-mode 'host
     :tail-mode 'host)
   (define-polymode poly-deno-ts-mode
     :hostmode 'poly-deno-ts-hostmode
-    :innermodes '(poly-deno-ts-sql-innermode)))
+    :innermodes '(poly-deno-ts-sql-innermode poly-deno-ts-sql-manual-innermode)))
 
 
 
