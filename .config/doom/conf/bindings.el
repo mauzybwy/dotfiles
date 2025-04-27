@@ -53,6 +53,12 @@
       :map rjsx-mode-map
       "M-." #'+lookup/implementations)
 
+;;; Mode overrides
+(map! :after lsp-mode
+      :map lsp-mode-map
+      "C-c l d" #'lsp-ui-doc-toggle
+      )
+
 (use-package! dirvish
   :init
   (dirvish-override-dired-mode)

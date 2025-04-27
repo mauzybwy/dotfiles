@@ -1,0 +1,1 @@
+machine api.openai.com login apikey password $OPEN_AI_TOKEN

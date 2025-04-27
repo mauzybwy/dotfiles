@@ -31,6 +31,7 @@
 
 ;; For magit forge (github)
 (setq auth-sources '("~/.authinfo.gpg"))
+(setq magit-list-refs-sortby "-creatordate")
 
 
 ;; Nyannnnnnnnnnn
@@ -77,31 +78,26 @@
   (nerd-icons-completion-mode)
   (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
 
-;; ;; Use `consult-completion-in-region' if Vertico is enabled.
-;; ;; Otherwise use the default `completion--in-region' function.
-;; (setq completion-in-region-function
-;;       (lambda (&rest args)
-;;         (apply (if vertico-mode
-;;                    #'consult-completion-in-region
-;;                  #'completion--in-region)
-;;                args)))
-
-;; (use-package! company
-;;   :config
-;;   (setq company-minimum-prefix-length 1)
-;;   (setq company-show-numbers t)
-;;   (setq company-idle-delay 0.2)
-;;   (setq company-tooltip-idle-delay 0.2))
-;; (add-to-list 'company-backends #'company-tabnine)
+(use-package orderless
+  :init
+  ;; Tune the global completion style settings to your liking!
+  ;; This affects the minibuffer and non-lsp completion at point.
+  (setq completion-styles '(orderless partial-completion basic)
+        completion-category-defaults nil
+        completion-category-overrides nil))
 
 ;;TAB-only configuration
 (use-package! corfu
   :custom
   (corfu-auto t)
-  (corfu-preselect t) 
+  (corfu-preselect t)
+  (corfu-preview-current 'insert)
+  (corfu-preselect 'prompt)
+  (corfu-on-exact-match nil)
   ;; (corfu-popupinfo-mode nil)
-  ;; (corfu-terminal-disable-on-gui nil)
-  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+  ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-passthrough)
+  ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-accept-all)
+  ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
 
   ;; Free the RET key for less intrusive behavior.
   :bind
@@ -109,12 +105,11 @@
         ;; Option 1: Unbind RET completely
         ("<tab>" . nil)
         ("TAB" . nil)
+        ("SPC" . corfu-insert-separator)
         ("C-;" . 'corfu-quick-jump))
 
   :init
   (global-corfu-mode)
-  ;; (corfu-terminal-mode t)
-  ;; (corfu-doc-terminal-mode t)
   (setq corfu-auto-prefix 1)
   (setq corfu-auto-delay 0.1))
 
@@ -126,20 +121,6 @@
                                         ; (kind-icon-default-face 'corfu-default) ; only needed with blend-background
   :config
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
-
-;; (defun my/eglot-capf ()
-;;   (setq-local completion-at-point-functions
-;;               (list (cape-capf-super
-;;                      #'eglot-completion-at-point
-;;                      #'tempel-expand
-;;                      #'cape-file))))
-
-;; (add-hook 'eglot-managed-mode-hook #'my/eglot-capf)
-
-
-;; (after! rjsx-mode
-;;   (set-company-backend! 'rjsx-mode nil)
-;;   (set-company-backend! 'rjsx-mode '(company-tabnine)))
 
 ;; accept completion from copilot and fallback to company
 (use-package! rainbow-mode
@@ -173,6 +154,10 @@
   :config
   (setq avy-timeout-seconds 0.1)
   (setq avy-all-windows t))
+
+(use-package! direnv
+  :config
+  (direnv-mode))
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;

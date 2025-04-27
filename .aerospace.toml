@@ -150,6 +150,8 @@ run = 'move-node-to-workspace 10'
 if.app-id = 'com.apple.systempreferences'
 run = 'layout floating'
 
+
+
 # Monitor Assignments
 [workspace-to-monitor-force-assignment]
 F1 = ['secondary', 'main']

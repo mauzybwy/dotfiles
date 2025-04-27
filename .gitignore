@@ -3,6 +3,8 @@
 *.log
 tmp/
 
+.zshrc-secret
+
 .oh-my-zsh/custom/plugins/fzf-tab
 .oh-my-zsh/custom/plugins/zsh-autosuggestions
 .oh-my-zsh/custom/plugins/zsh-secrets

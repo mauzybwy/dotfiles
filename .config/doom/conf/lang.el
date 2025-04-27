@@ -27,9 +27,12 @@
           (python "https://github.com/tree-sitter/tree-sitter-python")
           ;; (sql "https://github.com/m-novikov/tree-sitter-sql")
           (nix "https://github.com/nix-community/tree-sitter-nix")
+          (ruby "https://github.com/tree-sitter/tree-sitter-ruby")
           (toml "https://github.com/tree-sitter/tree-sitter-toml")
           (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
+          (heex "https://github.com/phoenixframework/tree-sitter-heex")
+          (elixir "https://github.com/elixir-lang/tree-sitter-elixir")
           (yaml "https://github.com/ikatyang/tree-sitter-yaml"))))
 
 ;; (use-package! treesit-auto
@@ -61,6 +64,164 @@
 (add-to-list 'auto-mode-alist '("\\.g\\'" . gnuplot-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ESLint
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (use-package! flymake-eslint
+;;   :config
+;;   ;; If Emacs is compiled with JSON support
+;;   (setq flymake-eslint-prefer-json-diagnostics t)
+
+;;   (defun lemacs/use-local-eslint ()
+;;     "Set project's `node_modules' binary eslint as first priority.
+;; If nothing is found, keep the default value flymake-eslint set or
+;; your override of `flymake-eslint-executable-name.'"
+;;     (interactive)
+;;     (let* ((root (or (locate-dominating-file (buffer-file-name) "pnpm-workspace.yaml") (locate-dominating-file (buffer-file-name) "node_modules")))
+;;            (eslint (and root
+;;                         (expand-file-name "node_modules/.bin/eslint"
+;;                                           root))))
+;;       (when (and eslint (file-executable-p eslint))
+;;         (setq-local flymake-eslint-executable-name eslint)
+;;         (message (format "Found local ESLINT! Setting: %s" eslint))
+;;         (flymake-eslint-enable))))
+
+;;   (add-hook 'lsp-managed-mode-hook #'lemacs/use-local-eslint)
+;;   ;; (add-hook 'eglot-managed-mode-hook #'lemacs/use-local-eslint)
+;;   )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; LSP
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; (after! lsp-eslint
+;;   (defun lsp-eslint-server-command ()
+;;     `("vscode-eslint-language-server" "--stdio"))
+;;   )
+
+(use-package lsp-mode
+  :init
+  ;; (setq lsp-use-plists t)
+  ;; (defun my/lsp-mode-setup-completion ()
+  ;;   (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+  ;;         '(orderless))) ;; Configure orderless
+
+  :config
+  ;; (lsp-register-client
+  ;;  (make-lsp-client :new-connection (lsp-stdio-connection '("vscode-eslint-language-server --stdio"))
+  ;;                   :major-modes '(jtsx-tsx-mode jtsx-jsx-mode jtsx-typescript-mode)
+  ;;                   :priority -1
+  ;;                   :server-id 'eslint-ls))
+
+  ;; :hook
+  ;; (lsp-completion-mode . my/lsp-mode-setup-completion)
+
+  :custom
+  (lsp-keymap-prefix "C-c l")           ; Prefix for LSP actions
+  (lsp-completion-provider :none)       ; we use Corfu!
+  (lsp-diagnostics-provider :flymake)
+  (lsp-session-file (locate-user-emacs-file ".lsp-session"))
+  (lsp-log-io nil)                      ; IMPORTANT! Use only for debugging! Drastically affects performance
+  (lsp-keep-workspace-alive nil)        ; Close LSP server if all project buffers are closed
+  (lsp-idle-delay 0.5)                  ; Debounce timer for `after-change-function'
+
+  ;; core
+  (lsp-enable-xref t)                   ; Use xref to find references
+  (lsp-auto-configure t)                ; Used to decide between current active servers
+  (lsp-eldoc-enable-hover t)            ; Display signature information in the echo area
+  (lsp-enable-dap-auto-configure t)     ; Debug support
+  (lsp-enable-file-watchers nil)
+  (lsp-enable-folding nil)              ; I disable folding since I use origami
+  (lsp-enable-imenu t)
+  (lsp-enable-indentation nil)          ; I use prettier
+  (lsp-enable-links nil)                ; No need since we have `browse-url'
+  (lsp-enable-on-type-formatting nil)   ; Prettier handles this
+  (lsp-enable-suggest-server-download t) ; Useful prompt to download LSP providers
+  (lsp-enable-symbol-highlighting t)     ; Shows usages of symbol at point in the current buffer
+  (lsp-enable-text-document-color nil)   ; This is Treesitter's job
+
+  (lsp-ui-sideline-show-hover nil)      ; Sideline used only for diagnostics
+  (lsp-ui-sideline-diagnostic-max-lines 20) ; 20 lines since typescript errors can be quite big
+
+  ;; completion
+  (lsp-completion-enable t)
+  (lsp-completion-enable-additional-text-edit t) ; Ex: auto-insert an import for a completion candidate
+  (lsp-enable-snippet nil)                         ; Important to provide full JSX completion
+  (lsp-completion-show-kind nil)                   ; Optional
+
+  ;; headerline
+  (lsp-headerline-breadcrumb-enable nil)  ; Optional, I like the breadcrumbs
+  (lsp-headerline-breadcrumb-enable-diagnostics nil) ; Don't make them red, too noisy
+  (lsp-headerline-breadcrumb-enable-symbol-numbers nil)
+  (lsp-headerline-breadcrumb-icons-enable nil)
+
+  ;; modeline
+  (lsp-modeline-code-actions-enable nil) ; Modeline should be relatively clean
+  (lsp-modeline-diagnostics-enable t)  ; Already supported through `flycheck'
+  (lsp-modeline-workspace-status-enable nil) ; Modeline displays "LSP" when lsp-mode is enabled
+  (lsp-signature-doc-lines 1)                ; Don't raise the echo area. It's distracting
+  (lsp-ui-doc-use-childframe t)              ; Show docs for symbol at point
+  ;;(lsp-eldoc-render-all nil)            ; This would be very useful if it would respect `lsp-signature-doc-lines', currently it's distracting
+
+  ;; ruby
+  (lsp-solargraph-use-bundler t)        ; Use bundler to find solargraph
+  (lsp-ruby-lsp-use-bundler t)         ; Use bundler to find ruby-lsp
+
+  ;; lens
+  ;;(lsp-lens-enable nil)                 ; Optional, I don't need it
+  ;; semantic
+  (lsp-semantic-tokens-enable nil)      ; Related to highlighting, and we defer to treesitter
+
+  ;; Typescript
+  (lsp-clients-typescript-prefer-use-project-ts-server t)
+
+  ;; DISABLED
+  (lsp-disabled-clients
+   '(
+     ;; ruby-lsp-ls ; ruby-lsp ( when in use, make sure the :add-on patch is in place )
+     ;; ruby-ls ; solargraph
+     typeprof-ls
+     rubocop-ls
+     ruby-lsp-mzy-ls
+     semgrep-ls
+     ))
+
+  :preface
+  (defun lsp-booster--advice-json-parse (old-fn &rest args)
+    "Try to parse bytecode instead of json."
+    (or
+     (when (equal (following-char) ?#)
+       (let ((bytecode (read (current-buffer))))
+         (when (byte-code-function-p bytecode)
+           (funcall bytecode))))
+     (apply old-fn args)))
+  (advice-add (if (progn (require 'json)
+                         (fboundp 'json-parse-buffer))
+                  'json-parse-buffer
+                'json-read)
+              :around
+              #'lsp-booster--advice-json-parse)
+
+  (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+    "Prepend emacs-lsp-booster command to lsp CMD."
+    (let ((orig-result (funcall old-fn cmd test?)))
+      (if (and (not test?)                             ;; for check lsp-server-present?
+               (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+               lsp-use-plists
+               (not (functionp 'json-rpc-connection))  ;; native json-rpc
+               (executable-find "emacs-lsp-booster"))
+          (progn
+            (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+              (setcar orig-result command-from-exec-path))
+            (message "Using emacs-lsp-booster for %s!" orig-result)
+            (cons "emacs-lsp-booster" orig-result))
+        orig-result)))
+  (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+  )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Eglot
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -74,18 +235,11 @@
 (use-package! eglot
   :config
   (eglot-booster-mode)
-  ;; (setq eglot-events-buffer-size 0)
+  ;; (setq completion-category-overrides '((eglot (styles orderless))
+  ;;                                       (eglot-capf (styles orderless))))
+  ;; (setq eglot-events-buffer-config '(:size 200 :format full))
   ;; (fset #'jsonrpc--log-event #'ignore)
-  (mauzy/add-to-list-multiple
-   'eglot-server-programs
-   '(((js2-mode :language-id "javascript") "typescript-language-server" "--stdio")
-     ((rjsx-mode :language-id "typescriptreact") "typescript-language-server" "--stdio")
-     ;; ((deno-ts-mode :language-id "typescript") "deno" "lsp")
-     ;; ((deno-tsx-ts-mode :language-id "typescriptreact") "deno" "lsp")
-     )))
-
-(after! rjsx-mode (set-company-backend! 'rjsx-mode '(company-files)))
-
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Auto-mode
@@ -119,38 +273,47 @@
 (use-package! jtsx-jsx-mode
   :mode "\\.[mc]?jsx?\\'"
   :init
-  (add-hook! jtsx-jsx-mode
-    (eglot-add-server
-     '((jtsx-jsx-mode :language-id "javascript")
-       "typescript-language-server" "--stdio"))))
+  (add-hook!
+   jtsx-jsx-mode
+   #'lsp
+   ;; (eglot-add-server
+   ;;  '((jtsx-jsx-mode :language-id "javascript")
+   ;;    "typescript-language-server" "--stdio"))
+   ))
 
 ;; Typescript
 (use-package! jtsx-typescript-mode
   :mode "\\.[mc]?ts\\'"
   :init
-  (add-hook! jtsx-typescript-mode
-    (eglot-add-server
-     '((jtsx-typescript-mode :language-id "typescript")
-       "typescript-language-server" "--stdio"))))
+  (add-hook!
+   jtsx-typescript-mode
+   #'lsp
+   ;; (eglot-add-server
+   ;;  '((jtsx-typescript-mode :language-id "typescript")
+   ;;    "typescript-language-server" "--stdio"))
+   ))
 
 ;; Typescript[TSX]
 (use-package! jtsx-tsx-mode
   :mode "\\.tsx\\'"
   :init
-  (add-hook! jtsx-tsx-mode
-    (eglot-add-server
-     '((jtsx-tsx-mode :language-id "typescriptreact")
-       "typescript-language-server" "--stdio"
-       :initializationOptions
-       (:preferences
-        (
-         ;; :includeInlayFunctionParameterTypeHints t
-         ;; :includeInlayFunctionLikeReturnTypeHints t
-         :allowRenameOfImportPath t
-         :lint t
-         )
-        )
-       ))))
+  (add-hook!
+   jtsx-tsx-mode
+   #'lsp
+   ;; (eglot-add-server
+   ;;  '((jtsx-tsx-mode :language-id "typescriptreact")
+   ;;    "typescript-language-server" "--stdio"
+   ;;    :initializationOptions
+   ;;    (:preferences
+   ;;     (
+   ;;      ;; :includeInlayFunctionParameterTypeHints t
+   ;;      ;; :includeInlayFunctionLikeReturnTypeHints t
+   ;;      :allowRenameOfImportPath t
+   ;;      :lint t
+   ;;      )
+   ;;     )
+   ;;    ))
+   ))
 
 ;; Deno
 (use-package! deno-ts-mode
@@ -188,6 +351,27 @@
 ;;         :lint t
 ;;         )
 ;;        ))))
+
+;; Ruby
+(use-package! ruby-ts-mode
+  :init
+  (add-hook!
+   ruby-ts-mode
+   #'lsp
+   (setq format-all-formatters
+         '(("Ruby" (rubocop))))
+   (format-all-mode)
+   (minitest-mode)
+   (apheleia-mode -1)))
+
+(use-package! minitest
+  :config
+  (setq minitest--test-regexps
+        '("\\(test\\) ['\"]\\([^\"]+?\\)['\"]"
+          "\\(test\\)(['\"]\\([^\"]+?\\)['\"])"
+          "def \\(test\\)_\\([_A-Za-z0-9]+\\)"
+          "\\(it\\) \"\\([^\"]+?\\)\""
+          "\\(it\\) '\\([^\"]+?\\)'")))
 
 ;; ------------------------------------------------------------------------------
 ;; NOTE - make sure you set up a dir-locals.el with the enabled paths
@@ -230,16 +414,34 @@
     (eglot-add-server
      '(jq-ts-mode "jq-lsp"))))
 
-;; Python
-(use-package! python-ts-mode
-  :mode "\\.py[iw]?\\'"
+;; (add-hook! elixir-ts-mode
+;;            #'lsp
+;;            ;; (poly-elixir-heex-mode)
+;;            )
+(use-package! elixir-ts-mode
   :init
-  (add-hook! python-ts-mode
-    (setq python-indent-offset 4)
-    (add-to-list
-     'eglot-server-programs
-     '(python-ts-mode "pyright-langserver" "--stdio"))
-    (eglot-ensure)))
+  (add-hook! elixir-ts-mode
+    (eglot-add-server
+     '(elixir-ts-mode "elixir-ls"))))
+
+
+;; ;; elixir
+;; (use-package! elixir-ts-mode
+;;   :init
+;;   (add-hook! elixir-ts-mode
+;;     (poly-elixir-heex-mode)
+;;     ;; (eglot-add-server
+;;     ;;  '(elixir-ts-mode "elixir-ls"))
+;;     )
+;;   )
+
+;; ;; elixir
+;; (use-package! heex-ts-mode
+;;   :init
+;;   (add-hook! heex-ts-mode
+;;     (eglot-add-server
+;;      '(heex-ts-mode "elixir-ls"))))
+
 
 ;; SQL
 (use-package! sqlformat
@@ -249,87 +451,87 @@
   ;; (setq sqlformat-command 'pgformatter)
   ;;(setq sqlformat-args '("-s2" "-g" "-w80" "-W1"))
   )
-(use-package! sql-mode
-  :mode "\\.sql\\'"
-  :init
-  (defvar my/eglot/sqls/current-connection nil)
-  (defvar my/eglot/sqls/current-database nil)
+;; (use-package! sql-mode
+;;   :mode "\\.sql\\'"
+;;   :init
+;;   (defvar my/eglot/sqls/current-connection nil)
+;;   (defvar my/eglot/sqls/current-database nil)
 
-  (cl-defmethod eglot-execute
-    :around
-    (server action)
+;;   (cl-defmethod eglot-execute
+;;     :around
+;;     (server action)
 
-    (pcase (plist-get action :command)
-      ("executeQuery"
-       (if (use-region-p)
-           (let* ((begin (region-beginning))
-                  (end (region-end))
-                  (begin-lsp (eglot--pos-to-lsp-position begin))
-                  (end-lsp (eglot--pos-to-lsp-position end))
-                  (action (plist-put action :range `(:start ,begin-lsp :end ,end-lsp)))
-                  (result (cl-call-next-method server action)))
-             (my/eglot/sqls/show-result result))
-         (message "No region")))
+;;     (pcase (plist-get action :command)
+;;       ("executeQuery"
+;;        (if (use-region-p)
+;;            (let* ((begin (region-beginning))
+;;                   (end (region-end))
+;;                   (begin-lsp (eglot--pos-to-lsp-position begin))
+;;                   (end-lsp (eglot--pos-to-lsp-position end))
+;;                   (action (plist-put action :range `(:start ,begin-lsp :end ,end-lsp)))
+;;                   (result (cl-call-next-method server action)))
+;;              (my/eglot/sqls/show-result result))
+;;          (message "No region")))
 
-      ((or
-        "showConnections"
-        "showDatabases"
-        "showSchemas"
-        "showTables")
-       (my/eglot/sqls/show-result (cl-call-next-method)))
+;;       ((or
+;;         "showConnections"
+;;         "showDatabases"
+;;         "showSchemas"
+;;         "showTables")
+;;        (my/eglot/sqls/show-result (cl-call-next-method)))
 
-      ("switchConnections"
-       (let* ((connections (eglot--request server :workspace/executeCommand
-                                           '(:command "showConnections")))
-              (collection (split-string connections "\n"))
-              (connection (completing-read "Switch to connection: " collection nil t))
-              (index (number-to-string (string-to-number connection)))
-              (action (plist-put action :arguments (vector index))))
-         (cl-call-next-method server action)
-         (setq my/eglot/sqls/current-connection connection)))
+;;       ("switchConnections"
+;;        (let* ((connections (eglot--request server :workspace/executeCommand
+;;                                            '(:command "showConnections")))
+;;               (collection (split-string connections "\n"))
+;;               (connection (completing-read "Switch to connection: " collection nil t))
+;;               (index (number-to-string (string-to-number connection)))
+;;               (action (plist-put action :arguments (vector index))))
+;;          (cl-call-next-method server action)
+;;          (setq my/eglot/sqls/current-connection connection)))
 
-      ("switchDatabase"
-       (let* ((databases (eglot--request server :workspace/executeCommand
-                                         '(:command "showDatabases")))
-              (collection (split-string databases "\n"))
-              (database (completing-read "Switch to database: " collection nil t))
-              (action (plist-put action :arguments (vector database))))
-         (cl-call-next-method server action)
-         (setq my/eglot/sqls/current-database database)))
+;;       ("switchDatabase"
+;;        (let* ((databases (eglot--request server :workspace/executeCommand
+;;                                          '(:command "showDatabases")))
+;;               (collection (split-string databases "\n"))
+;;               (database (completing-read "Switch to database: " collection nil t))
+;;               (action (plist-put action :arguments (vector database))))
+;;          (cl-call-next-method server action)
+;;          (setq my/eglot/sqls/current-database database)))
 
-      (_
-       (cl-call-next-method))))
+;;       (_
+;;        (cl-call-next-method))))
 
-  (defun my/eglot/sqls/show-result (result)
-    (with-current-buffer (get-buffer-create "*sqls result*")
-      (setq-local header-line-format
-                  '(:eval (my/eglot/sqls/show-result/header-line-format)))
-      (erase-buffer)
-      (insert result)
-      (display-buffer (current-buffer))))
+;;   (defun my/eglot/sqls/show-result (result)
+;;     (with-current-buffer (get-buffer-create "*sqls result*")
+;;       (setq-local header-line-format
+;;                   '(:eval (my/eglot/sqls/show-result/header-line-format)))
+;;       (erase-buffer)
+;;       (insert result)
+;;       (display-buffer (current-buffer))))
 
-  (defun my/eglot/sqls/show-result/header-line-format ()
-    (let* ((connection (or my/eglot/sqls/current-connection ""))
-           (parts (split-string connection " "))
-           (driver (nth 1 parts))
-           (alias (nth 2 parts))
-           (result (format "[%s] %s/%s"
-                           (or driver "?")
-                           (or alias "?")
-                           (or my/eglot/sqls/current-database "?"))))
-      (propertize result
-                  'face 'my/eglot/sqls/show-result/header-line-face)))
+;;   (defun my/eglot/sqls/show-result/header-line-format ()
+;;     (let* ((connection (or my/eglot/sqls/current-connection ""))
+;;            (parts (split-string connection " "))
+;;            (driver (nth 1 parts))
+;;            (alias (nth 2 parts))
+;;            (result (format "[%s] %s/%s"
+;;                            (or driver "?")
+;;                            (or alias "?")
+;;                            (or my/eglot/sqls/current-database "?"))))
+;;       (propertize result
+;;                   'face 'my/eglot/sqls/show-result/header-line-face)))
 
-  (defface my/eglot/sqls/show-result/header-line-face
-    '((t (:inherit 'magit-header-line)))
-    "*sqls result* header-line face")
-  (add-hook! sql-mode
-    (add-to-list
-     'eglot-server-programs
-     '(sql-mode "/Users/mauzy/go/bin/sqls" "--trace"))
-    (eglot-ensure)
-    (sqlformat-on-save-mode))
-  )
+;;   (defface my/eglot/sqls/show-result/header-line-face
+;;     '((t (:inherit 'magit-header-line)))
+;;     "*sqls result* header-line face")
+;;   (add-hook! sql-mode
+;;     (add-to-list
+;;      'eglot-server-programs
+;;      '(sql-mode "/Users/mauzy/go/bin/sqls" "--trace"))
+;;     (eglot-ensure)
+;;     (sqlformat-on-save-mode))
+;;   )
 
 (use-package! jinja2-mode
   :mode "\\.jinja\\'")
@@ -337,7 +539,7 @@
 ;; fsharp
 (use-package! fsharp-mode
   :defer t)
-(use-package! eglot-fsharp)
+;; (use-package! eglot-fsharp)
 
 ;; Nix
 (use-package! poly-nix-mode
@@ -370,11 +572,11 @@
     :hostmode 'poly-nix-hostmode
     :innermodes '(poly-nix-shell-innermode))
 
-  ;; ;; sql
+  ;; sql
   ;; (define-hostmode poly-sql-hostmode :mode 'sql-mode)
   ;; (define-innermode poly-sql-deno-ts-innermode
   ;;   :mode 'deno-ts-mode
-  ;;   :head-matcher "[$]{"
+  ;;   :head-matcher "\\${"
   ;;   :tail-matcher "}"
   ;;   :head-mode 'host
   ;;   :tail-mode 'host)
@@ -384,22 +586,55 @@
 
   ;; typescript
   (define-hostmode poly-deno-ts-hostmode :mode 'deno-ts-mode)
+  (define-innermode poly-typescript-template-innermode
+    :mode 'deno-ts-mode
+    :head-matcher "\\${"
+    :tail-matcher "}"
+    :allow-nested t
+    :keep-in-mode 'host
+    :fallback-mode 'host
+    :head-mode 'host
+    :tail-mode 'host)
   (define-innermode poly-deno-ts-sql-innermode
     :mode 'sql-mode
     :head-matcher "sql\\(<.*>\\)?`"
-    :tail-matcher "`"
+    :tail-matcher "`;"
+    :allow-nested t
+    :keep-in-mode 'host
+    :fallback-mode 'host
     :head-mode 'host
     :tail-mode 'host)
   (define-innermode poly-deno-ts-sql-manual-innermode
     :mode 'sql-mode
     :head-matcher "--sql_start"
     :tail-matcher "--sql_end"
+    :allow-nested t
+    :keep-in-mode 'host
+    :fallback-mode 'host
     :head-mode 'host
     :tail-mode 'host)
   (define-polymode poly-deno-ts-mode
     :hostmode 'poly-deno-ts-hostmode
-    :innermodes '(poly-deno-ts-sql-innermode poly-deno-ts-sql-manual-innermode)))
+    :innermodes
+    '(poly-deno-ts-sql-innermode
+      poly-deno-ts-sql-manual-innermode
+      poly-typescript-template-innermode))
 
+  (define-hostmode poly-elixir-hostmode :mode 'elixir-ts-mode)
+  (define-innermode poly-liveview-expr-elixir-innermode
+    :mode 'heex-ts-mode
+    :head-matcher "~H\"\"\""
+    :tail-matcher "\"\"\""
+    :head-mode 'host
+    :tail-mode 'host
+    ;; :allow-nested t
+    ;; :keep-in-mode 'host
+    :fallback-mode 'host
+    )
+  (define-polymode poly-elixir-heex-mode
+    :hostmode 'poly-elixir-hostmode
+    :innermodes '(poly-liveview-expr-elixir-innermode))
+  )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

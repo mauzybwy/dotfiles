@@ -88,6 +88,7 @@ ctrl - n [
     "Google Chrome" : skhd -k "down"
     "Arc" : skhd -k "down"
     "Spark Desktop" : skhd -k "down"
+    "Zen Browser" : skhd -k "down"
 ]
 
 ctrl - p [
@@ -95,6 +96,7 @@ ctrl - p [
     "Google Chrome" : skhd -k "up"
     "Arc" : skhd -k "up"
     "Spark Desktop" : skhd -k "up"
+    "Zen Browser" : skhd -k "up"
 ]
 
 ctrl - f [
@@ -102,6 +104,7 @@ ctrl - f [
     "Google Chrome" : skhd -k "right"
     "Arc" : skhd -k "right"
     "Spark Desktop" : skhd -k "right"
+    "Zen Browser" : skhd -k "right"
 ]
 
 ctrl - b [
@@ -109,6 +112,7 @@ ctrl - b [
     "Google Chrome" : skhd -k "left"
     "Arc" : skhd -k "left"
     "Spark Desktop" : skhd -k "left"
+    "Zen Browser" : skhd -k "left"
 ]
 
 ctrl - w [
@@ -193,6 +197,7 @@ ctrl - g [
      "Google Chrome" : skhd -k "escape"
      "Arc" : skhd -k "escape"
      "Spark Desktop" : skhd -k "escape"
+     "Zen Browser" : skhd -k "escape"
 ]
 
 ctrl - e [

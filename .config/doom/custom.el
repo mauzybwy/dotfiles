@@ -4,19 +4,23 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(doom-modeline-major-mode-icon t)
+ '(ignored-local-variable-values nil)
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(package-selected-packages '(eglot eglot-fsharp))
+ '(safe-local-variable-directories '("/Users/mauzy/code/streamline-rails/"))
+ '(safe-local-variable-values
+   '((lsp-elixir-project-dir . "apps/phoenix")
+     (lsp-elixir-project-dir . "/Users/mauzy/code/streamline/apps/phoenix")
+     (lsp-elixir-project-dir . "~/code/streamline/apps/phoenix")))
  '(sql-postgres-login-params
-   '((user :default "mauzy")
-     server
+   '((user :default "mauzy") server
      (database :default "mauzy" :completion
-      #[771 "\211\242\302=\206\12\0\211\303=?\2053\0r\300\204\27\0p\202(\0\304 \305\1!\203%\0\306\1!\202&\0p\262\1q\210\307\1\301\5!\5\5$)\207"
-            [nil
-             #[257 "\300 \207"
-                   [sql-postgres-list-databases]
-                   2 "\12\12(fn _)"]
-             boundaries metadata minibuffer-selected-window window-live-p window-buffer complete-with-action]
-            8 "\12\12(fn STRING PRED ACTION)"]
+      #[771
+        "\211\242\302=\206\12\0\211\303=?\2053\0r\300\204\27\0p\202(\0\304 \305\1!\203%\0\306\1!\202&\0p\262\1q\210\307\1\301\5!\5\5$)\207"
+        [nil #[257 "\300 \207" [sql-postgres-list-databases] 2 "\12\12(fn _)"]
+             boundaries metadata minibuffer-selected-window window-live-p
+             window-buffer complete-with-action]
+        8 "\12\12(fn STRING PRED ACTION)"]
       :must-match confirm)
      port)))
 (custom-set-faces

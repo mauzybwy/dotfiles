@@ -108,9 +108,6 @@
 ;;(package! ejc-sql)
 
 (package! devil)
-(package! corfu-terminal)
-(package! corfu-doc-terminal :recipe (:type git
-                                      :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git"))
 (package! kind-icon)
 
 ;; (package! eglot-booster)
@@ -121,3 +118,23 @@
 (package! nix-ts-mode)
 (package! mmm-mode)
 (package! polymode)
+(package! gptel)
+
+;; Ruby
+(package! minitest)
+;; (package! inf-ruby)
+;; (package! robe)
+;; (package! rspec-mode)
+;; (package! rubocop)
+
+(package! direnv)
+(package! format-all)
+(package! csv-mode)
+(package! just-mode)
+
+;; Elixir
+(package! inf-elixir)
+(package! web-mode)
+
+(when (eq emacs-major-version 30)
+  (package! eldoc :built-in t))

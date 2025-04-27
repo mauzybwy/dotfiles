@@ -107,6 +107,11 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+# Secrets file :/
+if [ -e "$HOME/.zshrc-secret" ]; then
+  source "$HOME/.zshrc-secret"
+fi
+
 # Public Vars
 export ANDROID_HOME="/Users/mauzy/Library/Android/sdk"
 export RECEPIENT="blwetze@gmail.com"
@@ -155,6 +160,17 @@ eval "$(atuin init zsh)"
 # Direnv
 eval "$(direnv hook zsh)"
 
+# Post-direnv Hook
+function direnv_post_setup() {
+  if [ -n "$DIRENV_DIR" ]; then
+    # echo "Direnv finished setting up in $DIRENV_DIR."
+    eval "$(task --completion zsh)"
+  fi
+}
+
+# Attach the hook to the Zsh precmd
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd direnv_post_setup
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -205,3 +221,7 @@ fi
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
+
+# tabtab source for packages
+# uninstall by removing these lines
+[[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true

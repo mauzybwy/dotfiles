@@ -10,6 +10,11 @@ than having to call `add-to-list' multiple times."
   (dolist (item to-add)
     (add-to-list list item)))
 
+(defun mauzy/named-term (term-name)
+  "Generate a terminal with buffer name TERM-NAME."
+  (interactive "sTerminal purpose: ")
+  (vterm (concat "term-" term-name)))
+
 (defun mauzy/comment-section-block ()
   (interactive)
   (if (member major-mode
