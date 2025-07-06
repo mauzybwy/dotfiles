@@ -4,15 +4,14 @@
 (require 'smooth-scroll)
 
 ;;; Load Local Packages
-(load! "./pkgs/org-padding.el")
+(load! "pkgs/org-padding.el")
 
 ;;; Load configs
-(load! "./conf/mauzy.el")
-(load! "./conf/vertico.el")
-(load! "./conf/bindings.el")
-(load! "./conf/lang.el")
-(load! "./conf/lang.el")
-(load! "./conf/orgmode.el")
+(load! "config/mauzy.el")
+(load! "config/bindings.el")
+(load! "config/lang.el")
+(load! "config/tools.el")
+(load! "config/org.el")
 
 ;;; Global Variables
 
@@ -32,7 +31,6 @@
 ;; For magit forge (github)
 (setq auth-sources '("~/.authinfo.gpg"))
 (setq magit-list-refs-sortby "-creatordate")
-
 
 ;; Nyannnnnnnnnnn
 (use-package! nyan-mode
@@ -122,17 +120,20 @@
   :config
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
+(use-package! rainbow-delimiters-mode
+  :hook (prog-mode))
+
 ;; accept completion from copilot and fallback to company
 (use-package! rainbow-mode
   :hook (prog-mode text-mode))
 
-(use-package! copilot
-  :hook (prog-mode . copilot-mode)
-  :bind (:map copilot-completion-map
-              ("<tab>" . 'copilot-accept-completion)
-              ("TAB" . 'copilot-accept-completion)
-              ("C-TAB" . 'copilot-accept-completion-by-word)
-              ("C-<tab>" . 'copilot-accept-completion-by-word)))
+;; (use-package! copilot
+;;   :hook (prog-mode . copilot-mode)
+;;   :bind (:map copilot-completion-map
+;;               ("<tab>" . 'copilot-accept-completion)
+;;               ("TAB" . 'copilot-accept-completion)
+;;               ("C-TAB" . 'copilot-accept-completion-by-word)
+;;               ("C-<tab>" . 'copilot-accept-completion-by-word)))
 
 (use-package! flycheck
   :config

@@ -1,4 +1,4 @@
-;;; conf/org.el -*- lexical-binding: t; -*-
+;;; config/org.el -*- lexical-binding: t; -*-
 ;;; Code:
 
 (use-package! websocket
@@ -259,3 +259,5 @@
   (org . 'org-krita-mode)
   :config
   (setq org-krita-executable "/Applications/krita.app/Contents/MacOS/krita"))
+
+;;; config/org.el ends here

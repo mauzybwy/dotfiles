@@ -1,4 +1,4 @@
-;;; conf/bindings.el -*- lexical-binding: t; -*-
+;;; config/bindings.el -*- lexical-binding: t; -*-
 
 ;;; Meta Key
 (setq mac-command-modifier 'meta)

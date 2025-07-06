@@ -1,4 +1,4 @@
-;;; conf/mauzy.el --- custom functions -*- lexical-binding: t; -*-
+;;; config/mauzy.el --- custom functions -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;; Code:
 

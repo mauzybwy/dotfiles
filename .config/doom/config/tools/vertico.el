@@ -1,4 +1,4 @@
-;;; conf/vertico.el -*- lexical-binding: t; -*-
+;;; config/tools/vertico.el -*- lexical-binding: t; -*-
 
 
 ;;;;; SORTING
@@ -61,3 +61,5 @@
                '(execute-extended-command
                  reverse
                  (+vertico-transform-functions . +vertico-highlight-enabled-mode))))
+
+;;; config/tools/vertico.el ends here
