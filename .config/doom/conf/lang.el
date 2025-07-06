@@ -64,41 +64,8 @@
 (add-to-list 'auto-mode-alist '("\\.g\\'" . gnuplot-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; ESLint
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; (use-package! flymake-eslint
-;;   :config
-;;   ;; If Emacs is compiled with JSON support
-;;   (setq flymake-eslint-prefer-json-diagnostics t)
-
-;;   (defun lemacs/use-local-eslint ()
-;;     "Set project's `node_modules' binary eslint as first priority.
-;; If nothing is found, keep the default value flymake-eslint set or
-;; your override of `flymake-eslint-executable-name.'"
-;;     (interactive)
-;;     (let* ((root (or (locate-dominating-file (buffer-file-name) "pnpm-workspace.yaml") (locate-dominating-file (buffer-file-name) "node_modules")))
-;;            (eslint (and root
-;;                         (expand-file-name "node_modules/.bin/eslint"
-;;                                           root))))
-;;       (when (and eslint (file-executable-p eslint))
-;;         (setq-local flymake-eslint-executable-name eslint)
-;;         (message (format "Found local ESLINT! Setting: %s" eslint))
-;;         (flymake-eslint-enable))))
-
-;;   (add-hook 'lsp-managed-mode-hook #'lemacs/use-local-eslint)
-;;   ;; (add-hook 'eglot-managed-mode-hook #'lemacs/use-local-eslint)
-;;   )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; LSP
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;; (after! lsp-eslint
-;;   (defun lsp-eslint-server-command ()
-;;     `("vscode-eslint-language-server" "--stdio"))
-;;   )
 
 (use-package lsp-mode
   :init
@@ -233,8 +200,12 @@
   )
 
 (use-package! eglot
+  :defer t
+  :hook (elixir-ts-mode eglot-ensure)
+  
   :config
   (eglot-booster-mode)
+  (add-to-list 'eglot-server-programs '(elixir-ts-mode "elixir-ls"))
   ;; (setq completion-category-overrides '((eglot (styles orderless))
   ;;                                       (eglot-capf (styles orderless))))
   ;; (setq eglot-events-buffer-config '(:size 200 :format full))
@@ -414,124 +385,18 @@
     (eglot-add-server
      '(jq-ts-mode "jq-lsp"))))
 
-;; (add-hook! elixir-ts-mode
-;;            #'lsp
-;;            ;; (poly-elixir-heex-mode)
-;;            )
-(use-package! elixir-ts-mode
-  :init
-  (add-hook! elixir-ts-mode
-    (eglot-add-server
-     '(elixir-ts-mode "elixir-ls"))))
-
-
-;; ;; elixir
+(use-package! elixir-ts-mode)
 ;; (use-package! elixir-ts-mode
 ;;   :init
 ;;   (add-hook! elixir-ts-mode
-;;     (poly-elixir-heex-mode)
-;;     ;; (eglot-add-server
-;;     ;;  '(elixir-ts-mode "elixir-ls"))
-;;     )
-;;   )
-
-;; ;; elixir
-;; (use-package! heex-ts-mode
-;;   :init
-;;   (add-hook! heex-ts-mode
 ;;     (eglot-add-server
-;;      '(heex-ts-mode "elixir-ls"))))
-
+;;      '(elixir-ts-mode "elixir-ls"))))
 
 ;; SQL
 (use-package! sqlformat
   :config
   (setq sqlformat-command 'sqlfluff)
-  (setq sqlformat-args '("--config" "/Users/mauzy/.sqlfluff.postgres.cfg"))
-  ;; (setq sqlformat-command 'pgformatter)
-  ;;(setq sqlformat-args '("-s2" "-g" "-w80" "-W1"))
-  )
-;; (use-package! sql-mode
-;;   :mode "\\.sql\\'"
-;;   :init
-;;   (defvar my/eglot/sqls/current-connection nil)
-;;   (defvar my/eglot/sqls/current-database nil)
-
-;;   (cl-defmethod eglot-execute
-;;     :around
-;;     (server action)
-
-;;     (pcase (plist-get action :command)
-;;       ("executeQuery"
-;;        (if (use-region-p)
-;;            (let* ((begin (region-beginning))
-;;                   (end (region-end))
-;;                   (begin-lsp (eglot--pos-to-lsp-position begin))
-;;                   (end-lsp (eglot--pos-to-lsp-position end))
-;;                   (action (plist-put action :range `(:start ,begin-lsp :end ,end-lsp)))
-;;                   (result (cl-call-next-method server action)))
-;;              (my/eglot/sqls/show-result result))
-;;          (message "No region")))
-
-;;       ((or
-;;         "showConnections"
-;;         "showDatabases"
-;;         "showSchemas"
-;;         "showTables")
-;;        (my/eglot/sqls/show-result (cl-call-next-method)))
-
-;;       ("switchConnections"
-;;        (let* ((connections (eglot--request server :workspace/executeCommand
-;;                                            '(:command "showConnections")))
-;;               (collection (split-string connections "\n"))
-;;               (connection (completing-read "Switch to connection: " collection nil t))
-;;               (index (number-to-string (string-to-number connection)))
-;;               (action (plist-put action :arguments (vector index))))
-;;          (cl-call-next-method server action)
-;;          (setq my/eglot/sqls/current-connection connection)))
-
-;;       ("switchDatabase"
-;;        (let* ((databases (eglot--request server :workspace/executeCommand
-;;                                          '(:command "showDatabases")))
-;;               (collection (split-string databases "\n"))
-;;               (database (completing-read "Switch to database: " collection nil t))
-;;               (action (plist-put action :arguments (vector database))))
-;;          (cl-call-next-method server action)
-;;          (setq my/eglot/sqls/current-database database)))
-
-;;       (_
-;;        (cl-call-next-method))))
-
-;;   (defun my/eglot/sqls/show-result (result)
-;;     (with-current-buffer (get-buffer-create "*sqls result*")
-;;       (setq-local header-line-format
-;;                   '(:eval (my/eglot/sqls/show-result/header-line-format)))
-;;       (erase-buffer)
-;;       (insert result)
-;;       (display-buffer (current-buffer))))
-
-;;   (defun my/eglot/sqls/show-result/header-line-format ()
-;;     (let* ((connection (or my/eglot/sqls/current-connection ""))
-;;            (parts (split-string connection " "))
-;;            (driver (nth 1 parts))
-;;            (alias (nth 2 parts))
-;;            (result (format "[%s] %s/%s"
-;;                            (or driver "?")
-;;                            (or alias "?")
-;;                            (or my/eglot/sqls/current-database "?"))))
-;;       (propertize result
-;;                   'face 'my/eglot/sqls/show-result/header-line-face)))
-
-;;   (defface my/eglot/sqls/show-result/header-line-face
-;;     '((t (:inherit 'magit-header-line)))
-;;     "*sqls result* header-line face")
-;;   (add-hook! sql-mode
-;;     (add-to-list
-;;      'eglot-server-programs
-;;      '(sql-mode "/Users/mauzy/go/bin/sqls" "--trace"))
-;;     (eglot-ensure)
-;;     (sqlformat-on-save-mode))
-;;   )
+  (setq sqlformat-args '("--config" "/Users/mauzy/.sqlfluff.postgres.cfg")))
 
 (use-package! jinja2-mode
   :mode "\\.jinja\\'")
@@ -539,7 +404,6 @@
 ;; fsharp
 (use-package! fsharp-mode
   :defer t)
-;; (use-package! eglot-fsharp)
 
 ;; Nix
 (use-package! poly-nix-mode
@@ -571,18 +435,6 @@
   (define-polymode poly-nix-mode
     :hostmode 'poly-nix-hostmode
     :innermodes '(poly-nix-shell-innermode))
-
-  ;; sql
-  ;; (define-hostmode poly-sql-hostmode :mode 'sql-mode)
-  ;; (define-innermode poly-sql-deno-ts-innermode
-  ;;   :mode 'deno-ts-mode
-  ;;   :head-matcher "\\${"
-  ;;   :tail-matcher "}"
-  ;;   :head-mode 'host
-  ;;   :tail-mode 'host)
-  ;; (define-polymode poly-sql-mode
-  ;;   :hostmode 'poly-sql-hostmode
-  ;;   :innermodes '(poly-sql-deno-ts-innermode))
 
   ;; typescript
   (define-hostmode poly-deno-ts-hostmode :mode 'deno-ts-mode)
@@ -618,23 +470,7 @@
     :innermodes
     '(poly-deno-ts-sql-innermode
       poly-deno-ts-sql-manual-innermode
-      poly-typescript-template-innermode))
-
-  (define-hostmode poly-elixir-hostmode :mode 'elixir-ts-mode)
-  (define-innermode poly-liveview-expr-elixir-innermode
-    :mode 'heex-ts-mode
-    :head-matcher "~H\"\"\""
-    :tail-matcher "\"\"\""
-    :head-mode 'host
-    :tail-mode 'host
-    ;; :allow-nested t
-    ;; :keep-in-mode 'host
-    :fallback-mode 'host
-    )
-  (define-polymode poly-elixir-heex-mode
-    :hostmode 'poly-elixir-hostmode
-    :innermodes '(poly-liveview-expr-elixir-innermode))
-  )
+      poly-typescript-template-innermode)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

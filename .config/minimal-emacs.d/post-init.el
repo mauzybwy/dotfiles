@@ -1,13 +1,6 @@
 ;;; post-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
 ;;; Code:
 
-;; (use-package vertico
-;;   ;; (Note: It is recommended to also enable the savehist package.)
-;;   :ensure t
-;;   :defer t
-;;   :commands vertico-mode
-;;   :hook (after-init . vertico-mode))
-
 (load "~/.config/minimal-emacs.d/post-init/theme.el")
 
 ;;; ----------------------------------------------------------------------------
@@ -165,6 +158,19 @@
   (xref-show-xrefs-function #'consult-xref)
   (xref-show-definitions-function #'consult-xref)
   (consult-narrow-key "<")
+  (consult-ripgrep-args (string-join
+                         '("rg"
+                           "--null"
+                           "--line-buffered"
+                           "--color=never"
+                           "--max-columns=1000"
+                           "--path-separator /"
+                           "--smart-case"
+                           "--no-heading"
+                           "--with-filename"
+                           "--line-number"
+                           "--search-zip"
+                           "--hidden") " "))
 
   :init
   ;; Optionally tweak the register preview window.
@@ -250,6 +256,14 @@
 
 ;;; ----------------------------------------------------------------------------
 
+(use-package vterm
+  :ensure t)
+
+(use-package multi-vterm
+  :ensure t)
+
+;;; ----------------------------------------------------------------------------
+
 (use-package undo-fu
   :config
   (global-unset-key (kbd "C-/"))
@@ -263,6 +277,15 @@
   :defer t
   :commands undo-fu-session-global-mode
   :hook (after-init . undo-fu-session-global-mode))
+
+;;; ----------------------------------------------------------------------------
+
+(use-package mwim
+  :ensure t
+
+  :bind (
+         ("C-a" . mwim-beginning)
+         ("C-e" . mwim-end)))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -362,10 +385,12 @@
               :rope_autoimport (:enabled :json-false)))))
   )
 
+(use-package eldoc-box
+  :ensure t)
+
 (use-package project
   :ensure t
 
-  ;; :bind-keymap ("C-c p" . project-prefix-map)
   :bind
   ("C-x p v" . magit-project-status)
   ("C-x p s" . consult-ripgrep)
@@ -419,6 +444,16 @@
 
 (use-package elixir-ts-mode)
 
+(use-package
+  exunit
+  :diminish t
+  :bind
+  (("C-c e ." . exunit-verify-single)
+   ("C-c e ." . exunit-debug)
+   ("C-c e b" . exunit-verify) ;; buffer-only
+   ("C-c e a" . exunit-verify-all)
+   ("C-c e l" . exunit-rerun)))
+
 ;;; ----------------------------------------------------------------------------
 
 (use-package typescript-ts-mode)
@@ -439,6 +474,12 @@
   :custom
   (magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
   (magit-bury-buffer-function 'magit-restore-window-configuration))
+
+(use-package forge
+  :after magit
+  :config
+  (setq auth-sources '("~/.authinfo.gpg"))
+  (setq magit-list-refs-sortby "-creatordate"))
 
 ;;; ----------------------------------------------------------------------------
 

@@ -159,6 +159,14 @@
   :config
   (direnv-mode))
 
+(use-package! aidermacs
+  :bind (("C-c a" . aidermacs-transient-menu))
+  :config
+  :custom
+                                        ; See the Configuration section below
+  (aidermacs-use-architect-mode t)
+  (aidermacs-default-model "gemini"))
+
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
 ;; - `doom-font' -- the primary font to use
@@ -196,7 +204,6 @@
 (tool-bar-mode)
 (menu-bar-mode -1)
 (tool-bar-mode 0)
-
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.

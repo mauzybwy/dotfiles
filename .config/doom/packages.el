@@ -97,6 +97,7 @@
 (package! nerd-icons)
 (package! nerd-icons-completion)
 (package! rainbow-mode)
+(package! rainbow-delimiters)
 
 (package! copilot
   :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
@@ -133,8 +134,9 @@
 (package! just-mode)
 
 ;; Elixir
-(package! inf-elixir)
 (package! web-mode)
+
+(package! aidermacs :recipe (:host github :repo "MatthewZMD/aidermacs" ))
 
 (when (eq emacs-major-version 30)
   (package! eldoc :built-in t))

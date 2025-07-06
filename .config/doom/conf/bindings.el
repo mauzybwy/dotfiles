@@ -20,6 +20,8 @@
       ;; "M-b" #'backward-to-word
       "M-f" #'forward-word
       "M-b" #'backward-to-word
+
+      "M-<backspace>" #'doom/delete-backward-word
       )
 
 (map! "C-;" #'avy-goto-word-0)

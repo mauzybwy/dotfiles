@@ -145,12 +145,15 @@ export SECRETS_STORAGE="/Users/mauzy/.secrets"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias ls='eza --git --group-directories-first --time-style=long-iso --group --color-scale'
 alias top='btop'
+alias rezsh='source ~/.zshrc'
+alias redoom='~/.config/emacs/bin/doom sync'
 alias renix="darwin-rebuild switch --flake ~/.nixpkgs";
+
 alias nixfix="sudo nix-store --repair --verify --check-contents"
+
 alias brewl='brew leaves | xargs brew desc --eval-all'
 alias brewlc='brew ls --casks | xargs brew desc --eval-all'
-alias sourcezsh='source ~/.zshrc'
-alias doomsync='~/.config/emacs/bin/doom sync'
+
 alias p='pnpm'
 alias e='emacsclient'
 
@@ -225,3 +228,6 @@ fi
 # tabtab source for packages
 # uninstall by removing these lines
 [[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
+
+# Added by Windsurf
+export PATH="/Users/mauzy/.codeium/windsurf/bin:$PATH"
