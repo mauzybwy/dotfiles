@@ -7,7 +7,7 @@
   (add-hook!
    jtsx-jsx-mode
    #'lsp
-   ;; (eglot-add-server
+   ;; (mauzy/eglot-add-server
    ;;  '((jtsx-jsx-mode :language-id "javascript")
    ;;    "typescript-language-server" "--stdio"))
    ))
@@ -19,7 +19,7 @@
   (add-hook!
    jtsx-typescript-mode
    #'lsp
-   ;; (eglot-add-server
+   ;; (mauzy/eglot-add-server
    ;;  '((jtsx-typescript-mode :language-id "typescript")
    ;;    "typescript-language-server" "--stdio"))
    ))
@@ -31,7 +31,7 @@
   (add-hook!
    jtsx-tsx-mode
    #'lsp
-   ;; (eglot-add-server
+   ;; (mauzy/eglot-add-server
    ;;  '((jtsx-tsx-mode :language-id "typescriptreact")
    ;;    "typescript-language-server" "--stdio"
    ;;    :initializationOptions
@@ -50,7 +50,7 @@
 (use-package! deno-ts-mode
   :init
   (add-hook! deno-ts-mode
-    (eglot-add-server
+    (mauzy/eglot-add-server
      '((deno-ts-mode :language-id "typescript")
        "deno" "lsp"
        :initializationOptions

@@ -3,7 +3,6 @@
 ;; Ensure polymode is loaded
 (use-package! polymode
   :init
-
   ;; nix
   (define-hostmode poly-nix-hostmode :mode 'nix-ts-mode)
   (define-innermode poly-nix-shell-innermode

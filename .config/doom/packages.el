@@ -49,94 +49,93 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
 
-;; FUN!
-(package! nyan-mode)
+;; -----------------------------------------------------------------------------
+;; General Config
+;; -----------------------------------------------------------------------------
 
-;; Langs
-;; (package! typescript-mode :disable t)
-(package! treesit-auto)
-(package! jq-mode)
-(package! jq-ts-mode)
-(package! eglot-fsharp)
-(package! deno-fmt)
-(package! deno-ts-mode)
-;; (package! tsx-mode
-;;   :recipe (:host github :repo "orzechowskid/tsx-mode.el"))
-;;
-
-;; (after! eglot
-;;   ;; :ensure t
-;;   :hook
-;;   ((deno-ts-mode . eglot-ensure)
-;;    (deno-tsx-ts-mode . eglot-ensure)
-;;    (js-ts-mode . eglot-ensure)
-;;    (tsx-ts-mode . eglot-ensure)
-;;    (rjsx-mode . eglot-ensure)
-;;    (typescript-ts-mode . eglot-ensure))
-
-;;   :config
-;;   (add-to-list
-;;    'eglot-server-programs
-;;    '(((deno-ts-mode :language-id "typescript") . (eglot-deno "deno" "lsp")))))
-
-(package! tsi :recipe (:host github :repo "orzechowskid/tsi.el"))
+;; Editing
+(package! rainbow-mode)
+(package! rainbow-delimiters)
+(package! olivetti)
 (package! coverlay)
 (package! origami)
-;; (setq eglot-server-programs '())
-;; (package! tsx-mode :recipe (:host github :repo "orzechowskid/tsx-mode.el"))
+(package! tsi :recipe (:host github :repo "orzechowskid/tsi.el"))
 
+;; AI
+(package! gptel)
+(package! copilot
+  :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
+
+;; Menus, etc.
+(package! nerd-icons)
+(package! nerd-icons-completion)
+(package! kind-icon)
 
 ;; Org Mode
 (unpin! org-roam)
 (package! org-roam-ui)
-
-(package! smooth-scroll)
-(package! sqlformat)
-(package! verb)
-(package! olivetti)
-(package! nerd-icons)
-(package! nerd-icons-completion)
-(package! rainbow-mode)
-(package! rainbow-delimiters)
-
-(package! copilot
-  :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
-
-(package! flymake-eslint)
-(package! jinja2-mode)
-(package! jtsx)
 (package! org-superstar)
-;;(package! ejc-sql)
+(package! verb)
 
-(package! devil)
-(package! kind-icon)
+;; Checkers
+(package! flycheck)
+(package! flymake-eslint)
 
-;; (package! eglot-booster)
+;; Misc
+(package! nyan-mode)
 
-(package! eglot-booster :recipe (:type git
-                                 :repo "https://github.com/jdtsmith/eglot-booster.git"))
+;; -----------------------------------------------------------------------------
+;; Language Support
+;; -----------------------------------------------------------------------------
 
-(package! nix-ts-mode)
-(package! mmm-mode)
+;; Multi-modes
 (package! polymode)
-(package! gptel)
+(package! mmm-mode)
+
+;; Javascript/TypeScript
+(package! deno-fmt)
+(package! deno-ts-mode)
+(package! jtsx)
+
+;; Elixir
+(package! exunit)
+
+;; Web
+(package! web-mode)
+
+;; jq
+(package! jq-mode)
+(package! jq-ts-mode)
+
+;; F#
+(package! eglot-fsharp)
+
+;; SQL
+(package! sqlformat)
+
+;; Python
+(package! jinja2-mode)
+
+;; Nix
+(package! nix-ts-mode)
 
 ;; Ruby
 (package! minitest)
-;; (package! inf-ruby)
-;; (package! robe)
-;; (package! rspec-mode)
-;; (package! rubocop)
 
-(package! direnv)
-(package! format-all)
+;; CSV
 (package! csv-mode)
+
+;; Just
 (package! just-mode)
 
-;; Elixir
-(package! web-mode)
+;; -----------------------------------------------------------------------------
+;; Eglot
+;; -----------------------------------------------------------------------------
 
-(package! aidermacs :recipe (:host github :repo "MatthewZMD/aidermacs" ))
-
+;; Eglot, etc.
 (when (eq emacs-major-version 30)
   (package! eldoc :built-in t))
+
+;; (package! eglot-booster)
+(package! eglot-booster :recipe (:type git
+                                 :repo "https://github.com/jdtsmith/eglot-booster.git"))

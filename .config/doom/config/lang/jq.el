@@ -4,7 +4,7 @@
   :mode "\\.jq\\'"
   :init
   (add-hook! jq-ts-mode
-    (eglot-add-server
+    (mauzy/eglot-add-server
      '(jq-ts-mode "jq-lsp"))))
 
 ;;; config/lang/jq.el ends here

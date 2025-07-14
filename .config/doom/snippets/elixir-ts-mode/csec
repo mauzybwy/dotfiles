@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Comment Section
+# key: csec
+# condition: t
+# --
+`(yas-trimmed-comment-start)`----------------------------------------------------------------------------
+`(yas-trimmed-comment-start)` ${1:Section}
+`(yas-trimmed-comment-start)`----------------------------------------------------------------------------

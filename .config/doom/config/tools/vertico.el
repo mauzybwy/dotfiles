@@ -1,6 +1,5 @@
 ;;; config/tools/vertico.el -*- lexical-binding: t; -*-
 
-
 ;;;;; SORTING
 ;; Configure the default sorting function for symbols and files
 ;; See `vertico-sort-function'.

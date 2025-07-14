@@ -3,7 +3,6 @@
 (use-package! poly-nix-mode
   :mode "\\.nix\\'"
   :init
-  (set-formatter! 'alejandra '("alejandra" "--quiet") :modes '(nix-mode))
-  )
+  (set-formatter! 'alejandra '("alejandra" "--quiet") :modes '(nix-mode)))
 
 ;;; config/lang/nix.el ends here

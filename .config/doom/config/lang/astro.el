@@ -10,7 +10,7 @@
       (apheleia-formatters-indent "--use-tabs" "--tab-width" 'astro-ts-mode-indent-offset))
     :modes '(astro-ts-mode))
   (add-hook! astro-ts-mode
-    (eglot-add-server
+    (mauzy/eglot-add-server
      '(astro-ts-mode "astro-ls" "--stdio"
        :initializationOptions
        (:typescript (:tsdk "/Users/mauzy/Library/pnpm/global/5/node_modules/typescript/lib/"))))))

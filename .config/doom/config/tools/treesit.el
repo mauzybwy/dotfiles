@@ -1,8 +1,6 @@
 ;;; config/tools/treesit.el -*- lexical-binding: t; -*-
 
 (after! treesit
-  :demand
-  :init
   (setq treesit-font-lock-level 4)
   (setq treesit-language-source-alist
         '((bash "https://github.com/tree-sitter/tree-sitter-bash")
@@ -19,7 +17,6 @@
           (markdown "https://github.com/ikatyang/tree-sitter-markdown")
           (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
           (python "https://github.com/tree-sitter/tree-sitter-python")
-          ;; (sql "https://github.com/m-novikov/tree-sitter-sql")
           (nix "https://github.com/nix-community/tree-sitter-nix")
           (ruby "https://github.com/tree-sitter/tree-sitter-ruby")
           (toml "https://github.com/tree-sitter/tree-sitter-toml")
@@ -28,13 +25,5 @@
           (heex "https://github.com/phoenixframework/tree-sitter-heex")
           (elixir "https://github.com/elixir-lang/tree-sitter-elixir")
           (yaml "https://github.com/ikatyang/tree-sitter-yaml"))))
-
-;; (use-package! treesit-auto
-;;   :after treesit
-;;   :custom
-;;   (treesit-auto-install 'prompt)
-;;   :config
-;;   ;; (treesit-auto-add-to-auto-mode-alist 'all)
-;;   (global-treesit-auto-mode))
 
 ;;; config/tools/treesit.el ends here

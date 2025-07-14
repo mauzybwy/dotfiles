@@ -1,19 +1,9 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 ;;; Commentary: Remember, you do not need to run 'doom sync' after modifying this file!
 
-(require 'smooth-scroll)
-
-;;; Load Local Packages
-(load! "pkgs/org-padding.el")
-
-;;; Load configs
-(load! "config/mauzy.el")
-(load! "config/bindings.el")
-(load! "config/lang.el")
-(load! "config/tools.el")
-(load! "config/org.el")
-
-;;; Global Variables
+;; -----------------------------------------------------------------------------
+;; Global Config
+;; -----------------------------------------------------------------------------
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
@@ -28,47 +18,25 @@
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
 
-;; For magit forge (github)
 (setq auth-sources '("~/.authinfo.gpg"))
-(setq magit-list-refs-sortby "-creatordate")
 
-;; Nyannnnnnnnnnn
-(use-package! nyan-mode
-  :after doom-modeline
-  :init
-  (nyan-mode))
+;; -----------------------------------------------------------------------------
+;; Loads
+;; -----------------------------------------------------------------------------
 
-(after! projectile
-  (add-to-list 'projectile-ignored-projects "/Users/mauzy/")
-  (add-to-list 'projectile-globally-ignored-directories "*venv")
-  (add-to-list 'projectile-globally-ignored-directories "*dist")
-  (add-to-list 'projectile-globally-ignored-directories "*obj")
-  (add-to-list 'projectile-globally-ignored-directories "*bin")
-  (add-to-list 'projectile-globally-ignored-directories "*out")
-  (add-to-list 'projectile-globally-ignored-directories "*node_modules"))
+;;; Load Local Packages
+(load! "pkgs/org-padding.el")
 
-(use-package! dirvish
-  :init
-  (dirvish-override-dired-mode)
-  :config
-  (when (eq system-type 'darwin)
-    (setq insert-directory-program "/opt/homebrew/bin/gls"))
-  (setq dirvish-mode-line-format
-        '(:left (sort symlink) :right (omit yank index)))
-  (setq dirvish-mode-line-height 10)
-  (setq dirvish-attributes
-        '(nerd-icons file-time file-size collapse subtree-state vc-state git-msg))
-  (setq dirvish-subtree-state-style 'nerd)
-  (setq delete-by-moving-to-trash t)
-  (setq dirvish-path-separators (list
-                                 (format "  %s " (nerd-icons-codicon "nf-cod-home"))
-                                 (format "  %s " (nerd-icons-codicon "nf-cod-root_folder"))
-                                 (format " %s " (nerd-icons-faicon "nf-fa-angle_right"))))
-  (setq dired-listing-switches
-        "-l --almost-all --human-readable --group-directories-first --no-group")
-  (dirvish-peek-mode) ; Preview files in minibuffer
-  (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
-  )
+;;; Load configs
+(load! "config/mauzy.el")
+(load! "config/bindings.el")
+(load! "config/lang.el")
+(load! "config/tools.el")
+(load! "config/org.el")
+
+;; -----------------------------------------------------------------------------
+;; Installed Packages
+;; -----------------------------------------------------------------------------
 
 (use-package! nerd-icons-completion
   :after marginalia
@@ -76,97 +44,162 @@
   (nerd-icons-completion-mode)
   (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
 
-(use-package orderless
-  :init
-  ;; Tune the global completion style settings to your liking!
-  ;; This affects the minibuffer and non-lsp completion at point.
-  (setq completion-styles '(orderless partial-completion basic)
-        completion-category-defaults nil
-        completion-category-overrides nil))
-
-;;TAB-only configuration
-(use-package! corfu
-  :custom
-  (corfu-auto t)
-  (corfu-preselect t)
-  (corfu-preview-current 'insert)
-  (corfu-preselect 'prompt)
-  (corfu-on-exact-match nil)
-  ;; (corfu-popupinfo-mode nil)
-  ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-passthrough)
-  ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-accept-all)
-  ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
-
-  ;; Free the RET key for less intrusive behavior.
-  :bind
-  (:map corfu-map
-        ;; Option 1: Unbind RET completely
-        ("<tab>" . nil)
-        ("TAB" . nil)
-        ("SPC" . corfu-insert-separator)
-        ("C-;" . 'corfu-quick-jump))
-
-  :init
-  (global-corfu-mode)
-  (setq corfu-auto-prefix 1)
-  (setq corfu-auto-delay 0.1))
+;; -----------------------------------------------------------------------------
 
 (use-package! kind-icon
-  :ensure t
   :after corfu
-                                        ;:custom
-                                        ; (kind-icon-blend-background t)
-                                        ; (kind-icon-default-face 'corfu-default) ; only needed with blend-background
   :config
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
-(use-package! rainbow-delimiters-mode
-  :hook (prog-mode))
+;; -----------------------------------------------------------------------------
 
-;; accept completion from copilot and fallback to company
+(use-package! rainbow-delimiters
+  :hook prog-mode)
+
+;; -----------------------------------------------------------------------------
+
 (use-package! rainbow-mode
   :hook (prog-mode text-mode))
 
-;; (use-package! copilot
-;;   :hook (prog-mode . copilot-mode)
-;;   :bind (:map copilot-completion-map
-;;               ("<tab>" . 'copilot-accept-completion)
-;;               ("TAB" . 'copilot-accept-completion)
-;;               ("C-TAB" . 'copilot-accept-completion-by-word)
-;;               ("C-<tab>" . 'copilot-accept-completion-by-word)))
+;; -----------------------------------------------------------------------------
+
+(use-package! copilot
+  :hook prog-mode
+  :bind
+  (:map copilot-completion-map
+        ("<tab>" . 'copilot-accept-completion)
+        ("TAB" . 'copilot-accept-completion)
+        ("C-TAB" . 'copilot-accept-completion-by-word)
+        ("C-<tab>" . 'copilot-accept-completion-by-word)))
+
+;; -----------------------------------------------------------------------------
 
 (use-package! flycheck
-  :config
-  (setq flycheck-idle-change-delay 4)
-  (setq
-   flycheck-check-syntax-automatically
+  :custom
+  (flycheck-idle-change-delay 4)
+  (flycheck-check-syntax-automatically
    '(save
      mode-enable
      ;; idle-change
      ;; new-line
      )))
 
+;; -----------------------------------------------------------------------------
+;; Doom Config Extensions
+;; -----------------------------------------------------------------------------
+
+(after! eglot
+  (eglot-booster-mode))
+
+;; -----------------------------------------------------------------------------
+
+(after! vterm
+  (set-popup-rule! "*doom:vterm-popup:" :size 0.4 :vslot -4 :select t :quit nil :ttl t :side 'right))
+
+(use-package! magit
+  :custom
+  (magit-list-refs-sortby "-creatordate"))
+
+;; -----------------------------------------------------------------------------
+
+(use-package! projectile
+  :bind
+  (:map projectile-command-map
+        ("s" . '+vertico/project-search)
+        ("S" . '+vertico/project-search-from-cwd)
+        ("F" . 'projectile-find-file-in-directory)
+        ("C-t" . 'projectile-run-vterm)
+        ("C-x C-s" . 'projectile-save-project-buffers))
+
+  :config
+  (add-to-list 'projectile-ignored-projects "/Users/mauzy/")
+  (add-to-list 'projectile-ignored-projects "~/")
+  (add-to-list 'projectile-globally-ignored-directories "*venv")
+  (add-to-list 'projectile-globally-ignored-directories "*dist")
+  (add-to-list 'projectile-globally-ignored-directories "*obj")
+  (add-to-list 'projectile-globally-ignored-directories "*bin")
+  (add-to-list 'projectile-globally-ignored-directories "*out")
+  (add-to-list 'projectile-globally-ignored-directories "*node_modules"))
+
+;; -----------------------------------------------------------------------------
+
+(use-package! dirvish
+  :init
+  (dirvish-override-dired-mode)
+
+  :config
+  (dirvish-peek-mode) ; Preview files in minibuffer
+  (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
+  (when (eq system-type 'darwin)
+    (setq insert-directory-program "/opt/homebrew/bin/gls"))
+
+  :custom
+  (dirvish-mode-line-format
+   '(:left (sort symlink) :right (omit yank index)))
+  (dirvish-mode-line-height 10)
+  (dirvish-attributes
+   '(nerd-icons file-time file-size collapse subtree-state vc-state git-msg))
+  (dirvish-subtree-state-style 'nerd)
+  (delete-by-moving-to-trash t)
+  (dirvish-path-separators (list
+                            (format "  %s " (nerd-icons-codicon "nf-cod-home"))
+                            (format "  %s " (nerd-icons-codicon "nf-cod-root_folder"))
+                            (format " %s " (nerd-icons-faicon "nf-fa-angle_right"))))
+  (dired-listing-switches
+   "-l --almost-all --human-readable --group-directories-first --no-group")
+  )
+
+;; -----------------------------------------------------------------------------
+
+(use-package! orderless
+  :custom
+  (completion-styles '(orderless partial-completion basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides nil))
+
+;; -----------------------------------------------------------------------------
+
+(use-package! corfu
+  :custom
+  (corfu-auto-prefix 1)
+  (corfu-auto-delay 0.1)
+  (corfu-auto t)
+  (corfu-preselect t)
+  (corfu-preview-current 'insert)
+  (corfu-preselect 'prompt)
+  (corfu-on-exact-match nil)
+
+  :bind
+  (:map corfu-map
+        ("<tab>" . nil)
+        ("TAB" . nil)
+        ("SPC" . corfu-insert-separator)
+        ("C-;" . 'corfu-quick-jump))
+
+  :init
+  (global-corfu-mode))
+
+;; -----------------------------------------------------------------------------
 
 (use-package! flymake
-  :config
-  (setq flymake-no-changes-timeout 4))
+  :custom
+  (flymake-no-changes-timeout 4))
+
+;; -----------------------------------------------------------------------------
 
 (use-package! avy
-  :config
-  (setq avy-timeout-seconds 0.1)
-  (setq avy-all-windows t))
-
-(use-package! direnv
-  :config
-  (direnv-mode))
-
-(use-package! aidermacs
-  :bind (("C-c a" . aidermacs-transient-menu))
-  :config
   :custom
-                                        ; See the Configuration section below
-  (aidermacs-use-architect-mode t)
-  (aidermacs-default-model "gemini"))
+  (avy-timeout-seconds 0.1)
+  (avy-all-windows t))
+
+;; -----------------------------------------------------------------------------
+
+(after! doom-modeline
+  (nyan-mode))
+
+;; -----------------------------------------------------------------------------
+;; Fonts and Themes
+;; -----------------------------------------------------------------------------
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
@@ -202,7 +235,6 @@
 ;;   (setq fancy-splash-image (concat doom-user-dir "bruiser.png")))
 (setq fancy-splash-image (concat doom-user-dir "bruiser.png"))
 
-(tool-bar-mode)
 (menu-bar-mode -1)
 (tool-bar-mode 0)
 

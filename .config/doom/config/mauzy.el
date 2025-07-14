@@ -2,6 +2,11 @@
 ;;; Commentary:
 ;;; Code:
 
+(defun mauzy/eglot-add-server (s)
+  (add-to-list 'eglot-server-programs s)
+  (message "Added %s to eglot-server-programs" s)
+  (eglot-ensure))
+
 (defun mauzy/add-to-list-multiple (list to-add)
   "Adds multiple items to LIST.
 Allows for adding a sequence of items to the same list, rather
