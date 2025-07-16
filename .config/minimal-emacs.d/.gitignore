@@ -1,0 +1,13 @@
+undo-fu-session/
+.mc-lists.el
+autosave/
+custom.el
+elpa/
+forge-database.sqlite
+history
+projects
+recentf
+saveplace
+transient/
+tree-sitter/
+undo-fu-session/

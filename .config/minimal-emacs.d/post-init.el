@@ -53,6 +53,11 @@
 
 ;;; ----------------------------------------------------------------------------
 
+(use-package wgrep
+  :ensure t)
+
+;;; ----------------------------------------------------------------------------
+
 (use-package embark
   ;; Embark is an Emacs package that acts like a context menu, allowing
   ;; users to perform context-sensitive actions on selected items
@@ -225,7 +230,6 @@
   :init
   ;; Add to the global default value of `completion-at-point-functions' which is
   ;; used by `completion-at-point'.
-  (add-hook 'completion-at-point-functions #'yasnippet-capf)
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-elisp-block))
