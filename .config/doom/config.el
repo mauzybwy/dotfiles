@@ -32,7 +32,7 @@
 (load! "config/bindings.el")
 (load! "config/lang.el")
 (load! "config/tools.el")
-(load! "config/org.el")
+;; (load! "config/org.el")
 
 ;; -----------------------------------------------------------------------------
 ;; Installed Packages
@@ -73,18 +73,6 @@
         ("C-<tab>" . 'copilot-accept-completion-by-word)))
 
 ;; -----------------------------------------------------------------------------
-
-(use-package! flycheck
-  :custom
-  (flycheck-idle-change-delay 4)
-  (flycheck-check-syntax-automatically
-   '(save
-     mode-enable
-     ;; idle-change
-     ;; new-line
-     )))
-
-;; -----------------------------------------------------------------------------
 ;; Doom Config Extensions
 ;; -----------------------------------------------------------------------------
 
@@ -120,6 +108,28 @@
   (add-to-list 'projectile-globally-ignored-directories "*bin")
   (add-to-list 'projectile-globally-ignored-directories "*out")
   (add-to-list 'projectile-globally-ignored-directories "*node_modules"))
+
+(after! projectile
+  (defun +streamline/setup-project-commands ()
+    "Setup commands specific to the Streamline project."
+    (when (and (projectile-project-p)
+               (string-match-p "streamline" (projectile-project-root)))
+
+      ;; Define project-specific search functions
+      (defun +streamline/search-debug-logs ()
+        "Search for IO.inspect in apps/phoenix/lib."
+        (interactive)
+        (+vertico/project-search nil "\\(console.logger.debug\\|IO.inspect\\) -- -g *.ex -g *.exs -g *.ts -g *.tsx -g *.js -g *.jsx" nil))
+
+      ;; Project-specific keybindings using Doom conventions
+      ;; Using localleader (SPC m) for mode-specific bindings
+      (map! :localleader
+            (:prefix ("p" . "project-search")  ; Custom prefix for project searches
+             :desc "Search for debug logs"         "s d" #'+streamline/search-debug-logs))))
+
+  ;; Hook to run when switching projects
+  (add-hook! 'projectile-after-switch-project-hook #'+streamline/setup-project-commands))
+
 
 ;; -----------------------------------------------------------------------------
 

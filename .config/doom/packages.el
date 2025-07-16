@@ -78,7 +78,6 @@
 (package! verb)
 
 ;; Checkers
-(package! flycheck)
 (package! flymake-eslint)
 
 ;; Misc
