@@ -3,8 +3,18 @@
 (use-package! elixir-ts-mode
   :init
   (add-hook! elixir-ts-mode
-    (mauzy/eglot-add-server
-     '(elixir-ts-mode "elixir-ls"))))
+             #'lsp
+             (subword-mode 1)
+             )
+
+  :config
+  (after! lsp-mode
+    (setq lsp-elixir-server-command '("elixir-ls")
+          lsp-elixir-suggest-specs nil)))
+
+(use-package! heex-ts-mode
+  :init
+  (add-hook! elixir-ts-mode #'lsp))
 
 (use-package! exunit
   :after elixir-ts-mode
@@ -19,7 +29,6 @@
         "p" #'exunit-verify-all ;; run all tests in the project
         "r" #'exunit-rerun
         "T" #'exunit-toggle-file-and-test
-        "t" #'exunit-toggle-file-and-test-other-window)
-  )
+        "t" #'exunit-toggle-file-and-test-other-window))
 
 ;;; config/lang/elixir.el ends here

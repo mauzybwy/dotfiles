@@ -20,6 +20,11 @@
 
 (setq auth-sources '("~/.authinfo.gpg"))
 
+(require 'auth-source)
+(let ((credential (auth-source-user-and-password "github")))
+  (setq grip-github-user (car credential)
+        grip-github-password (cadr credential)))
+
 ;; -----------------------------------------------------------------------------
 ;; Loads
 ;; -----------------------------------------------------------------------------
@@ -58,7 +63,7 @@
 
 ;; -----------------------------------------------------------------------------
 
-(use-package! rainbow-mode
+(use-package! colorful-mode
   :hook (prog-mode text-mode))
 
 ;; -----------------------------------------------------------------------------

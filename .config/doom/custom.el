@@ -18,9 +18,11 @@
  '(ignored-local-variable-values nil)
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(package-selected-packages '(eglot eglot-fsharp))
- '(safe-local-variable-directories '("/Users/mauzy/code/streamline-rails/"))
+ '(safe-local-variable-directories
+   '("/Users/mauzy/code/streamline/" "/Users/mauzy/code/streamline-rails/"))
  '(safe-local-variable-values
-   '((lsp-elixir-project-dir . "apps/phoenix")
+   '((lsp-elixir-project-dir . "apps/phx") (lsp-elixir-project-dir . ".")
+     (lsp-elixir-project-dir . "apps/phoenix")
      (lsp-elixir-project-dir . "/Users/mauzy/code/streamline/apps/phoenix")
      (lsp-elixir-project-dir . "~/code/streamline/apps/phoenix")))
  '(sql-postgres-login-params

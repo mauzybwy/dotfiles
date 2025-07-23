@@ -147,7 +147,7 @@ alias ls='eza --git --group-directories-first --time-style=long-iso --group --co
 alias top='btop'
 alias rezsh='source ~/.zshrc'
 alias redoom='~/.config/emacs/bin/doom sync'
-alias renix="darwin-rebuild switch --flake ~/.nixpkgs";
+alias renix="sudo darwin-rebuild switch --flake ~/.nixpkgs";
 
 alias nixfix="sudo nix-store --repair --verify --check-contents"
 

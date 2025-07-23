@@ -54,7 +54,7 @@
 ;; -----------------------------------------------------------------------------
 
 ;; Editing
-(package! rainbow-mode)
+(package! colorful-mode)
 (package! rainbow-delimiters)
 (package! olivetti)
 (package! coverlay)
@@ -65,6 +65,9 @@
 (package! gptel)
 (package! copilot
   :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
+
+;; VC
+(package! vc-jj)
 
 ;; Menus, etc.
 (package! nerd-icons)

@@ -70,10 +70,11 @@
 
   ;; lens
   ;;(lsp-lens-enable nil)                 ; Optional, I don't need it
+
   ;; semantic
   (lsp-semantic-tokens-enable nil)      ; Related to highlighting, and we defer to treesitter
 
-  ;; Typescript
+  ;; typescript
   (lsp-clients-typescript-prefer-use-project-ts-server t)
 
   ;; DISABLED
