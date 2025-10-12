@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: Comment Fat Divider
+# key: #==
+# condition: t
+# --
+`(let* ((comment-str (concat (yas-trimmed-comment-start) " "))
+        (current-column (current-column))
+        (total-length (- 100 current-column))
+        (comment-length (length comment-str))
+        (equals-count (- total-length comment-length)))
+   (concat comment-str (make-string equals-count ?=)))`

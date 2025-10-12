@@ -21,7 +21,8 @@
  '(safe-local-variable-directories
    '("/Users/mauzy/code/streamline/" "/Users/mauzy/code/streamline-rails/"))
  '(safe-local-variable-values
-   '((lsp-elixir-project-dir . "apps/phx") (lsp-elixir-project-dir . ".")
+   '((lsp-elixir-project-dir . "/Users/mauzy/code/myapp")
+     (lsp-elixir-project-dir . "apps/phx") (lsp-elixir-project-dir . ".")
      (lsp-elixir-project-dir . "apps/phoenix")
      (lsp-elixir-project-dir . "/Users/mauzy/code/streamline/apps/phoenix")
      (lsp-elixir-project-dir . "~/code/streamline/apps/phoenix")))
@@ -65,6 +66,7 @@
  '(org-special-keyword ((t (:family "Monospace Regular" :height 0.8))))
  '(org-src-block-faces ((t (:inherit nil :family "Monospace" :foreground "#525254" :height 0.8))))
  '(org-todo ((t (:height 0.8))))
+ '(popup-tip-face ((t (:inherit popup-face :background "#181818" :foreground "#e0e0d0"))))
  '(shadow ((t (:foreground "#7f7f7f"))))
  '(variable-pitch ((t (:font "EB Garamond" :height 1.0 :weight thin :slant normal :foreground "#fbf8ef"))))
  '(vertico-current ((t (:extend t :background "#5F5F5F")))))

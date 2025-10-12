@@ -260,4 +260,10 @@
   :config
   (setq org-krita-executable "/Applications/krita.app/Contents/MacOS/krita"))
 
+(global-set-key (kbd "<f5>")
+                (lambda () (interactive)
+                  (find-file "~/org/work-dump.org")
+                  (goto-char (point-max))
+                  (insert "\n<" (format-time-string "%Y-%m-%d %a %H:%M") ">\n")))
+
 ;;; config/org.el ends here

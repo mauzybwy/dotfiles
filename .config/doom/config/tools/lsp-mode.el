@@ -1,26 +1,14 @@
 ;;; config/tools/lsp-mode.el -*- lexical-binding: t; -*-
 
 (use-package! lsp-mode
-  :init
-  ;; (setq lsp-use-plists t)
-  ;; (defun my/lsp-mode-setup-completion ()
-  ;;   (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-  ;;         '(orderless))) ;; Configure orderless
-
-  :config
-  ;; (lsp-register-client
-  ;;  (make-lsp-client :new-connection (lsp-stdio-connection '("vscode-eslint-language-server --stdio"))
-  ;;                   :major-modes '(jtsx-tsx-mode jtsx-jsx-mode jtsx-typescript-mode)
-  ;;                   :priority -1
-  ;;                   :server-id 'eslint-ls))
-
+  ;; :init
+  ;; :config
   ;; :hook
-  ;; (lsp-completion-mode . my/lsp-mode-setup-completion)
 
   :custom
   (lsp-keymap-prefix "C-c l")           ; Prefix for LSP actions
   (lsp-completion-provider :none)       ; we use Corfu!
-  (lsp-diagnostics-provider :flymake)
+  (lsp-diagnostics-provider :flycheck)
   (lsp-session-file (locate-user-emacs-file ".lsp-session"))
   (lsp-log-io nil)                      ; IMPORTANT! Use only for debugging! Drastically affects performance
   (lsp-keep-workspace-alive nil)        ; Close LSP server if all project buffers are closed
@@ -41,8 +29,8 @@
   (lsp-enable-symbol-highlighting t)     ; Shows usages of symbol at point in the current buffer
   (lsp-enable-text-document-color nil)   ; This is Treesitter's job
 
-  (lsp-ui-sideline-show-hover nil)      ; Sideline used only for diagnostics
-  (lsp-ui-sideline-diagnostic-max-lines 20) ; 20 lines since typescript errors can be quite big
+  ;; ui
+  (lsp-ui-sideline-enable nil)           ; Use flyckeck/flymake for diagnostics
 
   ;; completion
   (lsp-completion-enable t)
@@ -58,7 +46,7 @@
 
   ;; modeline
   (lsp-modeline-code-actions-enable nil) ; Modeline should be relatively clean
-  (lsp-modeline-diagnostics-enable t)  ; Already supported through `flycheck'
+  (lsp-modeline-diagnostics-enable nil)  ; Already supported through `flycheck'
   (lsp-modeline-workspace-status-enable nil) ; Modeline displays "LSP" when lsp-mode is enabled
   (lsp-signature-doc-lines 1)                ; Don't raise the echo area. It's distracting
   (lsp-ui-doc-use-childframe t)              ; Show docs for symbol at point
@@ -76,6 +64,7 @@
 
   ;; typescript
   (lsp-clients-typescript-prefer-use-project-ts-server t)
+  (lsp-eslint-server-command '("vscode-eslint-language-server" "--stdio"))
 
   ;; DISABLED
   (lsp-disabled-clients

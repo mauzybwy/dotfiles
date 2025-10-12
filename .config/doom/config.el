@@ -44,173 +44,189 @@
 ;; -----------------------------------------------------------------------------
 
 (use-package! nerd-icons-completion
-  :after marginalia
-  :config
-  (nerd-icons-completion-mode)
-  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+              :after marginalia
+              :config
+              (nerd-icons-completion-mode)
+              (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
 
 ;; -----------------------------------------------------------------------------
 
 (use-package! kind-icon
-  :after corfu
-  :config
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+              :after corfu
+              :config
+              (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
 ;; -----------------------------------------------------------------------------
 
 (use-package! rainbow-delimiters
-  :hook prog-mode)
+              :hook prog-mode)
 
 ;; -----------------------------------------------------------------------------
 
 (use-package! colorful-mode
-  :hook (prog-mode text-mode))
+              :hook (prog-mode text-mode))
 
 ;; -----------------------------------------------------------------------------
 
 (use-package! copilot
-  :hook prog-mode
-  :bind
-  (:map copilot-completion-map
-        ("<tab>" . 'copilot-accept-completion)
-        ("TAB" . 'copilot-accept-completion)
-        ("C-TAB" . 'copilot-accept-completion-by-word)
-        ("C-<tab>" . 'copilot-accept-completion-by-word)))
+              :hook prog-mode
+              :bind
+              (:map copilot-completion-map
+                    ("<tab>" . 'copilot-accept-completion)
+                    ("TAB" . 'copilot-accept-completion)
+                    ("C-TAB" . 'copilot-accept-completion-by-word)
+                    ("C-<tab>" . 'copilot-accept-completion-by-word)))
 
 ;; -----------------------------------------------------------------------------
 ;; Doom Config Extensions
 ;; -----------------------------------------------------------------------------
 
 (after! eglot
-  (eglot-booster-mode))
+        (eglot-booster-mode))
 
 ;; -----------------------------------------------------------------------------
 
 (after! vterm
-  (set-popup-rule! "*doom:vterm-popup:" :size 0.4 :vslot -4 :select t :quit nil :ttl t :side 'right))
+        (set-popup-rule! "*doom:vterm-popup:" :size 0.4 :vslot -4 :select t :quit nil :ttl t :side 'right))
 
 (use-package! magit
-  :custom
-  (magit-list-refs-sortby "-creatordate"))
+              :custom
+              (magit-list-refs-sortby "-creatordate"))
 
 ;; -----------------------------------------------------------------------------
 
 (use-package! projectile
-  :bind
-  (:map projectile-command-map
-        ("s" . '+vertico/project-search)
-        ("S" . '+vertico/project-search-from-cwd)
-        ("F" . 'projectile-find-file-in-directory)
-        ("C-t" . 'projectile-run-vterm)
-        ("C-x C-s" . 'projectile-save-project-buffers))
+              :bind
+              (:map projectile-command-map
+                    ("s" . '+vertico/project-search)
+                    ("S" . '+vertico/project-search-from-cwd)
+                    ("F" . 'projectile-find-file-in-directory)
+                    ("C-t" . 'projectile-run-vterm)
+                    ("C-x C-s" . 'projectile-save-project-buffers))
 
-  :config
-  (add-to-list 'projectile-ignored-projects "/Users/mauzy/")
-  (add-to-list 'projectile-ignored-projects "~/")
-  (add-to-list 'projectile-globally-ignored-directories "*venv")
-  (add-to-list 'projectile-globally-ignored-directories "*dist")
-  (add-to-list 'projectile-globally-ignored-directories "*obj")
-  (add-to-list 'projectile-globally-ignored-directories "*bin")
-  (add-to-list 'projectile-globally-ignored-directories "*out")
-  (add-to-list 'projectile-globally-ignored-directories "*node_modules"))
+              :config
+              (add-to-list 'projectile-ignored-projects "/Users/mauzy/")
+              (add-to-list 'projectile-ignored-projects "~/")
+              (add-to-list 'projectile-globally-ignored-directories "*venv")
+              (add-to-list 'projectile-globally-ignored-directories "*dist")
+              (add-to-list 'projectile-globally-ignored-directories "*obj")
+              (add-to-list 'projectile-globally-ignored-directories "*bin")
+              (add-to-list 'projectile-globally-ignored-directories "*out")
+              (add-to-list 'projectile-globally-ignored-directories "*node_modules"))
 
 (after! projectile
-  (defun +streamline/setup-project-commands ()
-    "Setup commands specific to the Streamline project."
-    (when (and (projectile-project-p)
-               (string-match-p "streamline" (projectile-project-root)))
+        (defun +streamline/setup-project-commands ()
+          "Setup commands specific to the Streamline project."
+          (when (and (projectile-project-p)
+                     (string-match-p "streamline" (projectile-project-root)))
 
-      ;; Define project-specific search functions
-      (defun +streamline/search-debug-logs ()
-        "Search for IO.inspect in apps/phoenix/lib."
-        (interactive)
-        (+vertico/project-search nil "\\(console.logger.debug\\|IO.inspect\\) -- -g *.ex -g *.exs -g *.ts -g *.tsx -g *.js -g *.jsx" nil))
+            ;; Define project-specific search functions
+            (defun +streamline/search-debug-logs ()
+              "Search for IO.inspect in apps/phoenix/lib."
+              (interactive)
+              (+vertico/project-search nil "\\(console.logger.debug\\|IO.inspect\\) -- -g *.ex -g *.exs -g *.ts -g *.tsx -g *.js -g *.jsx" nil))
 
-      ;; Project-specific keybindings using Doom conventions
-      ;; Using localleader (SPC m) for mode-specific bindings
-      (map! :localleader
-            (:prefix ("p" . "project-search")  ; Custom prefix for project searches
-             :desc "Search for debug logs"         "s d" #'+streamline/search-debug-logs))))
+            ;; Project-specific keybindings using Doom conventions
+            ;; Using localleader (SPC m) for mode-specific bindings
+            (map! :localleader
+                  (:prefix ("p" . "project-search")  ; Custom prefix for project searches
+                           :desc "Search for debug logs"         "s d" #'+streamline/search-debug-logs))))
 
-  ;; Hook to run when switching projects
-  (add-hook! 'projectile-after-switch-project-hook #'+streamline/setup-project-commands))
+        ;; Hook to run when switching projects
+        (add-hook! 'projectile-after-switch-project-hook #'+streamline/setup-project-commands))
 
 
 ;; -----------------------------------------------------------------------------
 
 (use-package! dirvish
-  :init
-  (dirvish-override-dired-mode)
+              :init
+              (dirvish-override-dired-mode)
 
-  :config
-  (dirvish-peek-mode) ; Preview files in minibuffer
-  (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
-  (when (eq system-type 'darwin)
-    (setq insert-directory-program "/opt/homebrew/bin/gls"))
+              :config
+              (dirvish-peek-mode) ; Preview files in minibuffer
+              (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
+              (when (eq system-type 'darwin)
+                (setq insert-directory-program "/opt/homebrew/bin/gls"))
 
-  :custom
-  (dirvish-mode-line-format
-   '(:left (sort symlink) :right (omit yank index)))
-  (dirvish-mode-line-height 10)
-  (dirvish-attributes
-   '(nerd-icons file-time file-size collapse subtree-state vc-state git-msg))
-  (dirvish-subtree-state-style 'nerd)
-  (delete-by-moving-to-trash t)
-  (dirvish-path-separators (list
-                            (format "  %s " (nerd-icons-codicon "nf-cod-home"))
-                            (format "  %s " (nerd-icons-codicon "nf-cod-root_folder"))
-                            (format " %s " (nerd-icons-faicon "nf-fa-angle_right"))))
-  (dired-listing-switches
-   "-l --almost-all --human-readable --group-directories-first --no-group")
-  )
+              :custom
+              (dirvish-mode-line-format
+               '(:left (sort symlink) :right (omit yank index)))
+              (dirvish-mode-line-height 10)
+              (dirvish-attributes
+               '(nerd-icons file-time file-size collapse subtree-state vc-state git-msg))
+              (dirvish-subtree-state-style 'nerd)
+              (delete-by-moving-to-trash t)
+              (dirvish-path-separators (list
+                                        (format "  %s " (nerd-icons-codicon "nf-cod-home"))
+                                        (format "  %s " (nerd-icons-codicon "nf-cod-root_folder"))
+                                        (format " %s " (nerd-icons-faicon "nf-fa-angle_right"))))
+              (dired-listing-switches
+               "-l --almost-all --human-readable --group-directories-first --no-group")
+              )
 
 ;; -----------------------------------------------------------------------------
 
 (use-package! orderless
-  :custom
-  (completion-styles '(orderless partial-completion basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides nil))
+              :custom
+              (completion-styles '(orderless partial-completion basic))
+              (completion-category-defaults nil)
+              (completion-category-overrides nil))
 
 ;; -----------------------------------------------------------------------------
 
 (use-package! corfu
-  :custom
-  (corfu-auto-prefix 1)
-  (corfu-auto-delay 0.1)
-  (corfu-auto t)
-  (corfu-preselect t)
-  (corfu-preview-current 'insert)
-  (corfu-preselect 'prompt)
-  (corfu-on-exact-match nil)
+              :custom
+              (corfu-auto-prefix 1)
+              (corfu-auto-delay 0.1)
+              (corfu-auto t)
+              (corfu-preselect t)
+              (corfu-preview-current 'insert)
+              (corfu-preselect 'prompt)
+              (corfu-on-exact-match nil)
 
-  :bind
-  (:map corfu-map
-        ("<tab>" . nil)
-        ("TAB" . nil)
-        ("SPC" . corfu-insert-separator)
-        ("C-;" . 'corfu-quick-jump))
+              :bind
+              (:map corfu-map
+                    ("<tab>" . nil)
+                    ("TAB" . nil)
+                    ("SPC" . corfu-insert-separator)
+                    ("C-;" . 'corfu-quick-jump))
 
-  :init
-  (global-corfu-mode))
+              :init
+              (global-corfu-mode))
 
 ;; -----------------------------------------------------------------------------
 
 (use-package! flymake
-  :custom
-  (flymake-no-changes-timeout 4))
+              :custom
+              (flymake-no-changes-timeout 4))
+
+;; -----------------------------------------------------------------------------
+
+(use-package! flycheck
+              :config
+              (add-hook 'flycheck-mode-hook #'flycheck-popup-tip-mode)
+
+              :bind
+              (:map flycheck-command-map
+                    ("o" . 'flyover-toggle)))
+
+;; -----------------------------------------------------------------------------
+
+(use-package! flyover
+              :custom
+              (flyover-levels '(error warning info)))
 
 ;; -----------------------------------------------------------------------------
 
 (use-package! avy
-  :custom
-  (avy-timeout-seconds 0.1)
-  (avy-all-windows t))
+              :custom
+              (avy-timeout-seconds 0.1)
+              (avy-all-windows t))
 
 ;; -----------------------------------------------------------------------------
 
 (after! doom-modeline
-  (nyan-mode))
+        (nyan-mode))
 
 ;; -----------------------------------------------------------------------------
 ;; Fonts and Themes

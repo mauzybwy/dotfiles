@@ -81,7 +81,8 @@
 (package! verb)
 
 ;; Checkers
-(package! flymake-eslint)
+;; (package! flymake-eslint)
+(package! flyover)
 
 ;; Misc
 (package! nyan-mode)

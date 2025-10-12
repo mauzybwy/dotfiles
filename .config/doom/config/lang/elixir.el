@@ -4,8 +4,7 @@
   :init
   (add-hook! elixir-ts-mode
              #'lsp
-             (subword-mode 1)
-             )
+             (subword-mode 1))
 
   :config
   (after! lsp-mode
