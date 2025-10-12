@@ -308,6 +308,14 @@
 
 ;;; ----------------------------------------------------------------------------
 
+(use-package vundo
+  :commands (vundo)
+  :bind (("C-M-/" . vundo))
+  :custom
+  (vundo-glyph-alist vundo-unicode-symbols))
+
+;;; ----------------------------------------------------------------------------
+
 (use-package mwim
   :ensure t
 

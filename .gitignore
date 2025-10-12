@@ -11,3 +11,4 @@ tmp/
 .oh-my-zsh/custom/themes/powerlevel10k
 
 .config/minimal-emacs.d/dirvish/
+.config/minimal-emacs.d/tramp
