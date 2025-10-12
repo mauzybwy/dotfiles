@@ -9,3 +9,5 @@ tmp/
 .oh-my-zsh/custom/plugins/zsh-autosuggestions
 .oh-my-zsh/custom/plugins/zsh-secrets
 .oh-my-zsh/custom/themes/powerlevel10k
+
+.config/minimal-emacs.d/dirvish/
