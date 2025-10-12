@@ -30,6 +30,8 @@
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+  ;; (load-theme 'doom-monokai-pro t)
+  ;; (load-theme 'doom-one t)
   (load-theme 'doom-zenburn t)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

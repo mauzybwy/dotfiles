@@ -497,6 +497,7 @@
     (define-key map (kbd "C-n") '("mark next word" . mc/mark-next-like-this-word))
     (define-key map (kbd "a") '("mark all" . mc/mark-all-like-this))
     (define-key map (kbd "r") '("mark region" . mc/mark-all-in-region))
+    (define-key map (kbd "d") '("mark in defun" . mc/mark-all-like-this-in-defun))
     (define-key map (kbd "t") '("mark dwim" . mc/mark-all-like-this-dwim))))
 
 ;;; ----------------------------------------------------------------------------
