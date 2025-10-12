@@ -299,7 +299,7 @@
   (global-unset-key (kbd "M-/"))
   (global-set-key (kbd "M-/") 'undo-fu-only-redo))
 
-;; ;;; ----------------------------------------------------------------------------
+;;; ----------------------------------------------------------------------------
 
 (use-package undo-fu-session
   :defer t
@@ -322,25 +322,26 @@
     (setq mac-command-modifier 'meta))
 
   :bind
-  (
-   ("C-c l e b" . eval-buffer)
+  (("C-c l e b" . eval-buffer)
    ("C-c r" . revert-buffer))
   
   :hook
+  ;; init hooks
   (after-init . global-auto-revert-mode)
   (after-init . recentf-mode)
   (after-init . savehist-mode)
   (after-init . save-place-mode)
   (after-init . electric-pair-mode)
   (after-init . show-paren-mode)
-  (after-init . display-line-numbers-mode)
+
+  ;; prog hooks
+  (prog-mode . display-line-numbers-mode)
+
+  ;; cleanup hooks
   (kill-emacs . recentf-cleanup)
 
   :custom
-  (fancy-splash-image "~/.config/doom/bruiser.png")
   (font-lock-maximum-decoration t)
-  (display-line-numbers-type t)
-  (display-line-numbers-mode t)
   (line-number-mode t)
   (column-number-mode t)
 
@@ -445,8 +446,7 @@
      (magit-project-status "VC: magit")
      (project-find-dir "Find directory")
      (project-eshell "Eshell")
-     (project-any-command "Other")
-     )))
+     (project-any-command "Other"))))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -536,6 +536,9 @@
      ("m" "/mnt/"                       "Drives")
      ("t" "~/.local/share/Trash/files/" "TrashCan")))
   :config
+  (custom-set-faces
+   '(dired-directory ((t (:foreground "#8CD0D3" :weight bold)))))
+  
   (setq dirvish-mode-line-format
         '(:left (sort symlink) :right (omit yank index)))
   (setq dirvish-attributes           ; The order *MATTERS* for some attributes
@@ -643,6 +646,10 @@
   (uniquify-ignore-buffers-re "^\\*"))
 
 ;;; ----------------------------------------------------------------------------
+
+(use-package nyan-mode
+  :config
+  (nyan-mode 1))
 
 (provide 'post-init)
 ;;; post-init.el ends here

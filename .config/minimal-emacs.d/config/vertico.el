@@ -13,8 +13,8 @@
 (defun +vertico-highlight-directory (file)
   "If FILE ends with a slash, highlight it as a directory."
   (if (string-suffix-p "/" file)
-      (propertize file 'face 'custom-face-tag)
-    ;; (propertize file 'face 'dired-directory)
+      ;;(propertize file 'face 'custom-face-tag)
+      (propertize file 'face 'dired-directory)
     ;; (propertize file 'face 'dired-header)
     ;; (propertize file 'face 'marginalia-file-priv-dir)
     file))

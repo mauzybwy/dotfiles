@@ -9,7 +9,7 @@
 ;;   :config
 ;;   (load-theme 'zenburn t))
 
-;; accept completion from copilot and fallback to company
+
 (use-package colorful-mode
   ;; :diminish
   ;; :ensure t ; Optional
