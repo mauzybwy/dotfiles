@@ -1,11 +1,10 @@
 ;;; post-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
 ;;; Code:
 
-(load "~/.config/minimal-emacs.d/post-init/theme.el")
+(load (expand-file-name "config/vertico" user-emacs-directory))
+(load (expand-file-name "config/theme" user-emacs-directory))
 
-;;; ----------------------------------------------------------------------------
-
-(load "~/.config/minimal-emacs.d/post-init/vertico.el")
+;;; ---------------------------------------------------------------------------
 
 ;; Configure directory extension.
 (use-package vertico-directory
@@ -150,6 +149,7 @@
          ("M-s L" . consult-line-multi)
          ;; Minibuffer history
          :map minibuffer-local-map
+         ("C-c C-e" . mauzy/consult-export-to-wgrep)
          ("M-s" . consult-history)
          ("M-r" . consult-history))
 
@@ -189,7 +189,25 @@
    consult--source-bookmark consult--source-file-register
    consult--source-recent-file consult--source-project-recent-file
    ;; :preview-key "M-."
-   :preview-key '(:debounce 0.4 any)))
+   :preview-key '(:debounce 0.4 any))
+
+  (defun mauzy/consult-ripgrep-with-region ()
+    "Run consult-ripgrep with region as initial input if active."
+    (interactive)
+    (let ((initial (if (use-region-p)
+                       (buffer-substring-no-properties (region-beginning) (region-end))
+                     nil)))
+      (consult-ripgrep nil initial)))
+  
+  (defun mauzy/consult-export-to-wgrep ()
+    "Export consult results to grep buffer and enter wgrep mode."
+    (interactive)
+    (embark-export)
+    ;; Give embark-export a moment to create the buffer
+    (run-at-time 0.1 nil
+                 (lambda ()
+                   (when (derived-mode-p 'grep-mode)
+                     (wgrep-change-to-wgrep-mode))))))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -288,8 +306,7 @@
 (use-package mwim
   :ensure t
 
-  :bind (
-         ("C-a" . mwim-beginning)
+  :bind (("C-a" . mwim-beginning)
          ("C-e" . mwim-end)))
 
 ;;; ----------------------------------------------------------------------------
@@ -315,7 +332,6 @@
   (kill-emacs . recentf-cleanup)
 
   :custom
-  ;; Splash screen
   (fancy-splash-image "~/.config/doom/bruiser.png")
   (font-lock-maximum-decoration t)
   (display-line-numbers-type t)
@@ -349,7 +365,17 @@
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
           (heex "https://github.com/phoenixframework/tree-sitter-heex")
           (elixir "https://github.com/elixir-lang/tree-sitter-elixir")
-          (yaml "https://github.com/ikatyang/tree-sitter-yaml"))))
+          (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+  
+  ;; Display all starred buffers at the bottom
+  (add-to-list 'display-buffer-alist
+               '((lambda (buffer-name action)
+                   (and (string-match-p "\\*.*\\*" buffer-name)
+                        (not (string-match-p "\\*dirvish" buffer-name))))
+                 (display-buffer-reuse-window display-buffer-at-bottom)
+                 (window-height . 20)
+                 (reusable-frames . visible))
+               t))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -398,7 +424,7 @@
 
   :bind
   ("C-x p v" . magit-project-status)
-  ("C-x p s" . consult-ripgrep)
+  ("C-x p s" . mauzy/consult-ripgrep-with-region)
 
   :custom
   (project-switch-commands
@@ -410,8 +436,7 @@
      (project-find-dir "Find directory")
      (project-eshell "Eshell")
      (project-any-command "Other")
-     ))
-  )
+     )))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -439,7 +464,95 @@
 
 ;;; ----------------------------------------------------------------------------
 
-(use-package multiple-cursors)
+(use-package multiple-cursors
+  :ensure t
+  :bind-keymap ("C-c m" . multiple-cursors-map)
+  :config
+  (defvar multiple-cursors-map (make-sparse-keymap)
+    "Keymap for multiple-cursors commands.")
+  
+  (let ((map multiple-cursors-map))
+    (define-key map (kbd "e") '("edit lines" . mc/edit-lines))
+    (define-key map (kbd "p") '("mark previous" . mc/mark-previous-like-this))
+    (define-key map (kbd "n") '("mark next" . mc/mark-next-like-this))
+    (define-key map (kbd "C-p") '("mark previous word" . mc/mark-previous-like-this-word))
+    (define-key map (kbd "C-n") '("mark next word" . mc/mark-next-like-this-word))
+    (define-key map (kbd "a") '("mark all" . mc/mark-all-like-this))
+    (define-key map (kbd "r") '("mark region" . mc/mark-all-in-region))
+    (define-key map (kbd "t") '("mark dwim" . mc/mark-all-like-this-dwim))))
+
+;;; ----------------------------------------------------------------------------
+
+(use-package expand-region
+  :ensure t
+  :bind (("C-=" . er/expand-region)
+         ("C--" . er/contract-region))
+  :config
+  ;; After first C-=, just press = or - to continue expanding/contracting
+  (setq expand-region-fast-keys-enabled t)
+  (setq er/try-expand-list
+        '(er/mark-word
+          er/mark-symbol
+          er/mark-inside-quotes
+          er/mark-outside-quotes
+          er/mark-inside-pairs
+          er/mark-outside-pairs
+          er/mark-method-call
+          er/mark-comment
+          er/mark-defun)))
+
+;;; ----------------------------------------------------------------------------
+
+(use-package dirvish
+  :ensure t
+  :init
+  (dirvish-override-dired-mode)
+  (add-to-list 'load-path 
+               (expand-file-name "extensions" 
+                                 (file-name-directory (locate-library "dirvish"))))
+
+  :config
+  (require 'dirvish-vc)
+  (require 'dirvish-fd)
+  (require 'dirvish-icons)
+  (require 'dirvish-quick-access)
+  
+  :custom
+  (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
+   '(("h" "~/"                          "Home")
+     ("d" "~/Downloads/"                "Downloads")
+     ("s" "~/code/streamline"           "Streamline")
+     ("m" "/mnt/"                       "Drives")
+     ("t" "~/.local/share/Trash/files/" "TrashCan")))
+  :config
+  (setq dirvish-mode-line-format
+        '(:left (sort symlink) :right (omit yank index)))
+  (setq dirvish-attributes           ; The order *MATTERS* for some attributes
+        '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
+        dirvish-side-attributes
+        '(vc-state nerd-icons collapse file-size))
+  ;; open large directory (over 20000 files) asynchronously with `fd' command
+  (setq dirvish-large-directory-threshold 20000)
+  :bind ; Bind `dirvish-fd|dirvish-side|dirvish-dwim' as you see fit
+  (("C-c f" . dirvish)
+   :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
+   (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
+   ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
+   ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
+   ("f"   . dirvish-file-info-menu)    ; [f]ile info
+   ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
+   ("s"   . dirvish-quicksort)         ; [s]ort flie list
+   ("r"   . dirvish-history-jump)      ; [r]ecent visited
+   ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
+   ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
+   ("*"   . dirvish-mark-menu)
+   ("y"   . dirvish-yank-menu)
+   ("N"   . dirvish-narrow)
+   ("^"   . dirvish-history-last)
+   ("TAB" . dirvish-subtree-toggle)
+   ("M-f" . dirvish-history-go-forward)
+   ("M-b" . dirvish-history-go-backward)
+   ("M-e" . dirvish-emerge-menu)))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -465,6 +578,18 @@
 
 ;;; ----------------------------------------------------------------------------
 
+(use-package jtsx
+  :ensure t
+  :mode (("\\.jsx?\\'" . jtsx-jsx-mode)
+         ("\\.tsx\\'" . jtsx-tsx-mode)
+         ("\\.ts\\'" . jtsx-typescript-mode))
+  :commands jtsx-install-treesit-language
+  :hook ((jtsx-jsx-mode . hs-minor-mode)
+         (jtsx-tsx-mode . hs-minor-mode)
+         (jtsx-typescript-mode . hs-minor-mode)))
+
+;;; ----------------------------------------------------------------------------
+
 ;; (use-package tsx-ts-mode
 ;;   :ensure nil)
 
@@ -480,11 +605,12 @@
   (magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
   (magit-bury-buffer-function 'magit-restore-window-configuration))
 
-(use-package forge
-  :after magit
-  :config
-  (setq auth-sources '("~/.authinfo.gpg"))
-  (setq magit-list-refs-sortby "-creatordate"))
+;; NOTE - not really using forge right now, but keeping this here for future reference
+;; (use-package forge
+;;   :after magit
+;;   :config
+;;   (setq auth-sources '("~/.authinfo.gpg"))
+;;   (setq magit-list-refs-sortby "-creatordate"))
 
 ;;; ----------------------------------------------------------------------------
 

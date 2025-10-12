@@ -71,5 +71,4 @@
                  (+vertico-transform-functions . +vertico-highlight-enabled-mode)))
   )
 
-(provide 'vertico)
 ;;; vertico.el ends here

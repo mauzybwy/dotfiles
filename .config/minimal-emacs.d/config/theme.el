@@ -44,5 +44,4 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-(provide 'theme)
 ;;; theme.el ends here
