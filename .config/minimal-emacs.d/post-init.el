@@ -191,6 +191,11 @@
    ;; :preview-key "M-."
    :preview-key '(:debounce 0.4 any))
 
+  (defun mauzy/consult-ripgrep-here ()
+    "Run consult-ripgrep in the current directory only."
+    (interactive)
+    (consult-ripgrep default-directory))
+  
   (defun mauzy/consult-ripgrep-with-region ()
     "Run consult-ripgrep with region as initial input if active."
     (interactive)
@@ -392,6 +397,10 @@
              eglot-ensure
              eglot-rename
              eglot-format-buffer)
+  :bind
+  (("C-c l s r" . eglot-rename)
+   ("C-c l s d" . eldoc-doc-buffer)
+   ("C-c l s D" . eldoc-box-eglot-help-at-point))
   :config
   (add-to-list
    'eglot-server-programs '(elixir-ts-mode "elixir-ls"))
@@ -425,6 +434,7 @@
   :bind
   ("C-x p v" . magit-project-status)
   ("C-x p s" . mauzy/consult-ripgrep-with-region)
+  ("C-x p S" . mauzy/consult-ripgrep-here)
 
   :custom
   (project-switch-commands
@@ -515,6 +525,7 @@
   (require 'dirvish-vc)
   (require 'dirvish-fd)
   (require 'dirvish-icons)
+  (require 'dirvish-extras)
   (require 'dirvish-quick-access)
   
   :custom
@@ -537,7 +548,7 @@
   (("C-c f" . dirvish)
    :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
    (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
-   ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
+   ("?"   . dirvish-dired-cheatsheet)  ; [?] a helpful cheatsheet
    ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
    ("f"   . dirvish-file-info-menu)    ; [f]ile info
    ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
