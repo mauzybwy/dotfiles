@@ -9,6 +9,37 @@
 ;;   :config
 ;;   (load-theme 'zenburn t))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Custom Themes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun mauzy/load-zenburn ()
+  "Load doom-zenburn theme with custom overrides."
+  (interactive)
+  (load-theme 'doom-zenburn t)
+  (custom-theme-set-faces
+   'doom-zenburn
+   `(default ((t (:foreground ,(doom-color 'fg) :background ,(doom-color 'base1)))))
+   `(region ((t (:background ,(doom-color 'base4)))))
+   `(vertico-current ((t (:background ,(doom-color 'base4)))))
+   )
+  (enable-theme 'doom-zenburn))
+
+(defun mauzy/load-monokai-pro ()
+  "Load doom-monokai-pro theme with custom overrides."
+  (interactive)
+  (load-theme 'doom-monokai-pro t)
+  (custom-theme-set-faces
+   'doom-monokai-pro
+   ;; `(font-lock-function-name-face ((t (:foreground ,(doom-color 'blue)))))
+   ;; `(font-lock-type-face ((t (:foreground ,(doom-color 'violet)))))
+   ;; `(font-lock-constant-face ((t (:foreground ,(doom-color 'blue)))))
+   )
+  (enable-theme 'doom-monokai-pro))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Packages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package colorful-mode
   ;; :diminish
@@ -30,9 +61,10 @@
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  ;; (load-theme 'doom-monokai-pro t)
   ;; (load-theme 'doom-one t)
-  (load-theme 'doom-zenburn t)
+  ;; (load-theme 'doom-monokai-pro t)
+  (mauzy/load-zenburn)
+  ;; (mauzy/load-monokai-pro)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

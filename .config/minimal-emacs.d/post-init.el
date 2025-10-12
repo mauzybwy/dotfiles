@@ -331,6 +331,7 @@
 
   :bind
   (("C-c l e b" . eval-buffer)
+   ("C-h F" . describe-face)
    ("C-c r" . revert-buffer))
   
   :hook
@@ -504,10 +505,9 @@
 
 (use-package expand-region
   :ensure t
-  :bind (("C-=" . er/expand-region)
-         ("C--" . er/contract-region))
+  :bind (("M-SPC" . er/expand-region)
+         ("C-M-SPC" . er/contract-region))
   :config
-  ;; After first C-=, just press = or - to continue expanding/contracting
   (setq expand-region-fast-keys-enabled t)
   (setq er/try-expand-list
         '(er/mark-word
