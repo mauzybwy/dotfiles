@@ -362,6 +362,7 @@
           (astro "https://github.com/mauzybwy/tree-sitter-astro" "emacs")
           (cmake "https://github.com/uyha/tree-sitter-cmake")
           (css "https://github.com/tree-sitter/tree-sitter-css")
+          (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
           (elisp "https://github.com/Wilfred/tree-sitter-elisp")
           (go "https://github.com/tree-sitter/tree-sitter-go")
           (html "https://github.com/tree-sitter/tree-sitter-html")
@@ -505,8 +506,8 @@
 
 (use-package expand-region
   :ensure t
-  :bind (("M-SPC" . er/expand-region)
-         ("C-M-SPC" . er/contract-region))
+  :bind (("C-M-SPC" . er/expand-region)
+         ("M-SPC" . er/contract-region))
   :config
   (setq expand-region-fast-keys-enabled t)
   (setq er/try-expand-list
@@ -579,7 +580,8 @@
 
 ;;; ----------------------------------------------------------------------------
 
-(use-package nix-ts-mode)
+(use-package nix-ts-mode
+  :mode (("\\.nix\\'" . nix-ts-mode)))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -620,6 +622,16 @@
 
 (use-package json-ts-mode
   :ensure nil)
+
+;;; ----------------------------------------------------------------------------
+
+(use-package dockerfile-ts-mode
+  :mode (("Dockerfile" . dockerfile-ts-mode)))
+
+;;; ----------------------------------------------------------------------------
+
+(use-package yaml-ts-mode
+  :mode (("\\.ya?ml\\'" . yaml-ts-mode)))
 
 ;;; ----------------------------------------------------------------------------
 
