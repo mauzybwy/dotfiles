@@ -631,11 +631,6 @@
 
 ;;; ----------------------------------------------------------------------------
 
-;; (use-package tsx-ts-mode
-;;   :ensure nil)
-
-;;; ----------------------------------------------------------------------------
-
 (use-package json-ts-mode
   :ensure nil)
 
@@ -662,6 +657,27 @@
 ;;   :config
 ;;   (setq auth-sources '("~/.authinfo.gpg"))
 ;;   (setq magit-list-refs-sortby "-creatordate"))
+
+;;; ----------------------------------------------------------------------------
+
+(use-package magit-todos
+  :after magit
+  :config (magit-todos-mode 1))
+
+;;; ----------------------------------------------------------------------------
+
+(use-package hl-todo
+  :ensure t
+  :hook (prog-mode . hl-todo-mode)
+  :custom
+  (hl-todo-highlight-punctuation ":")
+  (hl-todo-keyword-faces
+   '(("TODO"   . (:foreground "#FF6C6B" :weight bold))
+     ("FIXME"  . (:foreground "#ECBE7B" :weight bold))
+     ("DEBUG"  . (:foreground "#51AFEF" :weight bold))
+     ("GOTCHA" . (:foreground "" :weight bold))
+     ("HACK"  . (:foreground "#a6e3a1" :weight bold))
+     ("NOTE"  . (:foreground ,(face-attribute 'font-lock-comment-face :foreground nil t) :weight bold)))))
 
 ;;; ----------------------------------------------------------------------------
 
