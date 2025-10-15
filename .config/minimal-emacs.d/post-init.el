@@ -436,8 +436,24 @@
               :rope_autoimport (:enabled :json-false)))))
   )
 
+;;; ----------------------------------------------------------------------------
+
 (use-package eldoc-box
   :ensure t)
+
+;;; ----------------------------------------------------------------------------
+
+(use-package copilot
+  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
+  :hook prog-mode
+  :bind
+  (:map copilot-completion-map
+        ("<tab>" . 'copilot-accept-completion)
+        ("TAB" . 'copilot-accept-completion)
+        ("C-TAB" . 'copilot-accept-completion-by-word)
+        ("C-<tab>" . 'copilot-accept-completion-by-word)))
+
+;;; ----------------------------------------------------------------------------
 
 (use-package project
   :ensure t
