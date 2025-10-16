@@ -13,3 +13,5 @@ saveplace
 transient/
 tree-sitter/
 undo-fu-session/
+eln-cache/
+project-scratch/

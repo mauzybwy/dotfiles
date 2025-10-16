@@ -30,5 +30,7 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+(add-to-list 'default-frame-alist '(undecorated-round . t))
+
 (provide 'pre-init)
 ;;; pre-init.el ends here

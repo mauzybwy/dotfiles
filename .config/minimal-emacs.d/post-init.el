@@ -1,6 +1,7 @@
 ;;; post-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
 ;;; Code:
 
+(require 'mauzy)
 (load (expand-file-name "config/vertico" user-emacs-directory))
 (load (expand-file-name "config/theme" user-emacs-directory))
 
@@ -189,30 +190,7 @@
    consult--source-bookmark consult--source-file-register
    consult--source-recent-file consult--source-project-recent-file
    ;; :preview-key "M-."
-   :preview-key '(:debounce 0.4 any))
-
-  (defun mauzy/consult-ripgrep-here ()
-    "Run consult-ripgrep in the current directory only."
-    (interactive)
-    (consult-ripgrep default-directory))
-  
-  (defun mauzy/consult-ripgrep-with-region ()
-    "Run consult-ripgrep with region as initial input if active."
-    (interactive)
-    (let ((initial (if (use-region-p)
-                       (buffer-substring-no-properties (region-beginning) (region-end))
-                     nil)))
-      (consult-ripgrep nil initial)))
-  
-  (defun mauzy/consult-export-to-wgrep ()
-    "Export consult results to grep buffer and enter wgrep mode."
-    (interactive)
-    (embark-export)
-    ;; Give embark-export a moment to create the buffer
-    (run-at-time 0.1 nil
-                 (lambda ()
-                   (when (derived-mode-p 'grep-mode)
-                     (wgrep-change-to-wgrep-mode))))))
+   :preview-key '(:debounce 0.4 any)))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -284,11 +262,37 @@
 
 ;;; ----------------------------------------------------------------------------
 
+;; Basic vterm setup
 (use-package vterm
-  :ensure t)
+  :ensure t
+  :config
+  (setq vterm-max-scrollback 10000)
+  (setq vterm-kill-buffer-on-exit t))
 
+;; vterm-toggle for quick access
+(use-package vterm-toggle
+  :ensure t
+  :config
+  (setq vterm-toggle-fullscreen-p nil)
+  (setq vterm-toggle-scope 'project)
+  
+  (global-set-key (kbd "C-c t") 'vterm-toggle)
+  (global-set-key (kbd "C-c T") 'vterm-toggle-cd)
+  
+  (define-key vterm-mode-map (kbd "C-c t") 'vterm-toggle)
+  (define-key vterm-mode-map (kbd "C-c T") 'vterm-toggle-cd))
+
+;; multi-vterm for managing multiple terminals
 (use-package multi-vterm
-  :ensure t)
+  :ensure t
+  :config
+  (setq multi-vterm-buffer-name "vterm")
+  
+  (global-set-key (kbd "C-c n t") 'multi-vterm)
+  (global-set-key (kbd "C-c p t") 'multi-vterm-project)
+  
+  (define-key vterm-mode-map (kbd "C-c C-n") 'multi-vterm-next)
+  (define-key vterm-mode-map (kbd "C-c C-p") 'multi-vterm-prev))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -386,8 +390,8 @@
   ;; Display all starred buffers at the bottom
   (add-to-list 'display-buffer-alist
                '((lambda (buffer-name action)
-                   (and (string-match-p "\\*.*\\*" buffer-name)
-                        (not (string-match-p "\\*dirvish" buffer-name))))
+                   (or (string-match-p "\\*Embark.*\\*" buffer-name)
+                       (string-match-p "\\*scratch:.*\\*" buffer-name)))
                  (display-buffer-reuse-window display-buffer-at-bottom)
                  (window-height . 20)
                  (reusable-frames . visible))
@@ -455,24 +459,42 @@
 
 ;;; ----------------------------------------------------------------------------
 
+(use-package claude-code-ide
+  :straight (:type git :host github :repo "manzaltu/claude-code-ide.el")
+  :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
+  :config
+  (claude-code-ide-emacs-tools-setup)) ; Optionally enable Emacs MCP tools
+
+;;; ----------------------------------------------------------------------------
+
 (use-package project
   :ensure t
 
   :bind
   ("C-x p v" . magit-project-status)
+  ("C-x p x" . mauzy/project-scratch)
   ("C-x p s" . mauzy/consult-ripgrep-with-region)
   ("C-x p S" . mauzy/consult-ripgrep-here)
 
+  :config
+  (unbind-key "o" project-prefix-map)
+  (advice-add 'project-known-project-roots :around #'mauzy/project-current-last)
+  
   :custom
   (project-switch-commands
-   '(
-     (project-find-file "Find file")
-     (consult-ripgrep "Search (ripgrep)")
-     (consult-project-buffer "Find buffer")
-     (magit-project-status "VC: magit")
-     (project-find-dir "Find directory")
-     (project-eshell "Eshell")
-     (project-any-command "Other"))))
+   'mauzy/project-switch-to-recent-buffer)
+
+  ;; NOTE: keeping this here for reference
+  ;; (project-switch-commands
+  ;;  '(
+  ;;    (project-find-file "Find file")
+  ;;    (consult-ripgrep "Search (ripgrep)")
+  ;;    (consult-project-buffer "Find buffer")
+  ;;    (magit-project-status "VC: magit")
+  ;;    (project-find-dir "Find directory")
+  ;;    (project-eshell "Eshell")
+  ;;    (project-any-command "Other")))
+  )
 
 ;;; ----------------------------------------------------------------------------
 
@@ -603,15 +625,22 @@
 
 (use-package elixir-ts-mode)
 
-(use-package
-  exunit
-  :diminish t
+(use-package mix
+  :config
+  (add-hook 'elixir-ts-mode-hook 'mix-minor-mode))
+
+(use-package exunit
+  :after elixir-ts-mode
+  :bind-keymap ("C-c e" . exunit-mode-map)
   :bind
-  (("C-c e ." . exunit-verify-single)
-   ("C-c e ." . exunit-debug)
-   ("C-c e b" . exunit-verify) ;; buffer-only
-   ("C-c e a" . exunit-verify-all)
-   ("C-c e l" . exunit-rerun)))
+  (:map exunit-mode-map
+        ("." . exunit-verify-single)
+        ("s" . exunit-verify-single)
+        ("f" . exunit-verify) ;; run all tests in the current file
+        ("p" . exunit-verify-all) ;; run all tests in the project
+        ("r" . exunit-rerun)
+        ("T" . exunit-toggle-file-and-test)
+        ("t" . exunit-toggle-file-and-test-other-window)))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -700,9 +729,33 @@
 
 ;;; ----------------------------------------------------------------------------
 
+(use-package minions
+  :ensure t
+  :init (minions-mode 1))
+
+;;; ----------------------------------------------------------------------------
+
+(use-package doom-modeline
+  :ensure t
+  :after minions
+  :init (doom-modeline-mode 1)
+  :custom
+  (doom-modeline-minor-modes t)
+  (doom-modeline-buffer-encoding nil)
+  (doom-modeline-project-name t)
+  (doom-modeline-buffer-file-name-style 'buffer-name)
+  (doom-modeline-position-column-line-format '("%c"))
+  (doom-modeline-percent-position nil))
+
+;;; ----------------------------------------------------------------------------
+
 (use-package nyan-mode
+  :after doom-modeline
   :config
-  (nyan-mode 1))
+  (nyan-mode 1)
+  :custom
+  (nyan-minimum-window-width 90)
+  (nyan-bar-length 20))
 
 (provide 'post-init)
 ;;; post-init.el ends here
