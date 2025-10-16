@@ -1,17 +1,17 @@
 ;;; pre-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
 
-(add-to-list 'load-path (expand-file-name "custom" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "mauzy" user-emacs-directory))
 
 (set-face-attribute 'default nil :family "JetBrains Mono" :weight 'regular :height 125)
 
-(require 'splash)
+(require 'mauzy-splash)
 
 ;; Configure the splash screen
-(setq splash-image-path (expand-file-name "bruiser.png" user-emacs-directory))
-(setq splash-text '("welcome back :)"))
+(setq mauzy/splash-image-path (expand-file-name "bruiser.png" user-emacs-directory))
+(setq mauzy/splash-text '("welcome back :)"))
 
 ;; Enable the splash screen
-(setq initial-buffer-choice #'splash-screen)
+(setq initial-buffer-choice #'mauzy/splash-screen)
 
 ;; Straight bootstrap
 (defvar bootstrap-version)
