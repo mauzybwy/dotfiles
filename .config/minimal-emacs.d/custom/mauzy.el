@@ -104,11 +104,6 @@ If STARTUP-COMMAND is provided, run it when the terminal is first created."
     (when key
       (global-set-key (kbd key) func-name))))
 
-(defcustom mauzy/project-scratch-dir
-  (expand-file-name "project-scratch/" user-emacs-directory)
-  "Directory where project scratch buffers are saved."
-  :type 'directory
-  :group 'mauzy)
 
 (defcustom mauzy/project-scratch-dir
   (expand-file-name "project-scratch/" user-emacs-directory)
@@ -148,6 +143,25 @@ If STARTUP-COMMAND is provided, run it when the terminal is first created."
           (make-directory mauzy/project-scratch-dir t))
         (write-region (point-min) (point-max) scratch-file nil 'quiet)))))
 
+(defun mauzy/project-scratch-setup ()
+  "Set up project scratch buffer settings."
+  (when (string-match-p "^\\*scratch:" (buffer-name))
+    (setq-local buffer-offer-save nil
+                header-line-format (format "Project Scratch: %s (C-c C-c to save and close)" 
+                                           (mauzy/project-name)))
+    
+    ;; Add keybindings
+    (local-set-key (kbd "C-c C-c")
+                   (lambda ()
+                     (interactive)
+                     (mauzy/project-scratch-save)
+                     (quit-window t)))
+    (local-set-key (kbd "C-x C-s")
+                   (lambda ()
+                     (interactive)
+                     (mauzy/project-scratch-save)
+                     (quit-window t)))))
+
 (defun mauzy/project-scratch ()
   "Open or create a persistent scratch buffer for the current project.
 Works like *scratch* but content is saved between sessions."
@@ -162,35 +176,27 @@ Works like *scratch* but content is saved between sessions."
           (when (and (zerop (buffer-size))
                      (file-exists-p scratch-file))
             (insert-file-contents scratch-file))
+          
           ;; Set up the buffer like *scratch*
           (unless (eq major-mode 'lisp-interaction-mode)
             (lisp-interaction-mode))
-          (setq-local buffer-offer-save nil
-                      header-line-format (format "Project Scratch: %s (C-c C-c to save and close)" (mauzy/project-name)))
           
-          ;; Add keybinding to close and save
-          (local-set-key (kbd "C-c C-c")
-                         (lambda ()
-                           (interactive)
-                           (mauzy/project-scratch-save)
-                           (quit-window t)))
-
-          (local-set-key (kbd "C-x C-s")
-                         (lambda ()
-                           (interactive)
-                           (mauzy/project-scratch-save)
-                           (quit-window t)))
-
+          ;; Apply settings initially
+          (mauzy/project-scratch-setup)
+          
+          ;; Reapply settings after any major mode change
+          (add-hook 'after-change-major-mode-hook 
+                    'mauzy/project-scratch-setup)
+          
           ;; Save on buffer modifications
           (add-hook 'after-change-functions
                     (lambda (&rest _) (run-with-idle-timer 1 nil #'mauzy/project-scratch-save))
                     nil t)
+          
           ;; Save when killing buffer
           (add-hook 'kill-buffer-hook #'mauzy/project-scratch-save nil t))
         (pop-to-buffer buf))
     (message "Not in a project")))
 
-;; Optional: Bind to a key
-;; (define-key project-prefix-map "s" #'mauzy/project-scratch)
 (provide 'mauzy)
 ;;; mauzy.el ends here
