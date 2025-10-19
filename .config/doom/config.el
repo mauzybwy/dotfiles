@@ -161,8 +161,8 @@
                                         (format "  %s " (nerd-icons-codicon "nf-cod-root_folder"))
                                         (format " %s " (nerd-icons-faicon "nf-fa-angle_right"))))
               (dired-listing-switches
-               "-l --almost-all --human-readable --group-directories-first --no-group")
-              )
+               "-l --almost-all --human-readable --group-directories-first --no-group"))
+
 
 ;; -----------------------------------------------------------------------------
 

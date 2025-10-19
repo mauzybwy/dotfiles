@@ -1,16 +1,22 @@
 ;;; post-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
 ;;; Code:
 
+;; Setup
 (require 'mauzy)
 (load (expand-file-name "config/vertico" user-emacs-directory))
 (load (expand-file-name "config/theme" user-emacs-directory))
+
+(setq use-package-always-ensure t)
+(setq use-package-always-defer nil)
+(setq use-package-verbose t)
+(setq use-package-compute-statistics t)
 
 ;;; ---------------------------------------------------------------------------
 
 ;; Configure directory extension.
 (use-package vertico-directory
   :after vertico
-  :ensure nil
+  :ensure nil ; built-in with vertico
   ;; More convenient directory navigation commands
   :bind (:map vertico-map
               ("RET" . vertico-directory-enter)
@@ -34,11 +40,12 @@
   ;; Vertico leverages Orderless' flexible matching capabilities, allowing users
   ;; to input multiple patterns separated by spaces, which Orderless then
   ;; matches in any order against the candidates.
-  :ensure t
+  
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
+
 
 ;;; ----------------------------------------------------------------------------
 
@@ -46,15 +53,28 @@
   ;; Marginalia allows Embark to offer you preconfigured actions in more contexts.
   ;; In addition to that, Marginalia also enhances Vertico by adding rich
   ;; annotations to the completion candidates displayed in Vertico's interface.
-  :ensure t
+  
   :defer t
   :commands (marginalia-mode marginalia-cycle)
   :hook (after-init . marginalia-mode))
 
 ;;; ----------------------------------------------------------------------------
 
-(use-package wgrep
-  :ensure t)
+(use-package wgrep)
+
+;;; ----------------------------------------------------------------------------
+
+;; (use-package aggressive-indent
+;;   :hook ((emacs-lisp-mode
+;;           lisp-mode
+;;           elixir-ts-mode
+;;           clojure-mode) . aggressive-indent-mode))
+
+(use-package parinfer-rust-mode
+  :hook emacs-lisp-mode
+  :custom
+  (parinfer-rust-disable-troublesome-modes t)
+  (parinfer-rust-auto-download t))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -62,7 +82,7 @@
   ;; Embark is an Emacs package that acts like a context menu, allowing
   ;; users to perform context-sensitive actions on selected items
   ;; directly from the completion interface.
-  :ensure t
+  
   :defer t
   :commands (embark-act
              embark-dwim
@@ -88,15 +108,12 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package embark-consult
-  :ensure t
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
 ;;; ----------------------------------------------------------------------------
 
 (use-package consult
-  :ensure t
-  
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
          ("C-c h" . consult-history)
@@ -195,7 +212,7 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package corfu
-  :ensure t
+  
   :defer t
   :commands (corfu-mode global-corfu-mode)
 
@@ -224,7 +241,6 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package cape
-  :ensure t
   :defer t
   :commands (cape-dabbrev cape-file cape-elisp-block)
   :bind ("C-c p" . cape-prefix-map)
@@ -238,7 +254,6 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package rainbow-delimiters
-  :ensure t
   :hook ((prog-mode . rainbow-delimiters-mode)))
 
 ;;; ----------------------------------------------------------------------------
@@ -251,7 +266,7 @@
   (global-set-key (kbd "M-;")   'avy-goto-line)
   
   :custom
-  (avy-timeout-seconds 0.1)
+  (avy-timeout-seconds 0.3)
   (avy-all-windows t))
 
 ;;; ----------------------------------------------------------------------------
@@ -264,14 +279,12 @@
 
 ;; Basic vterm setup
 (use-package vterm
-  :ensure t
   :config
   (setq vterm-max-scrollback 10000)
   (setq vterm-kill-buffer-on-exit t))
 
 ;; vterm-toggle for quick access
 (use-package vterm-toggle
-  :ensure t
   :config
   (setq vterm-toggle-fullscreen-p nil)
   (setq vterm-toggle-scope 'project)
@@ -284,7 +297,6 @@
 
 ;; multi-vterm for managing multiple terminals
 (use-package multi-vterm
-  :ensure t
   :config
   (setq multi-vterm-buffer-name "vterm")
   
@@ -321,8 +333,6 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package mwim
-  :ensure t
-
   :bind (("C-a" . mwim-beginning)
          ("C-e" . mwim-end)))
 
@@ -344,7 +354,6 @@
   (after-init . recentf-mode)
   (after-init . savehist-mode)
   (after-init . save-place-mode)
-  (after-init . electric-pair-mode)
   (after-init . show-paren-mode)
 
   ;; prog hooks
@@ -357,9 +366,22 @@
   (font-lock-maximum-decoration t)
   (line-number-mode t)
   (column-number-mode t)
+  (confirm-kill-emacs 'yes-or-no-p)
 
   :config
-  ;; Tree-sitter
+  ;; Display all starred buffers at the bottom
+  (add-to-list 'display-buffer-alist
+               '((lambda (buffer-name action)
+                   (or (string-match-p "\\*Embark.*\\*" buffer-name)
+                       (string-match-p "\\*scratch:.*\\*" buffer-name)))
+                 (display-buffer-reuse-window display-buffer-at-bottom)
+                 (window-height . 20)
+                 (reusable-frames . visible))
+               t))
+
+(use-package treesit
+  :ensure nil ; builtin
+  :config
   (setq treesit-font-lock-level 4)
   (setq treesit-language-source-alist
         '((bash "https://github.com/tree-sitter/tree-sitter-bash")
@@ -377,7 +399,6 @@
           (markdown "https://github.com/ikatyang/tree-sitter-markdown")
           (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
           (python "https://github.com/tree-sitter/tree-sitter-python")
-          ;; (sql "https://github.com/m-novikov/tree-sitter-sql")
           (nix "https://github.com/nix-community/tree-sitter-nix")
           (ruby "https://github.com/tree-sitter/tree-sitter-ruby")
           (toml "https://github.com/tree-sitter/tree-sitter-toml")
@@ -385,28 +406,17 @@
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
           (heex "https://github.com/phoenixframework/tree-sitter-heex")
           (elixir "https://github.com/elixir-lang/tree-sitter-elixir")
-          (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
-  
-  ;; Display all starred buffers at the bottom
-  (add-to-list 'display-buffer-alist
-               '((lambda (buffer-name action)
-                   (or (string-match-p "\\*Embark.*\\*" buffer-name)
-                       (string-match-p "\\*scratch:.*\\*" buffer-name)))
-                 (display-buffer-reuse-window display-buffer-at-bottom)
-                 (window-height . 20)
-                 (reusable-frames . visible))
-               t))
+          (yaml "https://github.com/ikatyang/tree-sitter-yaml"))))
 
 ;;; ----------------------------------------------------------------------------
 
 (use-package eglot
-  :ensure nil
-  :defer t
+  :ensure nil ; builtin
   :hook (((
            elixir-ts-mode
            tsx-ts-mode
-           typescript-ts-mode
-           )
+           typescript-ts-mode)
+          
           . eglot-ensure))
   :commands (eglot
              eglot-ensure
@@ -416,6 +426,7 @@
   (("C-c l s r" . eglot-rename)
    ("C-c l s d" . eldoc-doc-buffer)
    ("C-c l s D" . eldoc-box-eglot-help-at-point))
+
   :config
   (add-to-list
    'eglot-server-programs '(elixir-ts-mode "elixir-ls"))
@@ -437,13 +448,12 @@
               :mccabe (:enabled t)
 
               :yapf (:enabled :json-false)
-              :rope_autoimport (:enabled :json-false)))))
-  )
+              :rope_autoimport (:enabled :json-false))))))
+
 
 ;;; ----------------------------------------------------------------------------
 
-(use-package eldoc-box
-  :ensure t)
+(use-package eldoc-box)
 
 ;;; ----------------------------------------------------------------------------
 
@@ -468,8 +478,6 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package project
-  :ensure t
-
   :bind
   ("C-x p v" . magit-project-status)
   ("C-x p x" . mauzy/project-scratch)
@@ -482,19 +490,19 @@
   
   :custom
   (project-switch-commands
-   'mauzy/project-switch-to-recent-buffer)
+   'mauzy/project-switch-to-recent-buffer))
 
-  ;; NOTE: keeping this here for reference
-  ;; (project-switch-commands
-  ;;  '(
-  ;;    (project-find-file "Find file")
-  ;;    (consult-ripgrep "Search (ripgrep)")
-  ;;    (consult-project-buffer "Find buffer")
-  ;;    (magit-project-status "VC: magit")
-  ;;    (project-find-dir "Find directory")
-  ;;    (project-eshell "Eshell")
-  ;;    (project-any-command "Other")))
-  )
+;; NOTE: keeping this here for reference
+;; (project-switch-commands
+;;  '(
+;;    (project-find-file "Find file")
+;;    (consult-ripgrep "Search (ripgrep)")
+;;    (consult-project-buffer "Find buffer")
+;;    (magit-project-status "VC: magit")
+;;    (project-find-dir "Find directory")
+;;    (project-eshell "Eshell")
+;;    (project-any-command "Other")))
+
 
 ;;; ----------------------------------------------------------------------------
 
@@ -523,7 +531,6 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package multiple-cursors
-  :ensure t
   :bind-keymap ("C-c m" . multiple-cursors-map)
   :config
   (defvar multiple-cursors-map (make-sparse-keymap)
@@ -542,27 +549,15 @@
 
 ;;; ----------------------------------------------------------------------------
 
-(use-package expand-region
-  :ensure t
-  :bind (("C-M-SPC" . er/expand-region)
-         ("M-SPC" . er/contract-region))
-  :config
-  (setq expand-region-fast-keys-enabled t)
-  (setq er/try-expand-list
-        '(er/mark-word
-          er/mark-symbol
-          er/mark-inside-quotes
-          er/mark-outside-quotes
-          er/mark-inside-pairs
-          er/mark-outside-pairs
-          er/mark-method-call
-          er/mark-comment
-          er/mark-defun)))
+(use-package expreg
+  
+  :bind (("C-M-SPC" . expreg-expand)
+         ("M-SPC" . expreg-contract)))
 
 ;;; ----------------------------------------------------------------------------
 
 (use-package dirvish
-  :ensure t
+  
   :init
   (dirvish-override-dired-mode)
   (add-to-list 'load-path 
@@ -649,7 +644,7 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package jtsx
-  :ensure t
+  
   :mode (("\\.jsx?\\'" . jtsx-jsx-mode)
          ("\\.tsx\\'" . jtsx-tsx-mode)
          ("\\.ts\\'" . jtsx-typescript-mode))
@@ -661,7 +656,7 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package json-ts-mode
-  :ensure nil)
+  :mode (("\\.json\\'" . json-ts-mode)))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -677,6 +672,7 @@
 
 (use-package magit
   :custom
+  (magit-list-refs-sortby "-creatordate")
   (magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
   (magit-bury-buffer-function 'magit-restore-window-configuration))
 
@@ -696,7 +692,7 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package hl-todo
-  :ensure t
+  
   :hook (prog-mode . hl-todo-mode)
   :custom
   (hl-todo-highlight-punctuation ":")
@@ -711,7 +707,6 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package apheleia
-  :ensure t
   :defer t
   :commands (apheleia-mode
              apheleia-global-mode)
@@ -720,7 +715,7 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package uniquify
-  :ensure nil
+  :ensure nil ; built-in
   :custom
   (uniquify-buffer-name-style 'reverse)
   (uniquify-separator "•")
@@ -730,13 +725,11 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package minions
-  :ensure t
   :init (minions-mode 1))
 
 ;;; ----------------------------------------------------------------------------
 
 (use-package doom-modeline
-  :ensure t
   :after minions
   :init (doom-modeline-mode 1)
   :custom

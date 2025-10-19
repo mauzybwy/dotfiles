@@ -12,6 +12,7 @@
   :prefix "mauzy/")
 
 ;; Load submodules
+(require 'mauzy-eglot)
 (require 'mauzy-project)
 (require 'mauzy-search)
 (require 'mauzy-vterm)

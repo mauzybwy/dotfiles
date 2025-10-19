@@ -2,7 +2,6 @@ undo-fu-session/
 .mc-lists.el
 .cache/
 autosave/
-custom.el
 elpa/
 straight/
 forge-database.sqlite
