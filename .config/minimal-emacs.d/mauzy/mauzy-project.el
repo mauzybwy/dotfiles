@@ -18,11 +18,30 @@
   "Switch to most recent buffer in project, or show buffer list if none open."
   (interactive)
   (let* ((project (project-current t))
-         (buffers (project-buffers project))
-         (recent-buffer (car buffers)))
-    (if recent-buffer
+         (proper-project-buffers (mauzy/proper-project-buffers project))
+         (recent-buffer (car proper-project-buffers)))
+    (if (mauzy/maybe-buffer-name recent-buffer)
         (switch-to-buffer recent-buffer)
-      (consult-project-buffer))))
+      (magit-project-status))))
+
+(defun mauzy/proper-project-buffers (project)
+  "Return list of buffers belonging to the specified project, excluding special buffers."
+  (let* ((buffers (project-buffers project))
+         (proper-buffers
+          (seq-filter
+           (lambda (buf)
+             (let ((name (mauzy/maybe-buffer-name buf)))
+               (and (not (null name))
+                    (not (string-match-p "^\\*" name))
+                    (not (string-match-p "^ " name))
+                    (buffer-file-name buf))))
+           buffers)))
+    proper-buffers))
+
+(defun mauzy/maybe-buffer-name (buffer)
+  "Return the name of BUFFER, or nil if BUFFER is nil."
+  (when buffer
+    (buffer-name buffer)))
 
 (defun mauzy/project-name ()
   "Return the name of the current project."
