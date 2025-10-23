@@ -21,8 +21,8 @@
    'doom-zenburn
    `(default ((t (:foreground ,(doom-color 'fg) :background ,(doom-color 'base1)))))
    `(region ((t (:background ,(doom-color 'base4)))))
-   `(vertico-current ((t (:background ,(doom-color 'base4)))))
-   )
+   `(vertico-current ((t (:background ,(doom-color 'base4))))))
+  
   (enable-theme 'doom-zenburn))
 
 (defun mauzy/load-monokai-pro ()
@@ -30,11 +30,11 @@
   (interactive)
   (load-theme 'doom-monokai-pro t)
   (custom-theme-set-faces
-   'doom-monokai-pro
-   ;; `(font-lock-function-name-face ((t (:foreground ,(doom-color 'blue)))))
-   ;; `(font-lock-type-face ((t (:foreground ,(doom-color 'violet)))))
-   ;; `(font-lock-constant-face ((t (:foreground ,(doom-color 'blue)))))
-   )
+   'doom-monokai-pro)
+  ;; `(font-lock-function-name-face ((t (:foreground ,(doom-color 'blue)))))
+  ;; `(font-lock-type-face ((t (:foreground ,(doom-color 'violet)))))
+  ;; `(font-lock-constant-face ((t (:foreground ,(doom-color 'blue)))))
+  
   (enable-theme 'doom-monokai-pro))
 
 (defun mauzy/load-catppuccin ()
@@ -67,8 +67,8 @@
   (setq catppuccin-flavor 'mocha)
   :config
   ;; (load-theme 'catppuccin :no-confirm)
-  (mauzy/load-catppuccin)
-  )
+  (mauzy/load-catppuccin))
+
 
 
 ;; (use-package doom-themes

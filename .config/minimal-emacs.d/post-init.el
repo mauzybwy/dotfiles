@@ -1,7 +1,10 @@
 ;;; post-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
 ;;; Code:
 
-;; Setup
+;;; ============================================================================
+;;; Setup
+;;; ============================================================================
+
 (require 'mauzy)
 (load (expand-file-name "config/theme" user-emacs-directory))
 
@@ -13,16 +16,60 @@
 ;; Safe local variable directories
 (add-to-list 'safe-local-variable-directories "/Users/mauzy/code/streamline/")
 
+;;; ============================================================================
+;;; Packages Configuration
+;;; ============================================================================
+
+(use-package emacs
+  :ensure nil ; built-in
+  :init
+  (when (eq system-type 'darwin)
+    (setq mac-command-modifier 'meta))
+
+  :bind
+  (("C-h F" . describe-face)
+   ("C-c r" . revert-buffer))
+  
+  :hook
+  ;; init hooks
+  (after-init . global-auto-revert-mode)
+  (after-init . recentf-mode)
+  (after-init . savehist-mode)
+  (after-init . save-place-mode)
+  (after-init . show-paren-mode)
+
+  ;; prog hooks
+  (prog-mode . display-line-numbers-mode)
+  (prog-mode . subword-mode)
+
+  ;; cleanup hooks
+  (kill-emacs . recentf-cleanup)
+
+  :custom
+  (font-lock-maximum-decoration t)
+  (line-number-mode t)
+  (column-number-mode t)
+  (confirm-kill-emacs 'yes-or-no-p)
+
+  :config
+  ;; Display all starred buffers at the bottom
+  (add-to-list 'display-buffer-alist
+               '((lambda (buffer-name action)
+                   (or (string-match-p "\\*Embark.*\\*" buffer-name)
+                       (string-match-p "\\*scratch:.*\\*" buffer-name)))
+                 (display-buffer-reuse-window display-buffer-at-bottom)
+                 (window-height . 20)
+                 (reusable-frames . visible))
+               t))
+
 ;;; ---------------------------------------------------------------------------
 
 (use-package vertico
-  ;; (Note: It is recommended to also enable the savehist package.)
-  :ensure t
   :defer t
-  :commands vertico-mode
   :hook
   (after-init . vertico-mode)
   (after-init . vertico-multiform-mode)
+  ;; (after-init . vertico-reverse-mode)
 
   :custom
   (vertico-cycle t)
@@ -30,32 +77,19 @@
   (vertico-resize nil)
 
   :init
-  (cl-defmethod vertico--format-candidate :around
-    (cand prefix suffix index start &context ((not mauzy/vertico-transform-functions) null))
-    (dolist (fun (ensure-list mauzy/vertico-transform-functions))
-      (setq cand (funcall fun cand)))
-    (cl-call-next-method cand prefix suffix index start))
+  (advice-add 'vertico--format-candidate :around #'mauzy/vertico-format-candidate)
   
   :config
   (setq uniquify-buffer-name-style 'forward)
   
   (setq vertico-multiform-categories
-        '((symbol (vertico-sort-function . vertico-sort-alpha))
-          (file (vertico-sort-function . mauzy/sort-directories-first))))
+        '((symbol (vertico-sort-function . vertico-sort-alpha))))
+  ;;(file (vertico-sort-function . mauzy/sort-directories-first))
+  
 
   (setq vertico-multiform-commands
-        '((consult-line (vertico-sort-override-function . vertico-sort-alpha))))
+        '((consult-line (vertico-sort-override-function . vertico-sort-alpha)))))
 
-  (add-to-list 'vertico-multiform-categories
-               '(file
-                 ;; this is also defined in the wiki, uncomment if used
-                 ;; (vertico-sort-function . mauzy/sort-directories-first)
-                 (mauzy/vertico-transform-functions . mauzy/vertico-highlight-directory)))
-
-  (add-to-list 'vertico-multiform-commands
-               '(execute-extended-command
-                 reverse
-                 (mauzy/vertico-transform-functions . mauzy/vertico-highlight-enabled-mode))))
 
 ;; Configure directory extension.
 (use-package vertico-directory
@@ -94,6 +128,7 @@
   :defer t
   :commands (marginalia-mode marginalia-cycle)
   :hook (after-init . marginalia-mode))
+
 
 ;;; ----------------------------------------------------------------------------
 
@@ -161,10 +196,12 @@
          ;; General bindings
          ([remap Info-search] . consult-info)
          ([remap isearch-forward] . consult-line-literal)
-         ("C-x C-b" . consult-project-buffer)
-         ("C-x b" . consult-project-buffer)
-         ("C-x p b" . consult-project-buffer)
-         ("M-y" . consult-yank-pop)
+         ([remap list-buffers] . consult-project-buffer)
+         ([remap switch-to-buffer] . consult-project-buffer)
+         ([remap yank-pop] . consult-yank-pop)
+
+         :map project-prefix-map
+         ("b" . consult-project-buffer)
 
          :map minibuffer-local-map
          ("C-c C-e" . mauzy/consult-export-to-wgrep)
@@ -267,7 +304,7 @@
 (use-package cape
   :defer t
   :commands (cape-dabbrev cape-file cape-elisp-block)
-  :bind ("C-c p" . cape-prefix-map)
+  :bind-keymap ("C-c a" . cape-prefix-map)
   :init
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
@@ -319,14 +356,16 @@
 
 ;; multi-vterm for managing multiple terminals
 (use-package multi-vterm
+  :bind
+  ((:map vterm-mode-map
+         ("C-c C-n" . multi-vterm-next)
+         ("C-c C-p" . multi-vterm-prev))
+
+   (:map project-prefix-map
+         ("o" . multi-vterm-project)))
+  
   :config
-  (setq multi-vterm-buffer-name "vterm")
-  
-  (global-set-key (kbd "C-c n t") 'multi-vterm)
-  (global-set-key (kbd "C-c p t") 'multi-vterm-project)
-  
-  (define-key vterm-mode-map (kbd "C-c C-n") 'multi-vterm-next)
-  (define-key vterm-mode-map (kbd "C-c C-p") 'multi-vterm-prev))
+  (setq multi-vterm-buffer-name "vterm"))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -356,49 +395,6 @@
 (use-package mwim
   :bind (("C-a" . mwim-beginning)
          ("C-e" . mwim-end)))
-
-;;; ----------------------------------------------------------------------------
-
-(use-package emacs
-  :init
-  (when (eq system-type 'darwin)
-    (setq mac-command-modifier 'meta))
-
-  :bind
-  (("C-h F" . describe-face)
-   ("C-c r" . revert-buffer))
-  
-  :hook
-  ;; init hooks
-  (after-init . global-auto-revert-mode)
-  (after-init . recentf-mode)
-  (after-init . savehist-mode)
-  (after-init . save-place-mode)
-  (after-init . show-paren-mode)
-
-  ;; prog hooks
-  (prog-mode . display-line-numbers-mode)
-  (prog-mode . subword-mode)
-
-  ;; cleanup hooks
-  (kill-emacs . recentf-cleanup)
-
-  :custom
-  (font-lock-maximum-decoration t)
-  (line-number-mode t)
-  (column-number-mode t)
-  (confirm-kill-emacs 'yes-or-no-p)
-
-  :config  
-  ;; Display all starred buffers at the bottom
-  (add-to-list 'display-buffer-alist
-               '((lambda (buffer-name action)
-                   (or (string-match-p "\\*Embark.*\\*" buffer-name)
-                       (string-match-p "\\*scratch:.*\\*" buffer-name)))
-                 (display-buffer-reuse-window display-buffer-at-bottom)
-                 (window-height . 20)
-                 (reusable-frames . visible))
-               t))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -505,13 +501,13 @@
 
 (use-package project
   :bind
-  ("C-x p v" . magit-project-status)
-  ("C-x p x" . mauzy/project-scratch)
-  ("C-x p s" . mauzy/consult-ripgrep-with-region)
-  ("C-x p S" . mauzy/consult-ripgrep-here)
-
+  (:map project-prefix-map
+        ("v" . magit-project-status)
+        ("x" . mauzy/project-scratch)
+        ("s" . mauzy/consult-ripgrep-with-region)
+        ("S" . mauzy/consult-ripgrep-here))
+  
   :config
-  (unbind-key "o" project-prefix-map)
   (advice-add 'project-known-project-roots :around #'mauzy/project-current-last)
   
   :custom
@@ -647,7 +643,7 @@
 
 (use-package exunit
   :after elixir-ts-mode
-  :bind-keymap ("C-c e" . exunit-mode-map)
+  :bind-keymap ("C-x p t" . exunit-mode-map)
   :bind
   (:map exunit-mode-map
         ("." . exunit-verify-single)
@@ -655,8 +651,8 @@
         ("f" . exunit-verify) ;; run all tests in the current file
         ("p" . exunit-verify-all) ;; run all tests in the project
         ("r" . exunit-rerun)
-        ("T" . exunit-toggle-file-and-test)
-        ("t" . exunit-toggle-file-and-test-other-window)))
+        ("t" . exunit-toggle-file-and-test)
+        ("T" . exunit-toggle-file-and-test-other-window)))
 
 ;;; ----------------------------------------------------------------------------
 
