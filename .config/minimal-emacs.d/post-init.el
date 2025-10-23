@@ -10,6 +10,8 @@
 (setq use-package-always-defer nil)
 (setq use-package-verbose t)
 (setq use-package-compute-statistics t)
+
+;; Safe local variable directories
 (add-to-list 'safe-local-variable-directories "/Users/mauzy/code/streamline/")
 
 ;;; ---------------------------------------------------------------------------
@@ -18,13 +20,14 @@
 (use-package vertico-directory
   :after vertico
   :ensure nil ; built-in with vertico
-  ;; More convenient directory navigation commands
   :bind (:map vertico-map
               ("RET" . vertico-directory-enter)
               ("DEL" . vertico-directory-delete-char)
               ("M-DEL" . vertico-directory-delete-word))
+  
+  :hook
   ;; Tidy shadowed file names
-  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+  (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -38,10 +41,6 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package orderless
-  ;; Vertico leverages Orderless' flexible matching capabilities, allowing users
-  ;; to input multiple patterns separated by spaces, which Orderless then
-  ;; matches in any order against the candidates.
-  
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
@@ -51,20 +50,20 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package marginalia
-  ;; Marginalia allows Embark to offer you preconfigured actions in more contexts.
-  ;; In addition to that, Marginalia also enhances Vertico by adding rich
-  ;; annotations to the completion candidates displayed in Vertico's interface.
-  
   :defer t
   :commands (marginalia-mode marginalia-cycle)
   :hook (after-init . marginalia-mode))
 
 ;;; ----------------------------------------------------------------------------
 
-(use-package wgrep)
+(use-package wgrep
+  :custom
+  (wgrep-auto-save-buffer 1)) 
+
 
 ;;; ----------------------------------------------------------------------------
 
+;; NOTE: not using aggressive-indent at the moment, but keeping this here for reference
 ;; (use-package aggressive-indent
 ;;   :hook ((emacs-lisp-mode
 ;;           lisp-mode
@@ -80,10 +79,6 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package embark
-  ;; Embark is an Emacs package that acts like a context menu, allowing
-  ;; users to perform context-sensitive actions on selected items
-  ;; directly from the completion interface.
-  
   :defer t
   :commands (embark-act
              embark-dwim
@@ -92,9 +87,9 @@
              embark-bindings
              embark-prefix-help-command)
   :bind
-  (("C-." . embark-act)         ;; pick some comfortable binding
-   ("C-M-;" . embark-dwim)        ;; good alternative: M-.
-   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+  (("C-." . embark-act)
+   ("C-M-;" . embark-dwim)
+   ("C-h B" . embark-bindings))
 
   :custom
   (prefix-help-command #'embark-prefix-help-command)
@@ -121,59 +116,33 @@
          ("C-c k" . consult-kmacro)
          ("C-c m" . consult-man)
          ("C-c i" . consult-info)
+
+         ;; General bindings
          ([remap Info-search] . consult-info)
-         ;; C-x bindings in `ctl-x-map'
-         ("C-x M-:" . consult-complex-command)
-         ("C-x b" . consult-project-buffer)
+         ([remap isearch-forward] . consult-line-literal)
          ("C-x C-b" . consult-project-buffer)
-         ("C-x B" . consult-buffer)
-         ("C-x 4 b" . consult-buffer-other-window)
-         ("C-x 5 b" . consult-buffer-other-frame)
-         ("C-x t b" . consult-buffer-other-tab)
-         ("C-x r b" . consult-bookmark)
+         ("C-x b" . consult-project-buffer)
          ("C-x p b" . consult-project-buffer)
-         ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store)
-         ("C-M-#" . consult-register)
-         ;; Other custom bindings
          ("M-y" . consult-yank-pop)
+
+         :map minibuffer-local-map
+         ("C-c C-e" . mauzy/consult-export-to-wgrep)
+         ("M-s" . consult-history)
+         ("M-r" . consult-history)
+
          ;; M-g bindings in `goto-map'
-         ("M-g e" . consult-compile-error)
-         ("M-g f" . consult-flymake)
          ("M-g g" . consult-goto-line)
          ("M-g M-g" . consult-goto-line)
          ("M-g o" . consult-outline)
          ("M-g m" . consult-mark)
          ("M-g k" . consult-global-mark)
          ("M-g i" . consult-imenu)
-         ("M-g I" . consult-imenu-multi)
-         ;; M-s bindings in `search-map'
-         ("M-s d" . consult-find)
-         ("M-s c" . consult-locate)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("M-s l" . consult-line)
-         ("C-s" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-         ;; Isearch integration
-         ("M-s e" . consult-isearch-history)
-         :map isearch-mode-map
-         ("M-e" . consult-isearch-history)
-         ("M-s e" . consult-isearch-history)
-         ("M-s l" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ;; Minibuffer history
-         :map minibuffer-local-map
-         ("C-c C-e" . mauzy/consult-export-to-wgrep)
-         ("M-s" . consult-history)
-         ("M-r" . consult-history))
+         ("M-g I" . consult-imenu-multi))
 
+  
+  :hook
   ;; Enable automatic preview at point in the *Completions* buffer.
-  :hook (completion-list-mode . consult-preview-at-point-mode)
+  (completion-list-mode . consult-preview-at-point-mode)
 
   :custom
   ;; Optionally configure the register formatting. This improves the register
@@ -182,6 +151,7 @@
   (xref-show-xrefs-function #'consult-xref)
   (xref-show-definitions-function #'consult-xref)
   (consult-narrow-key "<")
+  (consult-line-start-from-top nil)
   (consult-ripgrep-args (string-join
                          '("rg"
                            "--null"
@@ -200,8 +170,23 @@
   ;; Optionally tweak the register preview window.
   (advice-add #'register-preview :override #'consult-register-window)
 
+  (defun consult-line-literal ()
+    (interactive)
+    (let ((completion-styles '(orderless))
+          (orderless-matching-styles '(orderless-literal))
+          (completion-category-defaults nil)
+          (completion-category-overrides nil))
+      (consult-line)))
+  
   :config
+  (defvar my-consult-line-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map "\C-s" #'previous-history-element)
+      map))
+  
   (consult-customize
+   consult-line :prompt "🔎 " :group nil :sort nil :keymap my-consult-line-map
+   consult-line-literal :prompt "🔎 " :group nil :sort nil :keymap my-consult-line-map
    consult-theme :preview-key '(:debounce 0.2 any)
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file consult-xref
@@ -213,7 +198,6 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package corfu
-  
   :defer t
   :commands (corfu-mode global-corfu-mode)
 
@@ -221,6 +205,9 @@
          (shell-mode . corfu-mode)
          (eshell-mode . corfu-mode))
 
+  :config
+  (global-corfu-mode)
+  
   :custom
   (corfu-auto t)
   (corfu-preselect t)
@@ -232,12 +219,7 @@
   ;; Hide commands in M-x which do not apply to the current mode.
   (read-extended-command-predicate #'command-completion-default-include-p)
   ;; Disable Ispell completion function. As an alternative try `cape-dict'.
-  (text-mode-ispell-word-completion nil)
-  ;; (tab-always-indent 'complete)
-
-  ;; Enable Corfu
-  :config
-  (global-corfu-mode))
+  (text-mode-ispell-word-completion nil))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -246,8 +228,6 @@
   :commands (cape-dabbrev cape-file cape-elisp-block)
   :bind ("C-c p" . cape-prefix-map)
   :init
-  ;; Add to the global default value of `completion-at-point-functions' which is
-  ;; used by `completion-at-point'.
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-elisp-block))
@@ -309,6 +289,7 @@
 
 ;;; ----------------------------------------------------------------------------
 
+;; Basic undo-fu setup
 (use-package undo-fu
   :config
   (global-unset-key (kbd "C-/"))
@@ -316,15 +297,13 @@
   (global-unset-key (kbd "M-/"))
   (global-set-key (kbd "M-/") 'undo-fu-only-redo))
 
-;;; ----------------------------------------------------------------------------
-
+;; Persist undo history across sessions
 (use-package undo-fu-session
   :defer t
   :commands undo-fu-session-global-mode
   :hook (after-init . undo-fu-session-global-mode))
 
-;;; ----------------------------------------------------------------------------
-
+;; Visualize undo history with vundo
 (use-package vundo
   :commands (vundo)
   :bind (("C-M-/" . vundo))
@@ -345,8 +324,7 @@
     (setq mac-command-modifier 'meta))
 
   :bind
-  (("C-c l e b" . eval-buffer)
-   ("C-h F" . describe-face)
+  (("C-h F" . describe-face)
    ("C-c r" . revert-buffer))
   
   :hook
@@ -359,6 +337,7 @@
 
   ;; prog hooks
   (prog-mode . display-line-numbers-mode)
+  (prog-mode . subword-mode)
 
   ;; cleanup hooks
   (kill-emacs . recentf-cleanup)
@@ -369,7 +348,7 @@
   (column-number-mode t)
   (confirm-kill-emacs 'yes-or-no-p)
 
-  :config
+  :config  
   ;; Display all starred buffers at the bottom
   (add-to-list 'display-buffer-alist
                '((lambda (buffer-name action)
@@ -379,6 +358,8 @@
                  (window-height . 20)
                  (reusable-frames . visible))
                t))
+
+;;; ----------------------------------------------------------------------------
 
 (use-package treesit
   :ensure nil ; builtin
@@ -413,12 +394,12 @@
 
 (use-package eglot
   :ensure nil ; builtin
-  :hook (((
-           elixir-ts-mode
+
+  :hook (((elixir-ts-mode
            tsx-ts-mode
            typescript-ts-mode)
-          
           . eglot-ensure))
+
   :commands (eglot
              eglot-ensure
              eglot-rename
@@ -429,8 +410,12 @@
    ("C-c l s D" . eldoc-box-eglot-help-at-point))
 
   :config
-  (add-to-list
-   'eglot-server-programs '(elixir-ts-mode "elixir-ls"))
+  (add-to-list 'eglot-server-programs
+               '(elixir-ts-mode "elixir-ls"))
+
+  (add-to-list 'eglot-server-programs
+               '((tsx-ts-mode typescript-ts-mode)
+                 . ("/Users/mauzy/Library/pnpm/typescript-language-server" "--stdio")))
 
   (setq-default
    eglot-workspace-configuration
@@ -452,8 +437,7 @@
               :rope_autoimport (:enabled :json-false))))))
 
 
-;;; ----------------------------------------------------------------------------
-
+;; Eldoc box for better eldoc display
 (use-package eldoc-box)
 
 ;;; ----------------------------------------------------------------------------
@@ -518,17 +502,6 @@
   (which-key-add-column-padding 1)
   (which-key-max-description-length 40))
 
-(unless (and (eq window-system 'mac)
-             (bound-and-true-p mac-carbon-version-string))
-  ;; Enables `pixel-scroll-precision-mode' on all operating systems and Emacs
-  ;; versions, except for emacs-mac.
-  ;;
-  ;; Enabling `pixel-scroll-precision-mode' is unnecessary with emacs-mac, as
-  ;; this version of Emacs natively supports smooth scrolling.
-  ;; https://bitbucket.org/mituharu/emacs-mac/commits/65c6c96f27afa446df6f9d8eff63f9cc012cc738
-  (setq pixel-scroll-precision-use-momentum nil) ; Precise/smoother scrolling
-  (pixel-scroll-precision-mode 1))
-
 ;;; ----------------------------------------------------------------------------
 
 (use-package multiple-cursors
@@ -550,8 +523,8 @@
 
 ;;; ----------------------------------------------------------------------------
 
-(use-package expreg
-  
+;; Expand-region, but with treesitter!
+(use-package expreg  
   :bind (("C-M-SPC" . expreg-expand)
          ("M-SPC" . expreg-contract)))
 
@@ -559,10 +532,32 @@
 
 (use-package dirvish 
   :init
-  (dirvish-override-dired-mode)
   (add-to-list 'load-path 
                (expand-file-name "extensions" 
                                  (file-name-directory (locate-library "dirvish"))))
+
+  :hook
+  (after-init . dirvish-override-dired-mode)
+  (after-init . dirvish-peek-mode)  
+
+  :custom
+  ;; open large directory (over 20000 files) asynchronously with `fd' command
+  (dirvish-large-directory-threshold 20000)
+  (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
+   '(("h" "~/"                          "Home")
+     ("d" "~/Downloads/"                "Downloads")
+     ("s" "~/code/streamline"           "Streamline")
+     ("m" "/mnt/"                       "Drives")
+     ("t" "~/.local/share/Trash/files/" "TrashCan")))
+
+  (dirvish-mode-line-format
+   '(:left (sort symlink) :right (omit yank index)))
+
+  (dirvish-attributes           ; The order *MATTERS* for some attributes
+   '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size))
+
+  (dirvish-side-attributes
+   '(vc-state nerd-icons collapse file-size))
 
   :config
   (require 'dirvish-vc)
@@ -572,27 +567,10 @@
   (require 'dirvish-extras)
   (require 'dirvish-quick-access)
   
-  :custom
-  (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
-   '(("h" "~/"                          "Home")
-     ("d" "~/Downloads/"                "Downloads")
-     ("s" "~/code/streamline"           "Streamline")
-     ("m" "/mnt/"                       "Drives")
-     ("t" "~/.local/share/Trash/files/" "TrashCan")))
-
-  :config
-  (dirvish-peek-mode)
   (custom-set-faces
    '(dired-directory ((t (:foreground "#8CD0D3" :weight bold)))))
 
-  (setq dirvish-mode-line-format
-        '(:left (sort symlink) :right (omit yank index)))
-  (setq dirvish-attributes           ; The order *MATTERS* for some attributes
-        '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
-        dirvish-side-attributes
-        '(vc-state nerd-icons collapse file-size))
-  ;; open large directory (over 20000 files) asynchronously with `fd' command
-  (setq dirvish-large-directory-threshold 20000)
+  
   :bind ; Bind `dirvish-fd|dirvish-side|dirvish-dwim' as you see fit
   (("C-c f" . dirvish)
    :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
@@ -624,8 +602,7 @@
 (use-package elixir-ts-mode)
 
 (use-package mix
-  :config
-  (add-hook 'elixir-ts-mode-hook 'mix-minor-mode))
+  :hook (elixir-ts-mode . mix-minor-mode))
 
 (use-package exunit
   :after elixir-ts-mode
@@ -647,16 +624,13 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package jtsx
-  :mode (("\\.jsx?\\'" . jtsx-jsx-mode)
+  :mode (("\\.jsx\\'" . jtsx-jsx-mode)
          ("\\.tsx\\'" . jtsx-tsx-mode)
+         ("\\.js\\'" . jtsx-typescript-mode)
          ("\\.ts\\'" . jtsx-typescript-mode))
-  :commands jtsx-install-treesit-language
-  :hook ((jtsx-jsx-mode . hs-minor-mode)
-         (jtsx-tsx-mode . hs-minor-mode)
-         (jtsx-typescript-mode . hs-minor-mode))
-  :config
-  (add-to-list
-   'eglot-server-programs '(jtsx-tsx-mode . ("/Users/mauzy/Library/pnpm/typescript-language-server" "--stdio"))))
+
+  :commands jtsx-install-treesit-language)
+
 
 ;;; ----------------------------------------------------------------------------
 
