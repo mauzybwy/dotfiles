@@ -68,7 +68,7 @@
   (add-to-list 'vertico-multiform-commands
                '(execute-extended-command
                  reverse
-                 (+vertico-transform-functions . +vertico-highlight-enabled-mode)))
-  )
+                 (+vertico-transform-functions . +vertico-highlight-enabled-mode))))
+
 
 ;;; vertico.el ends here
