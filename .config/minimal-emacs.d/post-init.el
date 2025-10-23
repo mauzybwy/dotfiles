@@ -10,6 +10,7 @@
 (setq use-package-always-defer nil)
 (setq use-package-verbose t)
 (setq use-package-compute-statistics t)
+(add-to-list 'safe-local-variable-directories "/Users/mauzy/code/streamline/")
 
 ;;; ---------------------------------------------------------------------------
 
@@ -556,8 +557,7 @@
 
 ;;; ----------------------------------------------------------------------------
 
-(use-package dirvish
-  
+(use-package dirvish 
   :init
   (dirvish-override-dired-mode)
   (add-to-list 'load-path 
@@ -567,6 +567,7 @@
   :config
   (require 'dirvish-vc)
   (require 'dirvish-fd)
+  (require 'dirvish-peek)
   (require 'dirvish-icons)
   (require 'dirvish-extras)
   (require 'dirvish-quick-access)
@@ -578,10 +579,12 @@
      ("s" "~/code/streamline"           "Streamline")
      ("m" "/mnt/"                       "Drives")
      ("t" "~/.local/share/Trash/files/" "TrashCan")))
+
   :config
+  (dirvish-peek-mode)
   (custom-set-faces
    '(dired-directory ((t (:foreground "#8CD0D3" :weight bold)))))
-  
+
   (setq dirvish-mode-line-format
         '(:left (sort symlink) :right (omit yank index)))
   (setq dirvish-attributes           ; The order *MATTERS* for some attributes
@@ -644,14 +647,16 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package jtsx
-  
   :mode (("\\.jsx?\\'" . jtsx-jsx-mode)
          ("\\.tsx\\'" . jtsx-tsx-mode)
          ("\\.ts\\'" . jtsx-typescript-mode))
   :commands jtsx-install-treesit-language
   :hook ((jtsx-jsx-mode . hs-minor-mode)
          (jtsx-tsx-mode . hs-minor-mode)
-         (jtsx-typescript-mode . hs-minor-mode)))
+         (jtsx-typescript-mode . hs-minor-mode))
+  :config
+  (add-to-list
+   'eglot-server-programs '(jtsx-tsx-mode . ("/Users/mauzy/Library/pnpm/typescript-language-server" "--stdio"))))
 
 ;;; ----------------------------------------------------------------------------
 
