@@ -18,6 +18,7 @@
 (require 'mauzy-vterm)
 (require 'mauzy-scratch)
 (require 'mauzy-splash)
+(require 'mauzy-vertico)
 
 (provide 'mauzy)
 ;;; mauzy.el ends here

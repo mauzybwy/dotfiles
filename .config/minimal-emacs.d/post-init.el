@@ -3,7 +3,6 @@
 
 ;; Setup
 (require 'mauzy)
-(load (expand-file-name "config/vertico" user-emacs-directory))
 (load (expand-file-name "config/theme" user-emacs-directory))
 
 (setq use-package-always-ensure t)
@@ -15,6 +14,48 @@
 (add-to-list 'safe-local-variable-directories "/Users/mauzy/code/streamline/")
 
 ;;; ---------------------------------------------------------------------------
+
+(use-package vertico
+  ;; (Note: It is recommended to also enable the savehist package.)
+  :ensure t
+  :defer t
+  :commands vertico-mode
+  :hook
+  (after-init . vertico-mode)
+  (after-init . vertico-multiform-mode)
+
+  :custom
+  (vertico-cycle t)
+  (vertico-count 17)
+  (vertico-resize nil)
+
+  :init
+  (cl-defmethod vertico--format-candidate :around
+    (cand prefix suffix index start &context ((not mauzy/vertico-transform-functions) null))
+    (dolist (fun (ensure-list mauzy/vertico-transform-functions))
+      (setq cand (funcall fun cand)))
+    (cl-call-next-method cand prefix suffix index start))
+  
+  :config
+  (setq uniquify-buffer-name-style 'forward)
+  
+  (setq vertico-multiform-categories
+        '((symbol (vertico-sort-function . vertico-sort-alpha))
+          (file (vertico-sort-function . mauzy/sort-directories-first))))
+
+  (setq vertico-multiform-commands
+        '((consult-line (vertico-sort-override-function . vertico-sort-alpha))))
+
+  (add-to-list 'vertico-multiform-categories
+               '(file
+                 ;; this is also defined in the wiki, uncomment if used
+                 ;; (vertico-sort-function . mauzy/sort-directories-first)
+                 (mauzy/vertico-transform-functions . mauzy/vertico-highlight-directory)))
+
+  (add-to-list 'vertico-multiform-commands
+               '(execute-extended-command
+                 reverse
+                 (mauzy/vertico-transform-functions . mauzy/vertico-highlight-enabled-mode))))
 
 ;; Configure directory extension.
 (use-package vertico-directory
