@@ -327,6 +327,17 @@
 
 ;;; ----------------------------------------------------------------------------
 
+(use-package kind-icon
+  :ensure t
+  :after corfu
+                                        ;:custom
+                                        ; (kind-icon-blend-background t)
+                                        ; (kind-icon-default-face 'corfu-default) ; only needed with blend-background
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+;;; ----------------------------------------------------------------------------
+
 (use-package cape
   :defer t
   :commands (cape-dabbrev cape-file cape-elisp-block)
@@ -455,53 +466,130 @@
 
 ;;; ----------------------------------------------------------------------------
 
-(use-package eglot
-  :ensure nil ; builtin
-
-  :hook (((elixir-ts-mode
-           tsx-ts-mode
-           typescript-ts-mode)
-          . eglot-ensure))
-
-  :commands (eglot
-             eglot-ensure
-             eglot-rename
-             eglot-format-buffer)
-  :bind
-  (("C-c l s r" . eglot-rename)
-   ("C-c l s d" . eldoc-doc-buffer)
-   ("C-c l s D" . eldoc-box-eglot-help-at-point))
-
-  :config
-  (add-to-list 'eglot-server-programs
-               '(elixir-ts-mode "elixir-ls"))
-
-  (add-to-list 'eglot-server-programs
-               '((tsx-ts-mode typescript-ts-mode)
-                 . ("/Users/mauzy/Library/pnpm/typescript-language-server" "--stdio")))
-
-  (setq-default
-   eglot-workspace-configuration
-   ;; NOTE: this pylsp config is just in here for reference
-   `(:pylsp (:plugins
-             (;; Fix imports and syntax using `eglot-format-buffer`
-              :isort (:enabled t)
-              :autopep8 (:enabled t)
-
-              ;; Syntax checkers (works with Flymake)
-              :pylint (:enabled t)
-              :pycodestyle (:enabled t)
-              :flake8 (:enabled t)
-              :pyflakes (:enabled t)
-              :pydocstyle (:enabled t)
-              :mccabe (:enabled t)
-
-              :yapf (:enabled :json-false)
-              :rope_autoimport (:enabled :json-false))))))
+;; (use-package eglot
+;;   :ensure nil ; builtin
+;; 
+;;   :hook (((elixir-ts-mode
+;;            tsx-ts-mode
+;;            typescript-ts-mode)
+;;           . eglot-ensure))
+;; 
+;;   :commands (eglot
+;;              eglot-ensure
+;;              eglot-rename
+;;              eglot-format-buffer)
+;;   :bind
+;;   (("C-c l s r" . eglot-rename)
+;;    ("C-c l s d" . eldoc-doc-buffer)
+;;    ("C-c l s D" . eldoc-box-eglot-help-at-point))
+;; 
+;;   :config
+;;   (add-to-list 'eglot-server-programs
+;;                '(elixir-ts-mode "elixir-ls"))
+;; 
+;;   (add-to-list 'eglot-server-programs
+;;                '((tsx-ts-mode typescript-ts-mode)
+;;                  . ("/Users/mauzy/Library/pnpm/typescript-language-server" "--stdio")))
+;; 
+;;   (setq-default
+;;    eglot-workspace-configuration
+;;    ;; NOTE: this pylsp config is just in here for reference
+;;    `(:pylsp (:plugins
+;;              (;; Fix imports and syntax using `eglot-format-buffer`
+;;               :isort (:enabled t)
+;;               :autopep8 (:enabled t)
+;; 
+;;               ;; Syntax checkers (works with Flymake)
+;;               :pylint (:enabled t)
+;;               :pycodestyle (:enabled t)
+;;               :flake8 (:enabled t)
+;;               :pyflakes (:enabled t)
+;;               :pydocstyle (:enabled t)
+;;               :mccabe (:enabled t)
+;; 
+;;               :yapf (:enabled :json-false)
+;;               :rope_autoimport (:enabled :json-false))))))
 
 
 ;; Eldoc box for better eldoc display
-(use-package eldoc-box)
+;; (use-package eldoc-box)
+
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (elixir-ts-mode . lsp-deferred)
+         (heex-ts-mode . lsp-deferred)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+
+  :bind
+  (:map lsp-command-map
+        ("d" . lsp-ui-doc-show))
+  
+  :custom
+  ;; Elixir
+  (lsp-elixir-suggest-specs nil)
+  (lsp-elixir-server-command '("/Users/mauzy/.nix-profile/bin/elixir-ls"))
+
+  ;; Disabled Clients
+  (lsp-disabled-clients
+   '(semgrep-ls))
+
+  (lsp-keymap-prefix "C-c l")
+  (lsp-completion-provider :none)       ; we use Corfu!
+  (lsp-diagnostics-provider :flymake)
+  (lsp-session-file (locate-user-emacs-file ".lsp-session"))
+  (lsp-log-io nil)                      ; IMPORTANT! Use only for debugging! Drastically affects performance
+  (lsp-keep-workspace-alive nil)        ; Close LSP server if all project buffers are closed
+  (lsp-idle-delay 0.5)                  ; Debounce timer for `after-change-function'
+
+  ;; core
+  (lsp-enable-xref t) ; Use xref to find references
+  (lsp-auto-configure t)
+  (lsp-eldoc-enable-hover t)
+  (lsp-enable-dap-auto-configure nil)
+  (lsp-enable-file-watchers nil)
+  (lsp-enable-folding nil)
+  (lsp-enable-imenu t)
+  (lsp-enable-indentation nil) ; prefer apheleia
+  (lsp-enable-on-type-formatting nil)
+  (lsp-enable-links nil)
+  (lsp-enable-suggest-server-download nil)
+  (lsp-enable-symbol-highlighting t)
+  (lsp-enable-text-document-color nil) ; prefer treesitter
+
+  ;; ui
+  (lsp-ui-sideline-enable nil) ; Use flyckeck/flymake for diagnostics
+
+  ;; completion
+  (lsp-completion-enable t)
+  (lsp-completion-enable-additional-text-edit t) ; Ex: auto-insert an import for a completion candidate
+  (lsp-enable-snippet nil) ; Important to provide full JSX completion
+  (lsp-completion-show-kind nil)
+
+  ;; headerline
+  (lsp-headerline-breadcrumb-enable t)
+  (lsp-headerline-breadcrumb-enable-diagnostics nil)
+  (lsp-headerline-breadcrumb-enable-symbol-numbers nil)
+  (lsp-headerline-breadcrumb-icons-enable t)
+
+  ;; modeline
+  (lsp-modeline-code-actions-enable nil)
+  (lsp-modeline-diagnostics-enable nil)
+  (lsp-modeline-workspace-status-enable t)
+  (lsp-signature-doc-lines 1)
+  (lsp-ui-doc-use-childframe t)
+  (lsp-eldoc-render-all nil)
+
+  ;; semantic
+  (lsp-semantic-tokens-enable nil)) ; prefer treesitter
+
+
+
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+
 
 ;;; ----------------------------------------------------------------------------
 
