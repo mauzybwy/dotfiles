@@ -20,6 +20,12 @@
 ;;; Packages Configuration
 ;;; ============================================================================
 
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+
 (use-package emacs
   :ensure nil ; built-in
   :init
@@ -198,6 +204,7 @@
          ([remap isearch-forward] . consult-line-literal)
          ([remap list-buffers] . consult-project-buffer)
          ([remap switch-to-buffer] . consult-project-buffer)
+         ("C-x B" . consult-buffer)
          ([remap yank-pop] . consult-yank-pop)
 
          :map project-prefix-map
@@ -230,6 +237,25 @@
   (xref-show-definitions-function #'consult-xref)
   (consult-narrow-key "<")
   (consult-line-start-from-top nil)
+  
+  (consult-project-buffer-sources
+   '(consult--source-hidden-buffer
+     consult--source-project-buffer
+     consult--source-project-recent-file
+     consult--source-project-root))
+
+  (consult-buffer-sources
+   '(consult--source-hidden-buffer
+     consult--source-modified-buffer
+     consult--source-buffer
+     consult--source-recent-file
+     consult--source-buffer-register
+     consult--source-file-register
+     consult--source-bookmark
+     consult--source-project-buffer-hidden
+     consult--source-project-recent-file-hidden
+     consult--source-project-root-hidden))
+  
   (consult-ripgrep-args (string-join
                          '("rg"
                            "--null"
@@ -479,23 +505,23 @@
 
 ;;; ----------------------------------------------------------------------------
 
-(use-package copilot
-  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
-  :hook prog-mode
-  :bind
-  (:map copilot-completion-map
-        ("<tab>" . 'copilot-accept-completion)
-        ("TAB" . 'copilot-accept-completion)
-        ("C-TAB" . 'copilot-accept-completion-by-word)
-        ("C-<tab>" . 'copilot-accept-completion-by-word)))
+;; (use-package copilot
+;;   :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
+;;   :hook prog-mode
+;;   :bind
+;;   (:map copilot-completion-map
+;;         ("<tab>" . 'copilot-accept-completion)
+;;         ("TAB" . 'copilot-accept-completion)
+;;         ("C-TAB" . 'copilot-accept-completion-by-word)
+;;         ("C-<tab>" . 'copilot-accept-completion-by-word)))
 
 ;;; ----------------------------------------------------------------------------
 
-(use-package claude-code-ide
-  :straight (:type git :host github :repo "manzaltu/claude-code-ide.el")
-  :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
-  :config
-  (claude-code-ide-emacs-tools-setup)) ; Optionally enable Emacs MCP tools
+;; (use-package claude-code-ide
+;;   :straight (:type git :host github :repo "manzaltu/claude-code-ide.el")
+;;   :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
+;;   :config
+;;   (claude-code-ide-emacs-tools-setup)) ; Optionally enable Emacs MCP tools
 
 ;;; ----------------------------------------------------------------------------
 
@@ -548,15 +574,16 @@
     "Keymap for multiple-cursors commands.")
   
   (let ((map multiple-cursors-map))
-    (define-key map (kbd "e") '("edit lines" . mc/edit-lines))
+    (define-key map (kbd "e") '("edit lines" . mc/edit-ends-of-lines))
+    (define-key map (kbd "a") '("edit lines" . mc/edit-beginnings-of-lines))
     (define-key map (kbd "p") '("mark previous" . mc/mark-previous-like-this))
     (define-key map (kbd "n") '("mark next" . mc/mark-next-like-this))
     (define-key map (kbd "C-p") '("mark previous word" . mc/mark-previous-like-this-word))
     (define-key map (kbd "C-n") '("mark next word" . mc/mark-next-like-this-word))
-    (define-key map (kbd "a") '("mark all" . mc/mark-all-like-this))
     (define-key map (kbd "r") '("mark region" . mc/mark-all-in-region))
     (define-key map (kbd "d") '("mark in defun" . mc/mark-all-like-this-in-defun))
-    (define-key map (kbd "t") '("mark dwim" . mc/mark-all-like-this-dwim))))
+    (define-key map (kbd "t") '("mark all" . mc/mark-all-like-this))
+    (define-key map (kbd "T") '("mark dwim" . mc/mark-all-like-this-dwim))))
 
 ;;; ----------------------------------------------------------------------------
 
