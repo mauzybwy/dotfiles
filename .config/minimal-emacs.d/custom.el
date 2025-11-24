@@ -4,10 +4,15 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(safe-local-variable-values
-   '((lsp-elixir-project-dir . "apps/phoenix")
-     (eval progn (mauzy/make-vterm-function "overmind" "C-c p o" "task dev")
-           (mauzy/make-vterm-function "connect" "C-c p c" "task connect")))))
+ '(package-selected-packages
+   '(aggressive-indent apheleia avy cape catppuccin-theme colorful-mode corfu
+                       direnv dirvish doom-modeline doom-themes eldoc-box
+                       embark-consult exec-path-from-shell expand-region expreg
+                       exunit forge inf-elixir jtsx kind-icon lsp-ui magit-todos
+                       marginalia minions mix multi-vterm multiple-cursors mwim
+                       nerd-icons-completion nix-ts-mode nyan-mode orderless
+                       org-mode parinfer-rust-mode rainbow-delimiters undo-fu
+                       undo-fu-session vertico vterm-toggle vundo wgrep)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

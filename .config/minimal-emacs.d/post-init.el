@@ -127,7 +127,6 @@
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
-
 ;;; ----------------------------------------------------------------------------
 
 (use-package marginalia
@@ -141,7 +140,6 @@
 (use-package wgrep
   :custom
   (wgrep-auto-save-buffer 1)) 
-
 
 ;;; ----------------------------------------------------------------------------
 
@@ -435,6 +433,27 @@
 
 ;;; ----------------------------------------------------------------------------
 
+(use-package org
+  :ensure nil ; builtin
+  :bind
+  (("C-c o c" . org-capture)
+   ("C-c o C" . org-capture-goto-target))
+
+  :custom
+  (org-todo-keywords '((sequence "TRIAGE" "TODO" "|" "DONE" "NOPE")))
+  (org-todo-keyword-faces
+   '(("TODO"   . (:foreground "#FF6C6B"))
+     ("TRIAGE"  . (:foreground "#ECBE7B"))))
+  (org-capture-templates
+   '(("e" "Emacs config features" entry
+      (file+headline "captures.org" "Emacs config features")
+      "* TRIAGE %?")
+     ("wd" "Work dump" entry
+      (file+headline "captures.org" "Work dump")
+      "%T\n%?"))))
+
+;;; ----------------------------------------------------------------------------
+
 (use-package treesit
   :ensure nil ; builtin
   :config
@@ -520,17 +539,24 @@
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
          (elixir-ts-mode . lsp-deferred)
          (heex-ts-mode . lsp-deferred)
+         (jtsx-tsx-mode . lsp-deferred)
+         (jtsx-jsx-mode . lsp-deferred)
+         (jtsx-typescript-mode . lsp-deferred)
          ;; if you want which-key integration
          (lsp-mode . lsp-enable-which-key-integration))
 
-  :bind
-  (:map lsp-command-map
-        ("d" . lsp-ui-doc-show))
+  ;; :bind
+  ;; (:map lsp-command-map
+  ;;       ("d" . lsp-ui-doc-show))
   
   :custom
   ;; Elixir
   (lsp-elixir-suggest-specs nil)
   (lsp-elixir-server-command '("/Users/mauzy/.nix-profile/bin/elixir-ls"))
+
+  ;; JS/TS
+  (lsp-clients-typescript-prefer-use-project-ts-server t)
+  (lsp-eslint-server-command "/Users/mauzy/Library/pnpm/eslint")
 
   ;; Disabled Clients
   (lsp-disabled-clients
