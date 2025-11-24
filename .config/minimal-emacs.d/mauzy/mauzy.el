@@ -19,6 +19,7 @@
 (require 'mauzy-scratch)
 (require 'mauzy-splash)
 (require 'mauzy-vertico)
+(require 'mauzy-modal)
 
 (provide 'mauzy)
 ;;; mauzy.el ends here
