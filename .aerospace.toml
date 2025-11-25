@@ -134,6 +134,11 @@ ctrl-g = ['mode main', 'exec-and-forget clear_sketchybar_mode']
 
 # Assignments
 
+# NOTE: can determine bundle ID with:
+#
+#  osascript -e 'id of app "AppName"'
+#
+
 [[on-window-detected]]
 if.app-id = 'org.gnu.Emacs'
 run = 'move-node-to-workspace 1'
@@ -153,6 +158,10 @@ run = 'layout floating'
 [[on-window-detected]]
 if.app-id = 'com.apple.iphonesimulator'
 run = 'layout tiling'
+
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+run = ['layout tiling', 'move-node-to-workspace 9']
 
 # Monitor Assignments
 [workspace-to-monitor-force-assignment]
