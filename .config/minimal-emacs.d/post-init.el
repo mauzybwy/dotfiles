@@ -6,7 +6,7 @@
 ;;; ============================================================================
 
 (require 'mauzy)
-(load (expand-file-name "config/theme" user-emacs-directory))
+(load (expand-file-name "config/theme" user-emacs-directory) t t)
 
 (setq use-package-always-ensure t)
 (setq use-package-always-defer nil)
