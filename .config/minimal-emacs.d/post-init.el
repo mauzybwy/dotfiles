@@ -15,6 +15,7 @@
 
 ;; Safe local variable directories
 (add-to-list 'safe-local-variable-directories "/Users/mauzy/code/streamline/")
+(add-to-list 'safe-local-variable-directories "/Users/mauzy/code/proteus/weblog/")
 
 ;;; ============================================================================
 ;;; Packages Configuration
@@ -22,6 +23,10 @@
 
 (use-package exec-path-from-shell
   :ensure t
+
+  :custom
+  (exec-path-from-shell-warn-duration-millis 1000)
+
   :config
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
@@ -454,13 +459,22 @@
 
 ;;; ----------------------------------------------------------------------------
 
+(use-package markdown-ts-mode
+  :mode (("\\.mdx?\\'" . markdown-ts-mode)
+         ("\\.MDX?\\'" . markdown-ts-mode))
+  :hook
+  (markdown-ts-mode . visual-line-mode))
+
+
+;;; ----------------------------------------------------------------------------
+
 (use-package treesit
   :ensure nil ; builtin
   :config
   (setq treesit-font-lock-level 4)
   (setq treesit-language-source-alist
         '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-          (astro "https://github.com/mauzybwy/tree-sitter-astro" "emacs")
+          (astro "https://github.com/virchau13/tree-sitter-astro")
           (cmake "https://github.com/uyha/tree-sitter-cmake")
           (css "https://github.com/tree-sitter/tree-sitter-css")
           (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
@@ -471,11 +485,13 @@
           (json "https://github.com/tree-sitter/tree-sitter-json")
           (jq "https://github.com/nverno/tree-sitter-jq")
           (make "https://github.com/alemuller/tree-sitter-make")
-          (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+          (markdown "https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown/src")
+          (markdown-inline "https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown-inline/src")
           (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
           (python "https://github.com/tree-sitter/tree-sitter-python")
           (nix "https://github.com/nix-community/tree-sitter-nix")
           (ruby "https://github.com/tree-sitter/tree-sitter-ruby")
+          (swift "https://codeberg.org/woolsweater/tree-sitter-swifter")
           (toml "https://github.com/tree-sitter/tree-sitter-toml")
           (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
@@ -537,6 +553,7 @@
   :commands (lsp lsp-deferred)
 
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (astro-ts-mode . lsp-deferred)
          (elixir-ts-mode . lsp-deferred)
          (heex-ts-mode . lsp-deferred)
          (jtsx-tsx-mode . lsp-deferred)
@@ -797,6 +814,17 @@
 
 ;;; ----------------------------------------------------------------------------
 
+;; (use-package swift-ts-mode
+;;   :mode (("\\.swift\\'" . swift-ts-mode))
+;;   :vc (:url "https://codeberg.org/woolsweater/swift-ts-mode.git"
+;;             :rev :newest
+;;             :branch "master"))
+
+(use-package swift-mode
+  :mode (("\\.swift\\'" . swift-ts-mode)))
+
+;;; ----------------------------------------------------------------------------
+
 (use-package typescript-ts-mode)
 
 ;;; ----------------------------------------------------------------------------
@@ -804,16 +832,63 @@
 (use-package jtsx
   :mode (("\\.jsx\\'" . jtsx-jsx-mode)
          ("\\.tsx\\'" . jtsx-tsx-mode)
-         ("\\.js\\'" . jtsx-typescript-mode)
-         ("\\.ts\\'" . jtsx-typescript-mode))
+         ("\\.m?js\\'" . jtsx-typescript-mode)
+         ("\\.m?ts\\'" . jtsx-typescript-mode))
 
   :commands jtsx-install-treesit-language)
 
+;;; ----------------------------------------------------------------------------
+
+(use-package astro-ts-mode
+  :mode (("\\.astro\\'" . astro-ts-mode))
+  :config
+  ;; HACK: There seems to be an issue with astro-ts-mode using some old treesitter config syntax
+
+  (defun astro-ts-mode--prefix-font-lock-features (prefix settings)
+    "Prefix with PREFIX the font lock features in SETTINGS."
+    (mapcar (lambda (setting)
+              (append (list (nth 0 setting)
+                            (nth 1 setting)
+                            (intern (format "%s-%s" prefix (nth 2 setting))))
+                      (nthcdr 3 setting)))
+            settings))
+
+  (setq astro-ts-mode--font-lock-settings
+        (append
+         (astro-ts-mode--prefix-font-lock-features
+          "tsx"
+          (typescript-ts-mode--font-lock-settings 'tsx))
+         (astro-ts-mode--prefix-font-lock-features "css" css--treesit-settings)
+         (treesit-font-lock-rules
+          :language 'astro
+          :feature 'astro-comment
+          '((comment) @font-lock-comment-face
+            (frontmatter ("---") @font-lock-comment-face))
+          :language 'astro
+          :feature 'astro-keyword
+          '("doctype" @font-lock-keyword-face)
+          :language 'astro
+          :feature 'astro-definition
+          '((tag_name) @font-lock-function-name-face)
+          :language 'astro
+          :feature 'astro-string
+          '((quoted_attribute_value) @font-lock-string-face
+            (attribute_name) @font-lock-constant-face)
+          :language 'astro
+          :feature 'astro-bracket
+          '((["<" ">" "</" "/>" "{" "}"]) @font-lock-bracket-face))))
+
+  (add-hook 'astro-ts-mode-hook
+            (lambda ()
+              (apheleia-mode)
+              (treesit-parser-create 'tsx)
+              (treesit-parser-create 'css))))
 
 ;;; ----------------------------------------------------------------------------
 
 (use-package json-ts-mode
-  :mode (("\\.json\\'" . json-ts-mode)))
+  :mode (("\\.json\\'" . json-ts-mode)
+         ("\\.prettierrc\\'" . json-ts-mode)))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -824,6 +899,24 @@
 
 (use-package yaml-ts-mode
   :mode (("\\.ya?ml\\'" . yaml-ts-mode)))
+
+;;; ----------------------------------------------------------------------------
+
+(use-package cook-mode
+  :mode (("\\.cook\\'" . cook-mode))
+  :vc (:url "https://github.com/cooklang/cook-mode"
+            :rev :newest
+            :branch "master"))
+
+;;; ----------------------------------------------------------------------------
+
+(use-package caddyfile-mode
+  :mode (("Caddyfile" . caddyfile-mode))
+  :hook (caddyfile-mode . mauzy/caddyfile-hook)
+  :preface
+  (defun mauzy/caddyfile-hook ()
+    (setq-local tab-width 4)
+    (setq-local indent-tabs-mode nil)))
 
 ;;; ----------------------------------------------------------------------------
 
