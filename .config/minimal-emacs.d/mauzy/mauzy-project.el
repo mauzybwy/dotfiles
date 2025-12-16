@@ -45,7 +45,7 @@
 
 (defun mauzy/project-name ()
   "Return the name of the current project."
-  (when-let ((proj (project-current)))
+  (when-let* ((proj (project-current)))
     (let ((name (file-name-nondirectory 
                  (directory-file-name (project-root proj)))))
       name)))

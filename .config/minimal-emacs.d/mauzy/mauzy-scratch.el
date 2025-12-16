@@ -15,7 +15,7 @@
 
 (defun mauzy/project-scratch-file-name ()
   "Return the scratch file path for the current project."
-  (when-let ((proj (project-current)))
+  (when-let* ((proj (project-current)))
     (let* ((root (project-root proj))
            (hash (secure-hash 'md5 root))
            (name (file-name-nondirectory (directory-file-name root))))
@@ -24,7 +24,7 @@
 
 (defun mauzy/project-scratch-buffer-name ()
   "Return the scratch buffer name for the current project."
-  (when-let ((name (mauzy/project-name)))
+  (when-let* ((name (mauzy/project-name)))
     (format "*scratch:%s*" name)))
 
 (defun mauzy/project-scratch-save ()
@@ -61,7 +61,7 @@
   "Open or create a persistent scratch buffer for the current project.
 Works like *scratch* but content is saved between sessions."
   (interactive)
-  (if-let ((proj (project-current)))
+  (if-let* ((proj (project-current)))
       (let* ((buf-name (mauzy/project-scratch-buffer-name))
              (scratch-file (mauzy/project-scratch-file-name))
              (buf (or (get-buffer buf-name)

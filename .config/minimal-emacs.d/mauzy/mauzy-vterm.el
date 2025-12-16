@@ -9,7 +9,7 @@
   "Create or toggle a vterm buffer with NAME in project root.
 The buffer will be named *vterm-NAME:PROJECT* where PROJECT is the project name.
 If STARTUP-COMMAND is provided and this is a new buffer, execute it in the terminal."
-  (if-let ((project (project-current)))
+  (if-let* ((project (project-current)))
       (let* ((project-root (project-root project))
              (project-name (file-name-nondirectory (directory-file-name project-root)))
              (default-directory project-root)
