@@ -8,6 +8,9 @@
 (require 'mauzy)
 (load (expand-file-name "config/theme" user-emacs-directory) t t)
 
+(load (expand-file-name "git-repos/pico8-mode/pico8-mode.el" user-emacs-directory) t t)
+(require 'pico8-mode)
+
 (setq use-package-always-ensure t)
 (setq use-package-always-defer nil)
 (setq use-package-verbose t)
@@ -501,49 +504,38 @@
 
 ;;; ----------------------------------------------------------------------------
 
-;; (use-package eglot
-;;   :ensure nil ; builtin
-;; 
-;;   :hook (((elixir-ts-mode
-;;            tsx-ts-mode
-;;            typescript-ts-mode)
-;;           . eglot-ensure))
-;; 
-;;   :commands (eglot
-;;              eglot-ensure
-;;              eglot-rename
-;;              eglot-format-buffer)
-;;   :bind
-;;   (("C-c l s r" . eglot-rename)
-;;    ("C-c l s d" . eldoc-doc-buffer)
-;;    ("C-c l s D" . eldoc-box-eglot-help-at-point))
-;; 
-;;   :config
-;;   (add-to-list 'eglot-server-programs
-;;                '(elixir-ts-mode "elixir-ls"))
-;; 
-;;   (add-to-list 'eglot-server-programs
-;;                '((tsx-ts-mode typescript-ts-mode)
-;;                  . ("/Users/mauzy/Library/pnpm/typescript-language-server" "--stdio")))
-;; 
-;;   (setq-default
-;;    eglot-workspace-configuration
-;;    ;; NOTE: this pylsp config is just in here for reference
-;;    `(:pylsp (:plugins
-;;              (;; Fix imports and syntax using `eglot-format-buffer`
-;;               :isort (:enabled t)
-;;               :autopep8 (:enabled t)
-;; 
-;;               ;; Syntax checkers (works with Flymake)
-;;               :pylint (:enabled t)
-;;               :pycodestyle (:enabled t)
-;;               :flake8 (:enabled t)
-;;               :pyflakes (:enabled t)
-;;               :pydocstyle (:enabled t)
-;;               :mccabe (:enabled t)
-;; 
-;;               :yapf (:enabled :json-false)
-;;               :rope_autoimport (:enabled :json-false))))))
+(use-package eglot
+  :ensure nil ; builtin
+
+  :hook (((;; elixir-ts-mode
+           ;; tsx-ts-mode
+           ;; typescript-ts-mode
+           astro-ts-mode)
+          . eglot-ensure))
+
+  :bind
+  (("C-c l s r" . eglot-rename)
+   ("C-c l s d" . eldoc-doc-buffer)
+   ("C-c l s D" . eldoc-box-eglot-help-at-point))
+
+  :config
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(elixir-ts-mode "elixir-ls"))
+
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '((tsx-ts-mode typescript-ts-mode)
+  ;;                . ("/Users/mauzy/Library/pnpm/typescript-language-server" "--stdio")))
+
+  
+  (add-to-list 'eglot-server-programs
+               '(astro-ts-mode . ("pnpm" "astro-ls" "--stdio"
+                                  :initializationOptions
+                                  (:typescript (:tsdk "./node_modules/typescript/lib"))))))
+
+
+
+
+
 
 
 ;; Eldoc box for better eldoc display
@@ -552,8 +544,7 @@
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
 
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (astro-ts-mode . lsp-deferred)
+  :hook (;; (astro-ts-mode . lsp-deferred)
          (elixir-ts-mode . lsp-deferred)
          (heex-ts-mode . lsp-deferred)
          (jtsx-tsx-mode . lsp-deferred)
@@ -814,6 +805,12 @@
 
 ;;; ----------------------------------------------------------------------------
 
+(use-package fsharp-mode)
+
+(use-package eglot-fsharp)
+
+;;; ----------------------------------------------------------------------------
+
 ;; (use-package swift-ts-mode
 ;;   :mode (("\\.swift\\'" . swift-ts-mode))
 ;;   :vc (:url "https://codeberg.org/woolsweater/swift-ts-mode.git"
@@ -826,6 +823,11 @@
 ;;; ----------------------------------------------------------------------------
 
 (use-package typescript-ts-mode)
+
+;;; ----------------------------------------------------------------------------
+
+(use-package lua-ts-mode
+  :mode (("\\.lua\\'" . lua-ts-mode)))
 
 ;;; ----------------------------------------------------------------------------
 

@@ -156,6 +156,10 @@ if.app-id = 'com.apple.systempreferences'
 run = 'layout floating'
 
 [[on-window-detected]]
+if.app-id = 'org.godotengine.godot'
+run = 'layout floating'
+
+[[on-window-detected]]
 if.app-id = 'com.apple.iphonesimulator'
 run = 'layout tiling'
 

@@ -20,6 +20,7 @@
 (require 'mauzy-splash)
 (require 'mauzy-vertico)
 (require 'mauzy-modal)
+(require 'mauzy-downcase-only-mode)
 
 (provide 'mauzy)
 ;;; mauzy.el ends here

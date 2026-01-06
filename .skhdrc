@@ -1,69 +1,11 @@
-# change focus (old)
-# alt - j : yabai -m window --focus west
-# alt - n : yabai -m window --focus south
-# alt - p : yabai -m window --focus north
-# alt - k : yabai -m window --focus east
-
-# change focus (with display support)
-# alt - j : yabai -m window --focus west  || $(yabai -m display --focus west)
-# alt - n : yabai -m window --focus stack.next || yabai -m window --focus stack.first || yabai -m window --focus south || $(yabai -m display --focus south)
-# alt - p : yabai -m window --focus stack.prev || yabai -m window --focus stack.last || yabai -m window --focus north || $(yabai -m display --focus north)
-# alt - k : yabai -m window --focus east  || $(yabai -m display --focus east)
-
-# create stacks
-
-# ctrl + alt - j : yabai -m window --stack west
-# ctrl + alt - n : yabai -m window --stack south
-# ctrl + alt - p : yabai -m window --stack north
-# ctrl + alt - k : yabai -m window --stack east
-
-# warp windows (old)
-# shift + alt - j : yabai -m window --warp west
-# shift + alt - n : yabai -m window --warp south
-# shift + alt - p : yabai -m window --warp north
-# shift + alt - k : yabai -m window --warp east
-
-# warp windows (with display support)
-# alt + shift - j : yabai -m window --warp west || $(yabai -m window --display west; yabai -m display --focus west)
-# alt + shift - n : yabai -m window --warp south || $(yabai -m window --display south; yabai -m display --focus south)
-# alt + shift - p : yabai -m window --warp north || $(yabai -m window --display north; yabai -m display --focus north)
-# alt + shift - k : yabai -m window --warp east || $(yabai -m window --display east; yabai -m display --focus east)
-
-0x37 : osascript -e 'display notification "Boom!" with title "Test Notification"'
-
-# alt - d : skhd -k "cmd - d"
-
-# alt - f : yabai -m window --toggle zoom-fullscreen
-
-# alt - v : yabai -m window --toggle split
-
-# ENABLED SIP, SPACE FOCUS NOT WORKING ANYMORE
-# alt - 1 : yabai -m space --focus 1
-# alt - 2 : yabai -m space --focus 2
-# alt - 3 : yabai -m space --focus 3
-# alt - 4 : yabai -m space --focus 4
-# alt - 5 : yabai -m space --focus 5
-# alt - 6 : yabai -m space --focus 6
-# alt - 7 : yabai -m space --focus 7
-# alt - 8 : yabai -m space --focus 8
-# alt - 9 : yabai -m space --focus 9
-# alt - 0 : yabai -m space --focus 10
-
-# alt + shift - 1 : yabai -m window --space 1
-# alt + shift - 2 : yabai -m window --space 2
-# alt + shift - 3 : yabai -m window --space 3
-# alt + shift - 4 : yabai -m window --space 4
-# alt + shift - 5 : yabai -m window --space 5
-# alt + shift - 6 : yabai -m window --space 6
-# alt + shift - 7 : yabai -m window --space 7
-# alt + shift - 8 : yabai -m window --space 8
-# alt + shift - 9 : yabai -m window --space 9
-# alt + shift - 0 : yabai -m window --space 10
-
 # alt - return : /Applications/kitty.app/Contents/MacOS/kitty -d=/Users/mauzy -o shell=bash --single-instance
-alt - return : bash ~/.local/script/open_iterm.sh
+# alt - return : bash ~/.local/script/open_iterm.sh
 
 # alt + shift - q : yabai -m window --close
+
+cmd - return [
+    "PICO-8" : skhd -k "alt - return"
+]
 
 ctrl - t [
     "Firefox" : skhd -k "cmd - t"
@@ -86,33 +28,33 @@ ctrl - l [
 ctrl - n [
     "Firefox" : skhd -k "down"
     "Google Chrome" : skhd -k "down"
-    "Arc" : skhd -k "down"
     "Spark Desktop" : skhd -k "down"
-    "Zen Browser" : skhd -k "down"
+    "Arc" : skhd -k "down"
+    "Zen" : skhd -k "down"
 ]
 
 ctrl - p [
     "Firefox" : skhd -k "up"
     "Google Chrome" : skhd -k "up"
-    "Arc" : skhd -k "up"
     "Spark Desktop" : skhd -k "up"
-    "Zen Browser" : skhd -k "up"
+    "Arc" : skhd -k "up"
+    "Zen" : skhd -k "up"
 ]
 
 ctrl - f [
     "Firefox" : skhd -k "right"
     "Google Chrome" : skhd -k "right"
-    "Arc" : skhd -k "right"
     "Spark Desktop" : skhd -k "right"
-    "Zen Browser" : skhd -k "right"
+    "Arc" : skhd -k "right"
+    "Zen" : skhd -k "right"
 ]
 
 ctrl - b [
     "Firefox" : skhd -k "left"
     "Google Chrome" : skhd -k "left"
-    "Arc" : skhd -k "left"
     "Spark Desktop" : skhd -k "left"
-    "Zen Browser" : skhd -k "left"
+    "Arc" : skhd -k "left"
+    "Zen" : skhd -k "left"
 ]
 
 ctrl - w [
@@ -193,43 +135,49 @@ ctrl - c [
 ]
 
 ctrl - g [
-     "Firefox" : skhd -k "escape"
-     "Google Chrome" : skhd -k "escape"
-     "Arc" : skhd -k "escape"
-     "Spark Desktop" : skhd -k "escape"
-     "Zen Browser" : skhd -k "escape"
+    "Firefox" : skhd -k "escape"
+    "Google Chrome" : skhd -k "escape"
+    "Spark Desktop" : skhd -k "escape"
+    "Arc" : skhd -k "escape"
+    "Zen" : skhd -k "escape"
 ]
 
 ctrl - e [
      "Firefox" : skhd -k "cmd - right"
      "Google Chrome" : skhd -k "cmd - right"
      "Arc" : skhd -k "cmd - right"
+     "Zen" : skhd -k "cmd - right"
 ]
 
 ctrl - a [
      "Firefox" : skhd -k "cmd - left"
      "Google Chrome" : skhd -k "cmd - left"
      "Arc" : skhd -k "cmd - left"
+     "Zen" : skhd -k "cmd - left"
 ]
 
 ctrl - 0x2C [
      "Firefox" : skhd -k "cmd - z"
      "Google Chrome" : skhd -k "cmd - z"
      "Arc" : skhd -k "cmd - z"
+     "Zen" : skhd -k "cmd - z"
 ]
 
 ctrl - v [
      "Arc" : skhd -k "alt - down"
+     "Zen" : skhd -k "alt - down"
 ]
 
 # cmd - v [
 #      "Arc" : skhd -k "alt - up"
+#      "Zen" : skhd -k "alt - up"
 # ]
 
 shift + ctrl - 0x2C [
      "Firefox" : skhd -k "cmd + shift - z"
      "Google Chrome" : skhd -k "cmd + shift - z"
      "Arc" : skhd -k "cmd + shift - z"
+     "Zen" : skhd -k "cmd + shift - z"
 ]
 
 shift + ctrl - d [
@@ -243,6 +191,7 @@ shift + ctrl - d [
 :: actions @ : sketchybar --set chevron label="[x]" label.drawing="on" icon.drawing="off"
 default < hyper + fn - x ; actions
 default < ctrl - x [
+    "Zen" : skhd -k 'hyper + fn - x'
     "Arc" : skhd -k 'hyper + fn - x'
     "iTerm2" : skhd -k 'hyper + fn - x'
 ]
@@ -259,12 +208,12 @@ actions < l [
     "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'cmd + alt - n'
 ]
 actions < b [
-    # "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'hyper - space'
     "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'ctrl - t'
+    "Zen" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'ctrl - tab'
 ]
 actions < ctrl - b [
-    # "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'hyper - space'
     "Arc" : skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; skhd -k 'ctrl - t'
+    "Zen" :  skhd -k 'hyper - escape' ; skhd -k 'hyper + fn - escape' ; osascript -e 'tell application "System Events" to key down tab'
 ]
 
 actions < k [
