@@ -231,3 +231,12 @@ fi
 
 # Added by Windsurf
 export PATH="/Users/mauzy/.codeium/windsurf/bin:$PATH"
+
+# bun completions
+[ -s "/Users/mauzy/.bun/_bun" ] && source "/Users/mauzy/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+alias claude-mem='/Users/mauzy/.bun/bin/bun "/Users/mauzy/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'

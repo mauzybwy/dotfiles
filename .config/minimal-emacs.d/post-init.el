@@ -18,7 +18,9 @@
 
 ;; Safe local variable directories
 (add-to-list 'safe-local-variable-directories "/Users/mauzy/code/streamline/")
+(add-to-list 'safe-local-variable-directories "/Users/mauzy/code/otp_book/")
 (add-to-list 'safe-local-variable-directories "/Users/mauzy/code/proteus/weblog/")
+(add-to-list 'safe-local-variable-directories "/Users/mauzy/code/streamline-worktrees/")
 
 ;;; ============================================================================
 ;;; Packages Configuration
@@ -42,7 +44,10 @@
 
   :bind
   (("C-h F" . describe-face)
-   ("C-c r" . revert-buffer))
+   ("C-c r" . revert-buffer)
+   ("C-c C-v"  . flymake-show-buffer-diagnostics)
+   ("C-c n" . flymake-goto-next-error)
+   ("C-c p" . flymake-goto-prev-error))
   
   :hook
   ;; init hooks
@@ -75,6 +80,11 @@
                  (window-height . 20)
                  (reusable-frames . visible))
                t))
+
+;;; ---------------------------------------------------------------------------
+
+(use-package ansi-color
+  :hook (compilation-filter . ansi-color-compilation-filter))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -379,6 +389,14 @@
 
 ;;; ----------------------------------------------------------------------------
 
+(use-package restclient
+  :mode ("\\.http\\'" . restclient-mode))
+
+(use-package restclient-jq
+  :after restclient)
+
+;;; ----------------------------------------------------------------------------
+
 ;; Basic vterm setup
 (use-package vterm
   :config
@@ -447,7 +465,15 @@
   (("C-c o c" . org-capture)
    ("C-c o C" . org-capture-goto-target))
 
+  :hook
+  (org-mode . visual-line-mode)
+
   :custom
+  (org-indent-indentation-per-level 2)
+  (org-hide-leading-stars t)
+  (org-startup-indented t)
+  (org-startup-numerated t)
+  (org-startup-with-inline-images t)
   (org-todo-keywords '((sequence "TRIAGE" "TODO" "|" "DONE" "NOPE")))
   (org-todo-keyword-faces
    '(("TODO"   . (:foreground "#FF6C6B"))
@@ -484,6 +510,7 @@
           (elisp "https://github.com/Wilfred/tree-sitter-elisp")
           (go "https://github.com/tree-sitter/tree-sitter-go")
           (html "https://github.com/tree-sitter/tree-sitter-html")
+          (haskell "https://github.com/tree-sitter/tree-sitter-haskell")
           (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
           (json "https://github.com/tree-sitter/tree-sitter-json")
           (jq "https://github.com/nverno/tree-sitter-jq")
@@ -509,7 +536,7 @@
 
   :hook (((;; elixir-ts-mode
            ;; tsx-ts-mode
-           ;; typescript-ts-mode
+           haskell-mode
            astro-ts-mode)
           . eglot-ensure))
 
@@ -526,16 +553,15 @@
   ;;              '((tsx-ts-mode typescript-ts-mode)
   ;;                . ("/Users/mauzy/Library/pnpm/typescript-language-server" "--stdio")))
 
+
+  (setq-default eglot-workspace-configuration
+                '(:haskell (:plugin (:stan (:globalOn t))
+                                    :formattingProvider "fourmolu")))
   
   (add-to-list 'eglot-server-programs
                '(astro-ts-mode . ("pnpm" "astro-ls" "--stdio"
                                   :initializationOptions
                                   (:typescript (:tsdk "./node_modules/typescript/lib"))))))
-
-
-
-
-
 
 
 ;; Eldoc box for better eldoc display
@@ -551,16 +577,29 @@
          (jtsx-jsx-mode . lsp-deferred)
          (jtsx-typescript-mode . lsp-deferred)
          ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
+         (lsp-mode . lsp-enable-which-key-integration)
+         (lsp-mode . lsp-modeline-code-actions-mode))
+  
 
+  ;; :bind (("M-." . lsp-goto-implementation))
   ;; :bind
   ;; (:map lsp-command-map
   ;;       ("d" . lsp-ui-doc-show))
+
+  :config
+  (add-to-list 'lsp-disabled-clients 'elixir-ls)
+  (lsp-register-client
+   (make-lsp-client
+    :new-connection (lsp-stdio-connection
+                     '("/Users/mauzy/.local/bin/expert" "--stdio"))
+    :activation-fn (lsp-activate-on "elixir")
+    :server-id 'expert-elixir))
+
   
   :custom
   ;; Elixir
   (lsp-elixir-suggest-specs nil)
-  (lsp-elixir-server-command '("/Users/mauzy/.nix-profile/bin/elixir-ls"))
+  ;; (lsp-elixir-server-command '("/Users/mauzy/.nix-profile/bin/elixir-ls"))
 
   ;; JS/TS
   (lsp-clients-typescript-prefer-use-project-ts-server t)
@@ -581,6 +620,7 @@
   ;; core
   (lsp-enable-xref t) ; Use xref to find references
   (lsp-auto-configure t)
+  (lsp-auto-execute-action nil) ; don't automatically execute command if there is only one
   (lsp-eldoc-enable-hover t)
   (lsp-enable-dap-auto-configure nil)
   (lsp-enable-file-watchers nil)
@@ -623,6 +663,20 @@
 
 ;; optionally
 (use-package lsp-ui :commands lsp-ui-mode)
+
+;; sourcekit-lsp support
+(use-package lsp-sourcekit
+  :ensure t
+  :after lsp-mode
+  :custom
+  (lsp-sourcekit-executable (find-sourcekit-lsp) "Find sourcekit-lsp")
+
+  :init
+  (defun find-sourcekit-lsp ()
+    (or (executable-find "sourcekit-lsp")
+        (and (eq system-type 'darwin)
+             (string-trim (shell-command-to-string "xcrun -f sourcekit-lsp")))
+        "/usr/local/swift/usr/bin/sourcekit-lsp")))
 
 
 ;;; ----------------------------------------------------------------------------
@@ -811,6 +865,38 @@
 
 ;;; ----------------------------------------------------------------------------
 
+;; Major mode for OCaml programming
+(use-package tuareg
+  :ensure t
+  :mode (("\\.ocamlinit\\'" . tuareg-mode)))
+
+;; Merlin provides advanced IDE features
+(use-package merlin
+  :ensure t
+  :config
+  (add-hook 'tuareg-mode-hook #'merlin-mode)
+  ;; (add-hook 'merlin-mode-hook #'company-mode)
+  ;; we're using flycheck instead
+  (setq merlin-error-after-save nil))
+
+(use-package merlin-eldoc
+  :ensure t
+  :hook ((tuareg-mode) . merlin-eldoc-setup))
+
+;; ;; This uses Merlin internally
+;; (use-package flycheck-ocaml
+;;   :ensure t
+;;   :config
+;;   (flycheck-ocaml-setup))
+
+;;; ----------------------------------------------------------------------------
+
+;; (use-package haskell-ts-mode
+;;   :mode (("\\.hs\\'" . haskell-ts-mode))
+;;   :ensure t)
+
+;;; ----------------------------------------------------------------------------
+
 ;; (use-package swift-ts-mode
 ;;   :mode (("\\.swift\\'" . swift-ts-mode))
 ;;   :vc (:url "https://codeberg.org/woolsweater/swift-ts-mode.git"
@@ -818,7 +904,60 @@
 ;;             :branch "master"))
 
 (use-package swift-mode
-  :mode (("\\.swift\\'" . swift-ts-mode)))
+  :hook (swift-mode . (lambda () (lsp)))
+  :mode (("\\.swift\\'" . swift-mode))
+  :config
+  (add-to-list 'apheleia-mode-alist
+               '(swift-mode . swift-format))
+  
+  (defun mauzy/find-xcode-project-root ()
+    "Find the directory containing the Xcode project."
+    (or (locate-dominating-file default-directory
+                                (lambda (dir)
+                                  (directory-files dir nil "\\.xcworkspace\\'" t)))
+        (locate-dominating-file default-directory
+                                (lambda (dir)
+                                  (directory-files dir nil "\\.xcodeproj\\'" t)))
+        default-directory))
+
+  (defun mauzy/xcode-scheme ()
+    "Guess the scheme name from the .xcodeproj directory name."
+    (let* ((root (mauzy/find-xcode-project-root))
+           (proj (car (directory-files root nil "\\.xcodeproj\\'"))))
+      (when proj
+        (file-name-sans-extension proj))))
+
+  (defun mauzy/xcode-build ()
+    "Build the Xcode project."
+    (interactive)
+    (let* ((default-directory (mauzy/find-xcode-project-root))
+           (scheme (mauzy/xcode-scheme)))
+      (unless scheme
+        (error "No .xcodeproj found"))
+      (compile (format "xcodebuild -scheme '%s' build 2>&1 | xcbeautify"
+                       scheme))))
+
+  (defun mauzy/xcode-build-with-scheme (scheme)
+    "Build with a specific SCHEME."
+    (interactive "sScheme name: ")
+    (let ((default-directory (mauzy/find-xcode-project-root)))
+      (compile (format "xcodebuild -scheme '%s' build 2>&1 | xcbeautify"
+                       scheme))))
+
+  (defun mauzy/xcode-run ()
+    "Build and run the macOS app."
+    (interactive)
+    (let* ((default-directory (mauzy/find-xcode-project-root))
+           (scheme (mauzy/xcode-scheme))
+           (script (expand-file-name "mauzy/bin/xcode-run.sh" user-emacs-directory)))
+      (unless scheme
+        (error "No .xcodeproj found"))
+      (compile (format "'%s' '%s'" script scheme))))
+
+  :bind (:map swift-mode-map
+              ("C-c C-c" . mauzy/xcode-build)
+              ("C-c C-r" . mauzy/xcode-run)
+              ("C-c C-s" . mauzy/xcode-build-with-scheme)))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -890,6 +1029,7 @@
 
 (use-package json-ts-mode
   :mode (("\\.json\\'" . json-ts-mode)
+         ("\\apple-app-site-association\\'" . json-ts-mode)
          ("\\.prettierrc\\'" . json-ts-mode)))
 
 ;;; ----------------------------------------------------------------------------
@@ -962,7 +1102,18 @@
   :defer t
   :commands (apheleia-mode
              apheleia-global-mode)
-  :hook ((prog-mode . apheleia-mode)))
+  :hook ((prog-mode . apheleia-mode))
+
+  :init
+  (defun find-swift-format ()
+    (or (executable-find "swift-format")
+        (and (eq system-type 'darwin)
+             (string-trim (shell-command-to-string "xcrun -f swift-format")))))
+  
+  
+  :config
+  (add-to-list 'apheleia-formatters
+               '(swift-format (find-swift-format) (buffer-file-name))))
 
 ;;; ----------------------------------------------------------------------------
 

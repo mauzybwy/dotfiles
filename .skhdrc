@@ -31,6 +31,7 @@ ctrl - n [
     "Spark Desktop" : skhd -k "down"
     "Arc" : skhd -k "down"
     "Zen" : skhd -k "down"
+    "pico8" : skhd -k "down"
 ]
 
 ctrl - p [
@@ -39,6 +40,7 @@ ctrl - p [
     "Spark Desktop" : skhd -k "up"
     "Arc" : skhd -k "up"
     "Zen" : skhd -k "up"
+    "pico8" : skhd -k "up"
 ]
 
 ctrl - f [
@@ -47,6 +49,7 @@ ctrl - f [
     "Spark Desktop" : skhd -k "right"
     "Arc" : skhd -k "right"
     "Zen" : skhd -k "right"
+    "pico8" : skhd -k "right"
 ]
 
 ctrl - b [
@@ -55,6 +58,7 @@ ctrl - b [
     "Spark Desktop" : skhd -k "left"
     "Arc" : skhd -k "left"
     "Zen" : skhd -k "left"
+    "pico8" : skhd -k "left"
 ]
 
 ctrl - w [
@@ -147,6 +151,7 @@ ctrl - e [
      "Google Chrome" : skhd -k "cmd - right"
      "Arc" : skhd -k "cmd - right"
      "Zen" : skhd -k "cmd - right"
+     "pico8" : skhd -k "cmd - right"
 ]
 
 ctrl - a [
@@ -154,6 +159,7 @@ ctrl - a [
      "Google Chrome" : skhd -k "cmd - left"
      "Arc" : skhd -k "cmd - left"
      "Zen" : skhd -k "cmd - left"
+     "pico8" : skhd -k "cmd - left"
 ]
 
 ctrl - 0x2C [
