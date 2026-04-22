@@ -50,12 +50,11 @@
                    (lambda ()
                      (interactive)
                      (mauzy/project-scratch-save)
-                     (quit-window t)))
+                     (kill-buffer-and-window)))
     (local-set-key (kbd "C-x C-s")
                    (lambda ()
                      (interactive)
-                     (mauzy/project-scratch-save)
-                     (quit-window t)))))
+                     (mauzy/project-scratch-save)))))
 
 (defun mauzy/project-scratch ()
   "Open or create a persistent scratch buffer for the current project.
@@ -72,9 +71,9 @@ Works like *scratch* but content is saved between sessions."
                      (file-exists-p scratch-file))
             (insert-file-contents scratch-file))
           
-          ;; Set up the buffer like *scratch*
-          (unless (eq major-mode 'lisp-interaction-mode)
-            (lisp-interaction-mode))
+          ;; Set up the buffer to use markdown-ts-mode by default
+          (unless (eq major-mode 'markdown-ts-mode)
+            (markdown-ts-mode))
           
           ;; Apply settings initially
           (mauzy/project-scratch-setup)

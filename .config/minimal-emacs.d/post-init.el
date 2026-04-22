@@ -778,7 +778,10 @@
 
   :hook
   (after-init . dirvish-override-dired-mode)
-  (after-init . dirvish-peek-mode)  
+  (after-init . dirvish-peek-mode)
+
+  :bind (:map dirvish-mode-map
+              ("W" . (lambda () (interactive) (dired-copy-filename-as-kill 0))))
 
   :custom
   ;; open large directory (over 20000 files) asynchronously with `fd' command

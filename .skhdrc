@@ -10,19 +10,16 @@ cmd - return [
 ctrl - t [
     "Firefox" : skhd -k "cmd - t"
     "Google Chrome" : skhd -k "cmd - t"
-    "Arc" : skhd -k "cmd - t"
 ]
 
 ctrl - r [
     "Firefox" : skhd -k "cmd - r"
     "Google Chrome" : skhd -k "cmd - r"
-    "Arc" : skhd -k "cmd - r"
 ]
 
 ctrl - l [
     "Firefox" : skhd -k "cmd - l"
     "Google Chrome" : skhd -k "cmd - l"
-    "Arc" : skhd -k "cmd - l"
 ]
 
 ctrl - n [
